@@ -16,7 +16,7 @@ public class SorryDeck {
 
         //first add five cards of ones to the deck
         for (int i = 0; i < 5; ++i) {
-            deck.add(new SorryCard(1, "Move a pawn onto the outer starting circle, or move a pawn one space forward."));
+            deck.add(new SorryCard(1, "Move a pawn onto the outer\nstarting circle, or move a pawn one space\nforward."));
         }
 
         //iterate four times the rest of the cards
@@ -25,30 +25,30 @@ public class SorryDeck {
             //then add 4 of each card 2-5
             for (int j = 2; j <= 5; ++j) {
                 if (j == 2) {
-                    description = "Move a pawn onto the outer starting circle, or move a pawn two spaces forward. Draw again, even if you could not move a pawn.";
+                    description = "Move a pawn onto the outer\nstarting circle, or move a pawn two spaces\nforward. Draw again, even if you could not\nmove a pawn.";
                     deck.add(new SorryCard(j, description));
                 } else if (j == 3) {
-                    description = "Move a pawn forward three spaces";
+                    description = "Move a pawn forward 3 spaces";
                     deck.add(new SorryCard(j, description));
                 } else if (j == 4) {
-                    description = "Move a pawn packward four spaces";
+                    description = "Move a pawn backward 4 spaces";
                     deck.add(new SorryCard(j, description));
                 } else {
-                    description = "Move a pawn forward five spaces";
+                    description = "Move a pawn forward 5 spaces";
                     deck.add(new SorryCard(j, description));
                 }
             }
 
             for(int l = 7; l <= 8; ++l) {
                 if (l == 7) {
-                    description = "Move a pawn forward seven spaces, or split the movement between two pawns. 7’s can’t be used to start a pawn. If a 7 is used to move on pawn home, " +
-                            "the remainder of the movement total" +
-                            " must be used exactly by another " +
-                            "pawn or it is not a legal move.";
+                    description = "Move a pawn forward seven\nspaces, or split the movement between two\npawns. 7’s can’t be used to start a pawn. If\na 7 is used to move on pawn home, " +
+                            "the\nremainder of the movement total" +
+                            " must be used\nexactly by another " +
+                            "pawn or it is not a legal\nmove.";
                     deck.add(new SorryCard(l, description));
                 }
                 else{
-                    description = "Move a pawn forward eight spaces";
+                    description = "Move a pawn forward 8 spaces";
                     deck.add(new SorryCard(l, description));
 
                 }
@@ -56,15 +56,15 @@ public class SorryDeck {
 
             for(int m = 10; m <= 12; ++m) {
                 if (m == 10) {
-                    description = "Move a pawn forward 10 spaces, or move a pawn backward one space.";
+                    description = "Move a pawn forward 10 spaces,\nor move a pawn backward one space.";
                     deck.add(new SorryCard(m, description));
                 }
                 else if(m == 11){
-                    description = "Move a pawn forward 11 spaces, or switch the position of any one of your " +
-                            "pawns with any one of your opponents pawns. Note, " +
-                            "you do not have to switch positions if there is no " +
-                            "other legal play. This is the exception to the aforementioned rule." +
-                            " Also, you cannot switch with pawns in the “START”, “HOME”, or “SAFETY ZONE” areas. ";
+                    description = "Move a pawn forward 11 spaces,\nor switch the position of any one of your\n" +
+                            "pawns with any one of your opponents pawns.\nNote, " +
+                            "you do not have to switch positions if\nthere is no " +
+                            "other legal play. This is the\nexception to the aforementioned rule." +
+                            " Also,\nyou cannot switch with pawns in the\n“START”, “HOME”, or “SAFETY ZONE”\nareas. ";
                     deck.add(new SorryCard(m, description));
 
                 }
@@ -75,12 +75,12 @@ public class SorryDeck {
             }
 
             //insert Sorry! cards
-            description = "Take one pawn from your “START” position" +
-                    " and move it to any legal space occupied by an opponent (" +
-                    "no “HOME”, “START”, or “SAFETY ZONE” spaces), and " +
-                    "bump the opponent back to their “START” space. If you have no" +
-                    " pawns in the “START” space, or " +
-                    "there are no legal pawns to bump, end your turn.";
+            description = "Take one pawn from your\n“START” position" +
+                    " and move it to any legal\nspace occupied by an opponent (" +
+                    "no “HOME”,\n“START”, or “SAFETY ZONE” spaces), and\n" +
+                    "bump the opponent back to their “START”\nspace. If you have no" +
+                    " pawns in the “START”\nspace, or " +
+                    "there are no legal pawns to bump,\nend your turn.";
             int number = 0;
             deck.add(new SorryCard(number, description));
 
@@ -88,6 +88,7 @@ public class SorryDeck {
             numFour++;
         }
     }
+
 
     /**
      * shuffle method takes no arguments

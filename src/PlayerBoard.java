@@ -170,7 +170,7 @@ public class PlayerBoard {
             }
         }
 
-        return 0;
+        return -1;
     }
 
 }
