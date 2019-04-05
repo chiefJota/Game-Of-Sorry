@@ -9,6 +9,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 public class Main extends Application {
 
@@ -16,7 +18,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         // stage title
-        primaryStage.setTitle("Sorry?");
+        primaryStage.setTitle("Sorry!");
 
         // root group
         Group root = new Group();
@@ -32,6 +34,7 @@ public class Main extends Application {
         //shuffle the deck
         deck.shuffle();
 
+        makeSidebar(root, deck.getTopCard(), deck.cardsRemaining());
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
@@ -141,6 +144,41 @@ public class Main extends Application {
 
 
     }
+
+    private void makeSidebar(Group root, SorryCard card, int remainingCards) {
+        Rectangle bar = new Rectangle(1000, 0, 25, 900);
+        bar.setFill(Color.BLACK);
+        Label label1, label2, label3;
+        if (card.getNumber() == 0) {
+            label1 = new Label("Card: Sorry!");
+            label1.setTranslateY(100);
+            label1.setTranslateX(1180);
+            label1.setFont(new Font("Times New Roman", 30));
+            root.getChildren().add(label1);
+        } else {
+            label1 = new Label("Card: " + card.getNumber());
+            label1.setTranslateY(100);
+            label1.setTranslateX(1180);
+            label1.setFont(new Font("Times New Roman", 30));
+            root.getChildren().add(label1);
+        }
+
+        label2 = new Label("Description: " + card.getDescription());
+        label2.setTranslateY(150);
+        label2.setTranslateX(1050);
+        label2.setMaxWidth(375);
+        label2.setFont(new Font("Times New Roman", 20));
+
+        label3 = new Label("Cards remaining in deck: " + remainingCards);
+        label3.setTranslateY(835);
+        label3.setTranslateX(1050);
+        label3.setMaxWidth(375);
+
+        root.getChildren().add(bar);
+        root.getChildren().add(label2);
+        root.getChildren().add(label3);
+    }
+
 
 
     public static void main(String[] args) {
