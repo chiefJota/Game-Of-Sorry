@@ -24,7 +24,7 @@ public class Main extends Application {
         Group root = new Group();
 
         // PlayerBoard object, don't worry about this for now
-        PlayerBoard board = new PlayerBoard();
+        PlayerBoard board = new PlayerBoard(2, Color.SALMON);
 
         makeBoard(root, board);
 
@@ -40,23 +40,23 @@ public class Main extends Application {
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
             int count = 0;
             int x, y;
-            int subtract;
 
             public void handle(MouseEvent e) {
                 //Calculates the coordinates of your click
                 x = (int)e.getX();
                 y = (int)e.getY();
-                subtract = x%25;
-                x = x - subtract;
-                subtract = y%25;
-                y = y - subtract;
 
                 //Need to write a function that returns what tile you're clicking on
                 System.out.println(x);
                 System.out.println(y);
 
                 //Moves the pawn and remakes the board
-                board.movePawn(board.getTileID(x, y), deck.getTopCard().getNumber());
+                if (board.canMovePawn(board.getTileID(x, y), 1)) {
+                    board.movePawn(board.getTileID(x, y), 1);
+                }
+                //board.movePawn(board.getTileID(x, y), deck.getTopCard().getNumber());
+
+                int[] bumped = board.checkSlide();
                 //print out every card
                 System.out.println(deck.getTopCard().getNumber());
                 //count++;
@@ -80,22 +80,52 @@ public class Main extends Application {
 
     public void makeBoard(Group root, PlayerBoard board) {
         // Code to create the board display, don't be afraid to put this in a function or something i'm just lazy
-        Circle start = new Circle(325, 150, 50, Color.WHITE);
-        start.setStroke(Color.BLACK);
+        Circle start1 = new Circle(325, 150, 50, Color.WHITE);
+        start1.setStroke(Color.BLACK);
+        Circle start2 = new Circle(800, 275, 50, Color.WHITE);
+        start2.setStroke(Color.BLACK);
+        Circle start3 = new Circle(675, 750, 50, Color.WHITE);
+        start3.setStroke(Color.BLACK);
+        Circle start4 = new Circle(200, 625, 50, Color.WHITE);
+        start4.setStroke(Color.BLACK);
 
-        Circle home = new Circle(225, 400, 50, Color.WHITE);
-        home.setStroke(Color.BLACK);
+        Circle home1 = new Circle(225, 400, 50, Color.WHITE);
+        home1.setStroke(Color.BLACK);
+        Circle home2 = new Circle(550, 175, 50, Color.WHITE);
+        home2.setStroke(Color.BLACK);
+        Circle home3 = new Circle(775, 500, 50, Color.WHITE);
+        home3.setStroke(Color.BLACK);
+        Circle home4 = new Circle(450, 725, 50, Color.WHITE);
+        home4.setStroke(Color.BLACK);
 
-        root.getChildren().add(start);
-        root.getChildren().add(home);
+        root.getChildren().add(start1);
+        root.getChildren().add(start2);
+        root.getChildren().add(start3);
+        root.getChildren().add(start4);
+        root.getChildren().add(home1);
+        root.getChildren().add(home2);
+        root.getChildren().add(home3);
+        root.getChildren().add(home4);
 
         for (int i = 0; i < 5; i++) {
-            Rectangle square = new Rectangle(200, 50 * i + 100, 50, 50);
+            Rectangle square1 = new Rectangle(200, 100 + 50 * i, 50, 50);
+            Rectangle square2 = new Rectangle(800 - 50 * i, 150, 50, 50);
+            Rectangle square3 = new Rectangle(750, 750 - 50 * i, 50, 50);
+            Rectangle square4 = new Rectangle(150 + 50 * i, 700, 50, 50);
 
-            square.setFill(Color.WHITE);
-            square.setStroke(Color.BLACK);
+            square1.setFill(Color.WHITE);
+            square1.setStroke(Color.BLACK);
+            square2.setFill(Color.WHITE);
+            square2.setStroke(Color.BLACK);
+            square3.setFill(Color.WHITE);
+            square3.setStroke(Color.BLACK);
+            square4.setFill(Color.WHITE);
+            square4.setStroke(Color.BLACK);
 
-            root.getChildren().add(square);
+            root.getChildren().add(square1);
+            root.getChildren().add(square2);
+            root.getChildren().add(square3);
+            root.getChildren().add(square4);
         }
 
         for (int i = 0; i < 16; i++) {

@@ -2,6 +2,8 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.Arrays;
+
 public class PlayerBoard {
     private int homePawns = 0;
     private int startPawns = 4;
@@ -11,6 +13,8 @@ public class PlayerBoard {
     private BoardTile startTile;
     private BoardTile endTile;
 
+    private int rotation = 0;
+    private Color playerColor = Color.RED;
 
     public PlayerBoard() {
         this.boardTiles = new BoardTile[65];
@@ -34,6 +38,36 @@ public class PlayerBoard {
         boardTiles[0].addPawn();
     }
 
+    public PlayerBoard(int rotation, Color playerColor) {
+        this.rotation = rotation;
+        this.boardTiles = new BoardTile[66];
+        this.playerColor = playerColor;
+
+        boardTiles[0] = new BoardTile();
+        boardTiles[0].setTileID(0);
+
+        for (int i = 1; i < 66; i++) {
+            boardTiles[i] = new BoardTile(i, boardTiles[i - 1]);
+        }
+
+        this.startTile = boardTiles[0];
+        this.endTile = boardTiles[65];
+
+        for (int i = 0; i < 65; i++) {
+            boardTiles[i].setNextTile(boardTiles[i + 1]);
+        }
+
+        boardTiles[0].setLastTile(boardTiles[1]);
+
+        boardTiles[1].addPawn();
+        boardTiles[2].addPawn();
+        boardTiles[3].addPawn();
+        boardTiles[22].addPawn();
+        boardTiles[23].addPawn();
+        boardTiles[24].addPawn();
+        boardTiles[25].addPawn();
+    }
+
     public Group displayPawns() {
         Group playerDisplay = new Group();
 
@@ -42,7 +76,7 @@ public class PlayerBoard {
                 int[] coords = getLocation(i);
                 int x = coords[0];
                 int y = coords[1];
-                Circle pawn = new Circle(x, y, 15, Color.RED);
+                Circle pawn = new Circle(x, y, 15, playerColor);
 
                 playerDisplay.getChildren().add(pawn);
             }
@@ -56,35 +90,90 @@ public class PlayerBoard {
         return boardTiles[tileID].getHasPawn();
     }
 
-    // Takes the id of the tile and if there's a pawn on it move it a certain amount foward
-    // cannot currently move backwards, but will not move tile off board(that will actually cause a crash)
-    public void movePawn(int tileID, int moves) {
-        if (boardTiles[tileID].getHasPawn() && tileID + moves < 65) {
+    public Boolean canMovePawn(int tileID, int moves) {
+        if (tileID + moves > 65) {
+            return false;
+        } else {
+            BoardTile activeTile = this.boardTiles[tileID];
 
-            BoardTile activeTile = this.startTile;
-
-            for (int i = 0; i < tileID; i++) {
-                activeTile = activeTile.getNextTile();
+            if (moves > 0) {
+                for (int i = 0; i < moves; i++) {
+                    activeTile = activeTile.getNextTile();
+                }
+            } else {
+                for (int i = 0; i > moves; i--) {
+                    activeTile = activeTile.getLastTile();
+                }
             }
 
-            activeTile.removePawn();
-
-            for (int i = 0; i < moves; i++) {
-                activeTile = activeTile.getNextTile();
-            }
-
-            activeTile.addPawn();
-
+            return !activeTile.getHasPawn();
         }
     }
 
-    public void checkSlide() {
-        int[] longSlides = new int[]{21, 36, 51};
-        int[] shortSlides = new int[]{13, 28, 43};
+    // Takes the id of the tile and if there's a pawn on it move it a certain amount foward
+    // cannot currently move backwards, but will not move tile off board(that will actually cause a crash)
+    public void movePawn(int tileID, int moves) {
+        BoardTile activeTile = this.boardTiles[tileID];
 
+        if (activeTile.getHasPawn()) {
+            activeTile.removePawn();
+
+            if (moves > 0) {
+                for (int i = 0; i < moves; i++) {
+                    activeTile = activeTile.getNextTile();
+                }
+            } else {
+                for (int i = 0; i > moves; i--) {
+                    activeTile = activeTile.getLastTile();
+                }
+            }
+
+            activeTile.addPawn();
+        }
+    }
+
+    public int[] checkSlide() {
         for (int i = 0; i < 64; i++) {
-            if (boardTiles[i].getHasPawn()) {
+            if (boardTiles[i].getHasPawn()){
+                if (i == 21 || i == 36 || i == 51) {
+                    this.movePawn(i, 4);
+                    int[] bumpedTiles = new int[]{i, i+1, i+2, i+3, i+4};
+                    this.bump(Arrays.copyOfRange(bumpedTiles, 0,4), rotation);
+                    return bumpedTiles;
+                } else if (i == 13 || i == 28 || i == 43) {
+                    this.movePawn(i, 3);
+                    int[] bumpedTiles = new int[]{i, i+1, i+2, i+3};
+                    this.bump(Arrays.copyOfRange(bumpedTiles, 0,3), rotation);
+                    return bumpedTiles;
+                }
+            }
+        }
+        return new int[0];
+    }
 
+    public void moveToHome() {
+        if (boardTiles[65].getHasPawn()) {
+            boardTiles[65].removePawn();
+            homePawns++;
+        }
+    }
+
+    public boolean hasWon() {
+        if (homePawns == 4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void bump(int[] tileIDs, int initRot) {
+        int[] rotatedIDs = tileIDRotation(tileIDs, initRot, rotation);
+
+        for (int rotatedID : rotatedIDs) {
+            if (boardTiles[rotatedID].getHasPawn()) {
+                boardTiles[rotatedID].removePawn();
+
+                startPawns++;
             }
         }
     }
@@ -93,7 +182,7 @@ public class PlayerBoard {
     // remember that if the pane is square it will start from the top left of the pane
     // you would want to subtract 25 from all values in these two lists to get the coords of the
     // left top corner
-    private int[] getLocation(int i) {
+    private int[] getLocation(int tileID) {
         int[] coordinates = new int[2];
 
         int[] xCoords = new int[]{275, 325, 375, 425, 475, 525, 575, 625, 675, 725, 775, 825, 875, 875, 875,
@@ -107,12 +196,77 @@ public class PlayerBoard {
                 175, 125, 75, 75, 75, 125, 175, 225, 275, 325};
 
 
-        coordinates[0] = xCoords[i];
-        coordinates[1] = yCoords[i];
+        coordinates[0] = xCoords[tileID];
+        coordinates[1] = yCoords[tileID];
 
-        return coordinates;
+        int[] rotatedCoordinates = coordinateRotation(coordinates, 0, rotation);
+
+        return rotatedCoordinates;
     }
+
+    public int[] coordinateRotation(int[] initCoords, int initRot, int finalRot) {
+        int initX = initCoords[0];
+        int initY = initCoords[1];
+
+        int rotation = (finalRot - initRot + 4)%4;
+
+        initX -= 500;
+        initY -= 450;
+
+        int finalX = 0;
+        int finalY = 0;
+
+        if (rotation == 0) {
+            finalX = initX;
+            finalY = initY;
+        } else if (rotation == 1) {
+            finalX = -initY;
+            finalY = initX;
+        } else if (rotation == 2) {
+            finalX = -initX;
+            finalY = -initY;
+        } else if (rotation == 3) {
+            finalX = initY;
+            finalY = -initX;
+        }
+
+        finalX += 500;
+        finalY += 450;
+
+        return new int[]{finalX, finalY};
+    }
+
+
+    private int[] tileIDRotation(int[] initTileIDs, int initRot, int finalRot) {
+        int rotation = (finalRot - initRot + 4)%4;
+
+        int finalTileIDs[] = new int[initTileIDs.length];
+
+        for (int i = 0; i < initTileIDs.length; i++) {
+            finalTileIDs[i] = (initTileIDs[i] + 15 * (4 - rotation)) % 60;
+        }
+
+        return finalTileIDs;
+    }
+
     public int getTileID(int x, int y){
+
+        int[] coords = new int[]{x, y};
+
+        int[] rotatedCoords = coordinateRotation(coords, rotation, 0);
+
+        x = rotatedCoords[0];
+        y = rotatedCoords[1];
+
+        int subtract;
+
+        subtract = x%25;
+        x = x - subtract;
+        subtract = y%25;
+        y = y - subtract;
+
+
+
         double count = 0;
         if (y == 50 || y == 75) {
             if (x >= 250 && x <= 875) {
