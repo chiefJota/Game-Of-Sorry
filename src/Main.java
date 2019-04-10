@@ -19,6 +19,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 @SuppressWarnings("Duplicates")
 public class Main extends Application {
@@ -36,10 +38,19 @@ public class Main extends Application {
         // root group
         BorderPane root = new BorderPane();
 
+        Group menu = new Group();
+        Scene startMenu = new Scene(menu, 1600,900);
+
+        Group sorryRules = new Group();
+        Scene rulesScene = new Scene(sorryRules, 1600, 900);
+
+        makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage);
+
         //TODO:Every single time a player moves, we should remake the board
         // and have the locations of all the pawns and everything
         // PlayerBoard object, don't worry about this for now
         PlayerBoard board = new PlayerBoard(2, Color.SALMON);
+
 
         makeBoard(root, board);
 
@@ -53,7 +64,7 @@ public class Main extends Application {
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
-            int count = 0;
+
             int x, y;
 
             @Override
@@ -63,39 +74,82 @@ public class Main extends Application {
                 x = (int)e.getX();
                 y = (int)e.getY();
 
-                //Need to write a function that returns what tile you're clicking on
-                System.out.println(x);
-                System.out.println(y);
 
-                //Moves the pawn and remakes the board
-                if (board.canMovePawn(board.getTileID(x, y), 1)) {
-                    board.movePawn(board.getTileID(x, y), 1);
+                try {
+                    //Moves the pawn and remakes the board
+                    if (board.canMovePawn(board.getTileID(x, y), 1)) {
+                        board.movePawn(board.getTileID(x, y), 1);
+                    }
+
+                    int[] bumped = board.checkSlide();
+                    //print out every card
+                    System.out.println(deck.getTopCard().getNumber());
+
+                    makeBoard(root, board);
+                } catch (Exception exception) {
+                    System.out.println("You did not click on a board tile.");
                 }
-                //board.movePawn(board.getTileID(x, y), deck.getTopCard().getNumber());
-
-                int[] bumped = board.checkSlide();
-                //print out every card
-                System.out.println(deck.getTopCard().getNumber());
-                //count++;
-                makeBoard(root, board);
             }
         };
-        //TODO:this will control clicking on the tile but if there is a click
-        // anywhere other than a tile will return an error, so we need to take
-        // into account clicking on the exit button and clicking on perhaps
-        // another button...WE SHOULD USE A TRY-CATCH TO HAVE IT "IGNORE" the
-        // "invalid" clicks in PlayerBoard.
+
+
        root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
         // this removes the pawns
         //root.getChildren().remove(boardDisplay);
 
         // this displays the scene with the resolution.
-        primaryStage.setScene(new Scene(root, 1600, 900));
-
+        primaryStage.setScene(startMenu);
         primaryStage.show();
     }
 
-    public void makeBoard(BorderPane root, PlayerBoard board) {
+    private void makeMenu(Group menu, Scene startMenu, Group sorryRules, Scene rulesScene, BorderPane root, Stage primaryStage){
+        startMenu.setFill(Color.LIGHTGREEN);
+        Button startGame = new Button("Start Game");
+        startGame.setTranslateX(750);
+        startGame.setTranslateY(650);
+        menu.getChildren().add(startGame);
+        startGame.setOnMouseClicked(e -> { primaryStage.setScene(new Scene(root, 1600, 900)); });
+
+        Button endGame = new Button("Exit");
+        endGame.setTranslateX(770);
+        endGame.setTranslateY(750);
+        menu.getChildren().add(endGame);
+        endGame.setOnMouseClicked(event ->Platform.exit());
+
+        Button rules = new Button("How to Play");
+        rules.setTranslateX(748);
+        rules.setTranslateY(700);
+        menu.getChildren().add(rules);
+        rules.setOnMouseClicked(e -> { primaryStage.setScene(rulesScene);});
+
+        Button back = new Button("Back to Menu");
+        back.setTranslateX(745);
+        back.setTranslateY(855);
+        sorryRules.getChildren().add(back);
+        back.setOnMouseClicked(e -> { primaryStage.setScene(startMenu);});
+
+        Image rulesPic = new Image("/sorryRules.png", true);
+        ImageView howToPlay = new ImageView(rulesPic);
+        howToPlay.setFitHeight(850);
+        howToPlay.setX(-200);
+        sorryRules.getChildren().add(howToPlay);
+
+        Image rulesPic2 = new Image("/sorryRules2.png", true);
+        ImageView howToPlay2 = new ImageView(rulesPic2);
+        howToPlay2.setFitHeight(850);
+        howToPlay2.setX(750);
+        sorryRules.getChildren().add(howToPlay2);
+
+        Image background = new Image("/Sorry!.jpg", true);
+        ImageView back1 = new ImageView(background);
+        back1.setFitHeight(500);
+        back1.setFitWidth(800);
+        back1.setX(400);
+        back1.setY(100);
+        menu.getChildren().add(back1);
+    }
+
+    private void makeBoard(BorderPane root, PlayerBoard board) {
         // Code to create the board display, don't be afraid to put this in a function or something i'm just lazy
         Circle start1 = new Circle(325, 150, 50, Color.WHITE);
         start1.setStroke(Color.BLACK);
@@ -123,6 +177,7 @@ public class Main extends Application {
         root.getChildren().add(home2);
         root.getChildren().add(home3);
         root.getChildren().add(home4);
+
 
         for (int i = 0; i < 5; i++) {
             Rectangle square1 = new Rectangle(200, 100 + 50 * i, 50, 50);
@@ -240,7 +295,7 @@ public class Main extends Application {
 
         BorderPane theButton = new BorderPane();
         theButton.setPrefSize(1600, 900);
-        theButton.setPadding(new Insets(830, 50, 0, 10));
+        theButton.setPadding(new Insets(830, 350, 0, 10));
         
         theButton.setRight(exitButton);
         theButton.getChildren().add(hbButton);
