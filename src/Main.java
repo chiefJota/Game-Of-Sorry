@@ -1,7 +1,15 @@
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -12,7 +20,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
+@SuppressWarnings("Duplicates")
 public class Main extends Application {
+
+    private Label remainingCards;
+    private SorryDeck deck;
+    private Label cardDescription;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -21,27 +34,31 @@ public class Main extends Application {
         primaryStage.setTitle("Sorry!");
 
         // root group
-        Group root = new Group();
+        BorderPane root = new BorderPane();
 
+        //TODO:Every single time a player moves, we should remake the board
+        // and have the locations of all the pawns and everything
         // PlayerBoard object, don't worry about this for now
         PlayerBoard board = new PlayerBoard(2, Color.SALMON);
 
         makeBoard(root, board);
 
         //create new Sorry! game deck
-        SorryDeck deck = new SorryDeck();
+        deck = new SorryDeck();
 
         //shuffle the deck
         deck.shuffle();
 
-        makeSidebar(root, deck.getTopCard(), deck.cardsRemaining());
+        makeSidebar(root, deck.getTopCard());
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
             int count = 0;
             int x, y;
 
+            @Override
             public void handle(MouseEvent e) {
+
                 //Calculates the coordinates of your click
                 x = (int)e.getX();
                 y = (int)e.getY();
@@ -61,14 +78,14 @@ public class Main extends Application {
                 System.out.println(deck.getTopCard().getNumber());
                 //count++;
                 makeBoard(root, board);
-
-
             }
         };
-
-
-        root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-
+        //TODO:this will control clicking on the tile but if there is a click
+        // anywhere other than a tile will return an error, so we need to take
+        // into account clicking on the exit button and clicking on perhaps
+        // another button...WE SHOULD USE A TRY-CATCH TO HAVE IT "IGNORE" the
+        // "invalid" clicks in PlayerBoard.
+       root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
         // this removes the pawns
         //root.getChildren().remove(boardDisplay);
 
@@ -78,7 +95,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public void makeBoard(Group root, PlayerBoard board) {
+    public void makeBoard(BorderPane root, PlayerBoard board) {
         // Code to create the board display, don't be afraid to put this in a function or something i'm just lazy
         Circle start1 = new Circle(325, 150, 50, Color.WHITE);
         start1.setStroke(Color.BLACK);
@@ -175,10 +192,14 @@ public class Main extends Application {
 
     }
 
-    private void makeSidebar(Group root, SorryCard card, int remainingCards) {
+    private void makeSidebar(BorderPane root, SorryCard card) {
         Rectangle bar = new Rectangle(1000, 0, 25, 900);
         bar.setFill(Color.BLACK);
-        Label label1, label2, label3;
+
+        //make a pane and place all the labels and exitbutton in it
+        Pane sideBar = new Pane();
+
+        Label label1;
         if (card.getNumber() == 0) {
             label1 = new Label("Card: Sorry!");
             label1.setTranslateY(100);
@@ -193,20 +214,49 @@ public class Main extends Application {
             root.getChildren().add(label1);
         }
 
-        label2 = new Label("Description: " + card.getDescription());
-        label2.setTranslateY(150);
-        label2.setTranslateX(1050);
-        label2.setMaxWidth(375);
-        label2.setFont(new Font("Times New Roman", 20));
+        cardDescription = new Label("Description: " + card.getDescription());
+        cardDescription.setTranslateY(150);
+        cardDescription.setTranslateX(1050);
+        cardDescription.setMaxWidth(375);
+        cardDescription.setFont(new Font("Times New Roman", 20));
 
-        label3 = new Label("Cards remaining in deck: " + remainingCards);
-        label3.setTranslateY(835);
-        label3.setTranslateX(1050);
-        label3.setMaxWidth(375);
+        remainingCards =  new Label("Cards remaining in deck: ");
+        remainingCards.setTranslateY(835);
+        remainingCards.setTranslateX(1050);
+        remainingCards.setMaxWidth(375);
+        remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
-        root.getChildren().add(bar);
-        root.getChildren().add(label2);
-        root.getChildren().add(label3);
+        sideBar.getChildren().add(bar);
+        sideBar.getChildren().add(label1);
+        sideBar.getChildren().add(cardDescription);
+        sideBar.getChildren().add(remainingCards);
+
+        //create Button to exit the game
+        Button exitButton = new Button("Exit Game");
+        HBox hbButton = new HBox();
+        hbButton.getChildren().add(exitButton);
+        hbButton.setAlignment(Pos.CENTER_RIGHT);
+        exitButton.setOnAction(event ->Platform.exit());
+
+        BorderPane theButton = new BorderPane();
+        theButton.setPrefSize(1600, 900);
+        theButton.setPadding(new Insets(830, 50, 0, 10));
+        
+        theButton.setRight(exitButton);
+        theButton.getChildren().add(hbButton);
+        sideBar.getChildren().add(theButton);
+
+
+
+        root.getChildren().add(sideBar);
+
+       /* root.getChildren().add(bar);
+        root.getChildren().add(cardDescription);
+        root.getChildren().add(remainingCards);*/
+
+
+
+       // root.setTop(sideBar);
     }
 
 
