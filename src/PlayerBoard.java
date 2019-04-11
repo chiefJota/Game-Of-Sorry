@@ -77,6 +77,8 @@ public class PlayerBoard {
                 int x = coords[0];
                 int y = coords[1];
                 Circle pawn = new Circle(x, y, 15, playerColor);
+                pawn.setStroke(Color.BLACK);
+                pawn.setStrokeWidth(new Double(2.0));
 
                 playerDisplay.getChildren().add(pawn);
             }
@@ -86,8 +88,10 @@ public class PlayerBoard {
     }
 
     // checks if there is a pawn at the tile
-    public Boolean hasPawnAt(int tileID) {
-        return boardTiles[tileID].getHasPawn();
+    public Boolean hasPawnAt(int tileID, int rotation) {
+        int[] tileIDs = new int[]{tileID};
+        int[] rotatedIDs = tileIDRotation(tileIDs, rotation, this.rotation);
+        return boardTiles[rotatedIDs[0]].getHasPawn();
     }
 
     public Boolean canMovePawn(int tileID, int moves) {
@@ -149,6 +153,11 @@ public class PlayerBoard {
             }
         }
         return new int[0];
+    }
+
+    public void moveFromStart() {
+        boardTiles[1].addPawn();
+        startPawns--;
     }
 
     public void moveToHome() {
