@@ -28,14 +28,18 @@ import java.util.Random;
 public class Main extends Application {
 
     private Label remainingCards;
-    private SorryDeck deck;
+    private Game Game;
     private Label cardDescription;
+    private Label cardNumber;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         // stage title
         primaryStage.setTitle("Sorry!");
+
+        //create an instance of the game
+        Game = new Game();
 
         // root group
         BorderPane root = new BorderPane();
@@ -56,15 +60,24 @@ public class Main extends Application {
 
         makeBoard(root, board);
 
+
+
+
+        /*//create new Sorry! game deck
+=======
         // this displays the scene with the resolution.
         primaryStage.setScene(startMenu);
         primaryStage.show();
 
         //create new Sorry! game deck
+>>>>>>> 7e87ece8bd89a166f29833ee851332c519bdf305
         deck = new SorryDeck();
 
         //shuffle the deck
-        deck.shuffle();
+        deck.shuffle();*/
+
+
+        makeSidebar(root, Game.getTopCard());
 
         //Choose first player to go
         /*
@@ -75,7 +88,8 @@ public class Main extends Application {
         }
         */
 
-        makeSidebar(root, deck.getTopCard());
+        makeSidebar(root, Game.getTopCard());
+
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
@@ -96,13 +110,21 @@ public class Main extends Application {
                             board.movePawn(board.getTileID(x, y), 1);
                         }
 
+                    int[] bumped = board.checkSlide();
+                    //print out every card
+                    System.out.println(Game.getTopCard().getNumber());
+
+                    makeBoard(root, board);
+                    makeSidebar(root,Game.getTopCard());
+
+                } catch (Exception exception) {
+                    System.out.println("You did not click on a board tile.");
+
                         int[] bumped = board.checkSlide();
                         //print out every card
-                        System.out.println(deck.getTopCard().getNumber());
+                        System.out.println(Game.getTopCard().getNumber());
 
                         makeBoard(root, board);
-                    } catch (Exception exception) {
-                        System.out.println("You did not click on a board tile.");
                     }
                 }
             };
@@ -423,18 +445,30 @@ public class Main extends Application {
         //make a pane and place all the labels and exitbutton in it
         Pane sideBar = new Pane();
 
-        Label label1;
+        /*sideBar.getChildren().remove(cardDescription);
+        sideBar.getChildren().remove(cardNumber);
+        sideBar.getChildren().remove(remainingCards);
+*/
+
+        //Label label1;
         if (card.getNumber() == 0) {
-            label1 = new Label("Card: Sorry!");
-            label1.setTranslateY(100);
-            label1.setTranslateX(1180);
-            label1.setFont(new Font("Times New Roman", 30));
-            //root.getChildren().add(label1);
+
+            cardNumber = new Label("Card: Sorry!");
+            cardNumber.setTranslateY(100);
+            cardNumber.setTranslateX(1180);
+            cardNumber.setFont(new Font("Times New Roman", 30));
+            root.getChildren().add(cardNumber);
         } else {
-            label1 = new Label("Card: " + card.getNumber());
-            label1.setTranslateY(100);
-            label1.setTranslateX(1180);
-            label1.setFont(new Font("Times New Roman", 30));
+            cardNumber = new Label("Card: " + card.getNumber());
+            cardNumber.setTranslateY(100);
+            cardNumber.setTranslateX(1180);
+            cardNumber.setFont(new Font("Times New Roman", 30));
+            root.getChildren().add(cardNumber);
+
+            cardNumber = new Label("Card: Sorry!");
+            cardNumber.setTranslateY(100);
+            cardNumber.setTranslateX(1180);
+            cardNumber.setFont(new Font("Times New Roman", 30));
             //root.getChildren().add(label1);
         }
 
@@ -444,14 +478,18 @@ public class Main extends Application {
         cardDescription.setMaxWidth(375);
         cardDescription.setFont(new Font("Times New Roman", 20));
 
-        remainingCards =  new Label("Cards left: " + deck.cardsRemaining());
+        //remainingCards =  new Label("Cards left: " + Game.cardsRemaining());
         remainingCards.setTranslateY(835);
         remainingCards.setTranslateX(1050);
         remainingCards.setMaxWidth(375);
+
+        remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(Game.cardsLeft()).asString()));
+
         //remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
+
         sideBar.getChildren().add(bar);
-        sideBar.getChildren().add(label1);
+        sideBar.getChildren().add(cardNumber);
         sideBar.getChildren().add(cardDescription);
         sideBar.getChildren().add(remainingCards);
 
