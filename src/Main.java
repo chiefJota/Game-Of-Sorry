@@ -28,7 +28,7 @@ import java.util.Random;
 public class Main extends Application {
 
     private Label remainingCards;
-    private Game Game;
+    private SorryDeck deck;
     private Label cardDescription;
     private Label cardNumber;
 
@@ -39,13 +39,13 @@ public class Main extends Application {
         primaryStage.setTitle("Sorry!");
 
         //create an instance of the game
-        Game = new Game();
+        deck = new SorryDeck();
 
         // root group
         BorderPane root = new BorderPane();
 
         Group menu = new Group();
-        Scene startMenu = new Scene(menu, 1450,900);
+        Scene startMenu = new Scene(menu, 1450, 900);
 
         Group sorryRules = new Group();
         Scene rulesScene = new Scene(sorryRules, 1450, 900);
@@ -60,24 +60,12 @@ public class Main extends Application {
 
         makeBoard(root, board);
 
+        //create new Sorry! game deck
+        makeSidebar(root, deck.getTopCard());
 
-
-
-        /*//create new Sorry! game deck
-=======
         // this displays the scene with the resolution.
         primaryStage.setScene(startMenu);
         primaryStage.show();
-
-        //create new Sorry! game deck
->>>>>>> 7e87ece8bd89a166f29833ee851332c519bdf305
-        deck = new SorryDeck();
-
-        //shuffle the deck
-        deck.shuffle();*/
-
-
-        makeSidebar(root, Game.getTopCard());
 
         //Choose first player to go
         /*
@@ -88,79 +76,76 @@ public class Main extends Application {
         }
         */
 
-        makeSidebar(root, Game.getTopCard());
-
-
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
 
-                int x, y;
+            int x, y;
 
-                @Override
-                public void handle(MouseEvent e) {
+            @Override
+            public void handle(MouseEvent e) {
 
-                    //Calculates the coordinates of your click
-                    x = (int) e.getX();
-                    y = (int) e.getY();
+                //Calculates the coordinates of your click
+                x = (int) e.getX();
+                y = (int) e.getY();
 
 
-                    try {
-                        //Moves the pawn and remakes the board
-                        if (board.canMovePawn(board.getTileID(x, y), 1)) {
-                            board.movePawn(board.getTileID(x, y), 1);
-                        }
+                try {
+                    //Moves the pawn and remakes the board
+                    if (board.canMovePawn(board.getTileID(x, y), 1)) {
+                        board.movePawn(board.getTileID(x, y), 1);
+                    }
 
                     int[] bumped = board.checkSlide();
                     //print out every card
-                    System.out.println(Game.getTopCard().getNumber());
+                    System.out.println(deck.getTopCard().getNumber());
 
                     makeBoard(root, board);
-                    makeSidebar(root,Game.getTopCard());
+                    makeSidebar(root, deck.getTopCard());
 
                 } catch (Exception exception) {
                     System.out.println("You did not click on a board tile.");
-
-                        int[] bumped = board.checkSlide();
-                        //print out every card
-                        System.out.println(Game.getTopCard().getNumber());
-
-                        makeBoard(root, board);
-                    }
                 }
-            };
+            }
+        };
 
 
-            root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-            // this removes the pawns
-            //root.getChildren().remove(boardDisplay);
+        root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+        // this removes the pawns
+        //root.getChildren().remove(boardDisplay);
 
     }
 
-    private void makeMenu(Group menu, Scene startMenu, Group sorryRules, Scene rulesScene, BorderPane root, Stage primaryStage){
+    private void makeMenu(Group menu, Scene startMenu, Group sorryRules, Scene rulesScene, BorderPane root, Stage primaryStage) {
         startMenu.setFill(Color.LIGHTGREEN);
         Button startGame = new Button("Start Game");
         startGame.setTranslateX(690);
         startGame.setTranslateY(650);
         menu.getChildren().add(startGame);
-        startGame.setOnMouseClicked(e -> { primaryStage.setScene(new Scene(root, 1450, 900)); });
+        startGame.setOnMouseClicked(e -> {
+            primaryStage.setScene(new Scene(root, 1450, 900));
+        });
 
         Button endGame = new Button("Exit");
         endGame.setTranslateX(710);
         endGame.setTranslateY(750);
         menu.getChildren().add(endGame);
-        endGame.setOnMouseClicked(event ->Platform.exit());
+        endGame.setOnMouseClicked(event -> Platform.exit());
 
         Button rules = new Button("How to Play");
         rules.setTranslateX(689);
         rules.setTranslateY(700);
         menu.getChildren().add(rules);
-        rules.setOnMouseClicked(e -> { primaryStage.setScene(rulesScene);});
+        rules.setOnMouseClicked(e -> {
+            primaryStage.setScene(rulesScene);
+        });
 
         Button back = new Button("Back to Menu");
         back.setTranslateX(655);
         back.setTranslateY(855);
         sorryRules.getChildren().add(back);
-        back.setOnMouseClicked(e -> { primaryStage.setScene(startMenu);});
+        back.setOnMouseClicked(e -> {
+            primaryStage.setScene(startMenu);
+        });
 
         Image rulesPic = new Image("/sorryRules.png", true);
         ImageView howToPlay = new ImageView(rulesPic);
@@ -273,7 +258,7 @@ public class Main extends Application {
         slideBody.setStroke(Color.RED);
         slideBody.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd = new Circle(775,75, 20);
+        Circle slideEnd = new Circle(775, 75, 20);
         slideEnd.setFill(Color.WHITE);
         slideEnd.setStroke(Color.RED);
         slideEnd.setStrokeWidth(new Double(3.0));
@@ -294,7 +279,7 @@ public class Main extends Application {
         slideBody2.setStroke(Color.RED);
         slideBody2.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd2 = new Circle(325,75, 20);
+        Circle slideEnd2 = new Circle(325, 75, 20);
         slideEnd2.setFill(Color.WHITE);
         slideEnd2.setStroke(Color.RED);
         slideEnd2.setStrokeWidth(new Double(3.0));
@@ -315,7 +300,7 @@ public class Main extends Application {
         slideBody3.setStroke(Color.RED);
         slideBody3.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd3 = new Circle(875,275, 20);
+        Circle slideEnd3 = new Circle(875, 275, 20);
         slideEnd3.setFill(Color.WHITE);
         slideEnd3.setStroke(Color.RED);
         slideEnd3.setStrokeWidth(new Double(3.0));
@@ -336,7 +321,7 @@ public class Main extends Application {
         slideBody4.setStroke(Color.RED);
         slideBody4.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd4 = new Circle(875,725, 20);
+        Circle slideEnd4 = new Circle(875, 725, 20);
         slideEnd4.setFill(Color.WHITE);
         slideEnd4.setStroke(Color.RED);
         slideEnd4.setStrokeWidth(new Double(3.0));
@@ -357,7 +342,7 @@ public class Main extends Application {
         slideBody5.setStroke(Color.RED);
         slideBody5.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd5 = new Circle(675,825, 20);
+        Circle slideEnd5 = new Circle(675, 825, 20);
         slideEnd5.setFill(Color.WHITE);
         slideEnd5.setStroke(Color.RED);
         slideEnd5.setStrokeWidth(new Double(3.0));
@@ -378,7 +363,7 @@ public class Main extends Application {
         slideBody6.setStroke(Color.RED);
         slideBody6.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd6 = new Circle(225,825, 20);
+        Circle slideEnd6 = new Circle(225, 825, 20);
         slideEnd6.setFill(Color.WHITE);
         slideEnd6.setStroke(Color.RED);
         slideEnd6.setStrokeWidth(new Double(3.0));
@@ -399,7 +384,7 @@ public class Main extends Application {
         slideBody7.setStroke(Color.RED);
         slideBody7.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd7 = new Circle(125,625, 20);
+        Circle slideEnd7 = new Circle(125, 625, 20);
         slideEnd7.setFill(Color.WHITE);
         slideEnd7.setStroke(Color.RED);
         slideEnd7.setStrokeWidth(new Double(3.0));
@@ -420,7 +405,7 @@ public class Main extends Application {
         slideBody8.setStroke(Color.RED);
         slideBody8.setStrokeWidth(new Double(3.0));
 
-        Circle slideEnd8 = new Circle(125,175, 20);
+        Circle slideEnd8 = new Circle(125, 175, 20);
         slideEnd8.setFill(Color.WHITE);
         slideEnd8.setStroke(Color.RED);
         slideEnd8.setStrokeWidth(new Double(3.0));
@@ -464,12 +449,6 @@ public class Main extends Application {
             cardNumber.setTranslateX(1180);
             cardNumber.setFont(new Font("Times New Roman", 30));
             root.getChildren().add(cardNumber);
-
-            cardNumber = new Label("Card: Sorry!");
-            cardNumber.setTranslateY(100);
-            cardNumber.setTranslateX(1180);
-            cardNumber.setFont(new Font("Times New Roman", 30));
-            //root.getChildren().add(label1);
         }
 
         cardDescription = new Label("Description: " + card.getDescription());
@@ -478,12 +457,12 @@ public class Main extends Application {
         cardDescription.setMaxWidth(375);
         cardDescription.setFont(new Font("Times New Roman", 20));
 
-        //remainingCards =  new Label("Cards left: " + Game.cardsRemaining());
+        remainingCards = new Label();
         remainingCards.setTranslateY(835);
         remainingCards.setTranslateX(1050);
         remainingCards.setMaxWidth(375);
 
-        remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(Game.cardsLeft()).asString()));
+        remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
         //remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
@@ -498,16 +477,15 @@ public class Main extends Application {
         HBox hbButton = new HBox();
         hbButton.getChildren().add(exitButton);
         hbButton.setAlignment(Pos.CENTER_RIGHT);
-        exitButton.setOnAction(event ->Platform.exit());
+        exitButton.setOnAction(event -> Platform.exit());
 
         BorderPane theButton = new BorderPane();
-        theButton.setPrefSize(1600, 900);
+        theButton.setPrefSize(1450, 900);
         theButton.setPadding(new Insets(830, 165, 0, 10));
-        
+
         theButton.setRight(exitButton);
         theButton.getChildren().add(hbButton);
         sideBar.getChildren().add(theButton);
-
 
 
         root.getChildren().add(sideBar);
@@ -517,10 +495,8 @@ public class Main extends Application {
         root.getChildren().add(remainingCards);*/
 
 
-
-       // root.setTop(sideBar);
+        // root.setTop(sideBar);
     }
-
 
 
     public static void main(String[] args) {
