@@ -22,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Random;
+
 @SuppressWarnings("Duplicates")
 public class Main extends Application {
 
@@ -39,10 +41,10 @@ public class Main extends Application {
         BorderPane root = new BorderPane();
 
         Group menu = new Group();
-        Scene startMenu = new Scene(menu, 1600,900);
+        Scene startMenu = new Scene(menu, 1450,900);
 
         Group sorryRules = new Group();
-        Scene rulesScene = new Scene(sorryRules, 1600, 900);
+        Scene rulesScene = new Scene(sorryRules, 1450, 900);
 
         makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage);
 
@@ -54,76 +56,86 @@ public class Main extends Application {
 
         makeBoard(root, board);
 
+        // this displays the scene with the resolution.
+        primaryStage.setScene(startMenu);
+        primaryStage.show();
+
         //create new Sorry! game deck
         deck = new SorryDeck();
 
         //shuffle the deck
         deck.shuffle();
 
+        //Choose first player to go
+        /*
+        Random rand = new Random();
+        int firstPlayer = rand.nextInt(4);
+        if (firstPlayer == 0){
+
+        }
+        */
+
         makeSidebar(root, deck.getTopCard());
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
 
-            int x, y;
+                int x, y;
 
-            @Override
-            public void handle(MouseEvent e) {
+                @Override
+                public void handle(MouseEvent e) {
 
-                //Calculates the coordinates of your click
-                x = (int)e.getX();
-                y = (int)e.getY();
+                    //Calculates the coordinates of your click
+                    x = (int) e.getX();
+                    y = (int) e.getY();
 
 
-                try {
-                    //Moves the pawn and remakes the board
-                    if (board.canMovePawn(board.getTileID(x, y), 1)) {
-                        board.movePawn(board.getTileID(x, y), 1);
+                    try {
+                        //Moves the pawn and remakes the board
+                        if (board.canMovePawn(board.getTileID(x, y), 1)) {
+                            board.movePawn(board.getTileID(x, y), 1);
+                        }
+
+                        int[] bumped = board.checkSlide();
+                        //print out every card
+                        System.out.println(deck.getTopCard().getNumber());
+
+                        makeBoard(root, board);
+                    } catch (Exception exception) {
+                        System.out.println("You did not click on a board tile.");
                     }
-
-                    int[] bumped = board.checkSlide();
-                    //print out every card
-                    System.out.println(deck.getTopCard().getNumber());
-
-                    makeBoard(root, board);
-                } catch (Exception exception) {
-                    System.out.println("You did not click on a board tile.");
                 }
-            }
-        };
+            };
 
 
-       root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-        // this removes the pawns
-        //root.getChildren().remove(boardDisplay);
+            root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+            // this removes the pawns
+            //root.getChildren().remove(boardDisplay);
 
-        // this displays the scene with the resolution.
-        primaryStage.setScene(startMenu);
-        primaryStage.show();
     }
 
     private void makeMenu(Group menu, Scene startMenu, Group sorryRules, Scene rulesScene, BorderPane root, Stage primaryStage){
         startMenu.setFill(Color.LIGHTGREEN);
         Button startGame = new Button("Start Game");
-        startGame.setTranslateX(750);
+        startGame.setTranslateX(690);
         startGame.setTranslateY(650);
         menu.getChildren().add(startGame);
-        startGame.setOnMouseClicked(e -> { primaryStage.setScene(new Scene(root, 1600, 900)); });
+        startGame.setOnMouseClicked(e -> { primaryStage.setScene(new Scene(root, 1450, 900)); });
 
         Button endGame = new Button("Exit");
-        endGame.setTranslateX(770);
+        endGame.setTranslateX(710);
         endGame.setTranslateY(750);
         menu.getChildren().add(endGame);
         endGame.setOnMouseClicked(event ->Platform.exit());
 
         Button rules = new Button("How to Play");
-        rules.setTranslateX(748);
+        rules.setTranslateX(689);
         rules.setTranslateY(700);
         menu.getChildren().add(rules);
         rules.setOnMouseClicked(e -> { primaryStage.setScene(rulesScene);});
 
         Button back = new Button("Back to Menu");
-        back.setTranslateX(745);
+        back.setTranslateX(655);
         back.setTranslateY(855);
         sorryRules.getChildren().add(back);
         back.setOnMouseClicked(e -> { primaryStage.setScene(startMenu);});
@@ -131,20 +143,22 @@ public class Main extends Application {
         Image rulesPic = new Image("/sorryRules.png", true);
         ImageView howToPlay = new ImageView(rulesPic);
         howToPlay.setFitHeight(850);
-        howToPlay.setX(-200);
-        sorryRules.getChildren().add(howToPlay);
+        howToPlay.setFitWidth(700);
+        howToPlay.setX(0);
 
         Image rulesPic2 = new Image("/sorryRules2.png", true);
         ImageView howToPlay2 = new ImageView(rulesPic2);
         howToPlay2.setFitHeight(850);
-        howToPlay2.setX(750);
+        howToPlay2.setFitWidth(700);
+        howToPlay2.setX(700);
         sorryRules.getChildren().add(howToPlay2);
+        sorryRules.getChildren().add(howToPlay);
 
         Image background = new Image("/Sorry!.jpg", true);
         ImageView back1 = new ImageView(background);
         back1.setFitHeight(500);
         back1.setFitWidth(800);
-        back1.setX(400);
+        back1.setX(325);
         back1.setY(100);
         menu.getChildren().add(back1);
     }
@@ -415,13 +429,13 @@ public class Main extends Application {
             label1.setTranslateY(100);
             label1.setTranslateX(1180);
             label1.setFont(new Font("Times New Roman", 30));
-            root.getChildren().add(label1);
+            //root.getChildren().add(label1);
         } else {
             label1 = new Label("Card: " + card.getNumber());
             label1.setTranslateY(100);
             label1.setTranslateX(1180);
             label1.setFont(new Font("Times New Roman", 30));
-            root.getChildren().add(label1);
+            //root.getChildren().add(label1);
         }
 
         cardDescription = new Label("Description: " + card.getDescription());
@@ -430,11 +444,11 @@ public class Main extends Application {
         cardDescription.setMaxWidth(375);
         cardDescription.setFont(new Font("Times New Roman", 20));
 
-        remainingCards =  new Label("Cards remaining in deck: ");
+        remainingCards =  new Label("Cards left: " + deck.cardsRemaining());
         remainingCards.setTranslateY(835);
         remainingCards.setTranslateX(1050);
         remainingCards.setMaxWidth(375);
-        remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
+        //remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
         sideBar.getChildren().add(bar);
         sideBar.getChildren().add(label1);
@@ -450,7 +464,7 @@ public class Main extends Application {
 
         BorderPane theButton = new BorderPane();
         theButton.setPrefSize(1600, 900);
-        theButton.setPadding(new Insets(830, 350, 0, 10));
+        theButton.setPadding(new Insets(830, 165, 0, 10));
         
         theButton.setRight(exitButton);
         theButton.getChildren().add(hbButton);
