@@ -22,6 +22,8 @@ import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Random;
+
 @SuppressWarnings("Duplicates")
 public class Main extends Application {
 
@@ -43,49 +45,70 @@ public class Main extends Application {
         BorderPane root = new BorderPane();
 
         Group menu = new Group();
-        Scene startMenu = new Scene(menu, 1600,900);
+        Scene startMenu = new Scene(menu, 1450,900);
 
         Group sorryRules = new Group();
-        Scene rulesScene = new Scene(sorryRules, 1600, 900);
+        Scene rulesScene = new Scene(sorryRules, 1450, 900);
 
         makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage);
 
         //TODO:Every single time a player moves, we should remake the board
         // and have the locations of all the pawns and everything
         // PlayerBoard object, don't worry about this for now
-        PlayerBoard board = new PlayerBoard(2, Color.SALMON);
+        PlayerBoard board = new PlayerBoard(0, Color.RED);
 
 
         makeBoard(root, board);
 
 
 
+
         /*//create new Sorry! game deck
+=======
+        // this displays the scene with the resolution.
+        primaryStage.setScene(startMenu);
+        primaryStage.show();
+
+        //create new Sorry! game deck
+>>>>>>> 7e87ece8bd89a166f29833ee851332c519bdf305
         deck = new SorryDeck();
 
         //shuffle the deck
         deck.shuffle();*/
 
+
         makeSidebar(root, Game.getTopCard());
+
+        //Choose first player to go
+        /*
+        Random rand = new Random();
+        int firstPlayer = rand.nextInt(4);
+        if (firstPlayer == 0){
+
+        }
+        */
+
+        makeSidebar(root, Game.getTopCard());
+
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
 
-            int x, y;
+                int x, y;
 
-            @Override
-            public void handle(MouseEvent e) {
+                @Override
+                public void handle(MouseEvent e) {
 
-                //Calculates the coordinates of your click
-                x = (int)e.getX();
-                y = (int)e.getY();
+                    //Calculates the coordinates of your click
+                    x = (int) e.getX();
+                    y = (int) e.getY();
 
 
-                try {
-                    //Moves the pawn and remakes the board
-                    if (board.canMovePawn(board.getTileID(x, y), 1)) {
-                        board.movePawn(board.getTileID(x, y), 1);
-                    }
+                    try {
+                        //Moves the pawn and remakes the board
+                        if (board.canMovePawn(board.getTileID(x, y), 1)) {
+                            board.movePawn(board.getTileID(x, y), 1);
+                        }
 
                     int[] bumped = board.checkSlide();
                     //print out every card
@@ -96,42 +119,45 @@ public class Main extends Application {
 
                 } catch (Exception exception) {
                     System.out.println("You did not click on a board tile.");
+
+                        int[] bumped = board.checkSlide();
+                        //print out every card
+                        System.out.println(Game.getTopCard().getNumber());
+
+                        makeBoard(root, board);
+                    }
                 }
-            }
-        };
+            };
 
 
-       root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-        // this removes the pawns
-        //root.getChildren().remove(boardDisplay);
+            root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+            // this removes the pawns
+            //root.getChildren().remove(boardDisplay);
 
-        // this displays the scene with the resolution.
-        primaryStage.setScene(startMenu);
-        primaryStage.show();
     }
 
     private void makeMenu(Group menu, Scene startMenu, Group sorryRules, Scene rulesScene, BorderPane root, Stage primaryStage){
         startMenu.setFill(Color.LIGHTGREEN);
         Button startGame = new Button("Start Game");
-        startGame.setTranslateX(750);
+        startGame.setTranslateX(690);
         startGame.setTranslateY(650);
         menu.getChildren().add(startGame);
-        startGame.setOnMouseClicked(e -> { primaryStage.setScene(new Scene(root, 1600, 900)); });
+        startGame.setOnMouseClicked(e -> { primaryStage.setScene(new Scene(root, 1450, 900)); });
 
         Button endGame = new Button("Exit");
-        endGame.setTranslateX(770);
+        endGame.setTranslateX(710);
         endGame.setTranslateY(750);
         menu.getChildren().add(endGame);
         endGame.setOnMouseClicked(event ->Platform.exit());
 
         Button rules = new Button("How to Play");
-        rules.setTranslateX(748);
+        rules.setTranslateX(689);
         rules.setTranslateY(700);
         menu.getChildren().add(rules);
         rules.setOnMouseClicked(e -> { primaryStage.setScene(rulesScene);});
 
         Button back = new Button("Back to Menu");
-        back.setTranslateX(745);
+        back.setTranslateX(655);
         back.setTranslateY(855);
         sorryRules.getChildren().add(back);
         back.setOnMouseClicked(e -> { primaryStage.setScene(startMenu);});
@@ -139,20 +165,22 @@ public class Main extends Application {
         Image rulesPic = new Image("/sorryRules.png", true);
         ImageView howToPlay = new ImageView(rulesPic);
         howToPlay.setFitHeight(850);
-        howToPlay.setX(-200);
-        sorryRules.getChildren().add(howToPlay);
+        howToPlay.setFitWidth(700);
+        howToPlay.setX(0);
 
         Image rulesPic2 = new Image("/sorryRules2.png", true);
         ImageView howToPlay2 = new ImageView(rulesPic2);
         howToPlay2.setFitHeight(850);
-        howToPlay2.setX(750);
+        howToPlay2.setFitWidth(700);
+        howToPlay2.setX(700);
         sorryRules.getChildren().add(howToPlay2);
+        sorryRules.getChildren().add(howToPlay);
 
         Image background = new Image("/Sorry!.jpg", true);
         ImageView back1 = new ImageView(background);
         back1.setFitHeight(500);
         back1.setFitWidth(800);
-        back1.setX(400);
+        back1.setX(325);
         back1.setY(100);
         menu.getChildren().add(back1);
     }
@@ -233,18 +261,173 @@ public class Main extends Application {
 
         // code to display the slides
 
-        /**
-         Polygon slideArrow = new Polygon();
-         slideArrow.getPoints().addAll(new Double[]{560.0, 55.0, 560.0, 95.0, 590.0, 75.0});
+        Polygon slideArrow = new Polygon();
+        slideArrow.getPoints().addAll(new Double[]{560.0, 55.0, 560.0, 95.0, 590.0, 75.0});
+        slideArrow.setFill(Color.WHITE);
+        slideArrow.setStroke(Color.RED);
+        slideArrow.setStrokeWidth(new Double(3.0));
 
-         Rectangle slideBody = new Rectangle(570, 70, 200, 10);
+        Polygon slideBody = new Polygon();
+        slideBody.getPoints().addAll(new Double[]{570.0, 70.0, 570.0, 80.0, 770.0, 80.0, 770.0, 70.0});
+        slideBody.setFill(Color.WHITE);
+        slideBody.setStroke(Color.RED);
+        slideBody.setStrokeWidth(new Double(3.0));
 
-         Circle slideEnd = new Circle(775,75, 20);
+        Circle slideEnd = new Circle(775,75, 20);
+        slideEnd.setFill(Color.WHITE);
+        slideEnd.setStroke(Color.RED);
+        slideEnd.setStrokeWidth(new Double(3.0));
 
-         root.getChildren().add(slideBody);
-         root.getChildren().add(slideEnd);
-         root.getChildren().add(slideArrow);
-         **/
+        root.getChildren().add(slideBody);
+        root.getChildren().add(slideEnd);
+        root.getChildren().add(slideArrow);
+
+        Polygon slideArrow2 = new Polygon();
+        slideArrow2.getPoints().addAll(new Double[]{160.0, 55.0, 160.0, 95.0, 190.0, 75.0});
+        slideArrow2.setFill(Color.WHITE);
+        slideArrow2.setStroke(Color.RED);
+        slideArrow2.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody2 = new Polygon();
+        slideBody2.getPoints().addAll(new Double[]{170.0, 70.0, 170.0, 80.0, 320.0, 80.0, 320.0, 70.0});
+        slideBody2.setFill(Color.WHITE);
+        slideBody2.setStroke(Color.RED);
+        slideBody2.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd2 = new Circle(325,75, 20);
+        slideEnd2.setFill(Color.WHITE);
+        slideEnd2.setStroke(Color.RED);
+        slideEnd2.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody2);
+        root.getChildren().add(slideEnd2);
+        root.getChildren().add(slideArrow2);
+
+        Polygon slideArrow3 = new Polygon();
+        slideArrow3.getPoints().addAll(new Double[]{855.0, 105.0, 895.0, 105.0, 875.0, 140.0});
+        slideArrow3.setFill(Color.WHITE);
+        slideArrow3.setStroke(Color.RED);
+        slideArrow3.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody3 = new Polygon();
+        slideBody3.getPoints().addAll(new Double[]{870.0, 120.0, 870.0, 270.0, 880.0, 270.0, 880.0, 120.0});
+        slideBody3.setFill(Color.WHITE);
+        slideBody3.setStroke(Color.RED);
+        slideBody3.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd3 = new Circle(875,275, 20);
+        slideEnd3.setFill(Color.WHITE);
+        slideEnd3.setStroke(Color.RED);
+        slideEnd3.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody3);
+        root.getChildren().add(slideEnd3);
+        root.getChildren().add(slideArrow3);
+
+        Polygon slideArrow4 = new Polygon();
+        slideArrow4.getPoints().addAll(new Double[]{855.0, 505.0, 895.0, 505.0, 875.0, 540.0});
+        slideArrow4.setFill(Color.WHITE);
+        slideArrow4.setStroke(Color.RED);
+        slideArrow4.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody4 = new Polygon();
+        slideBody4.getPoints().addAll(new Double[]{870.0, 520.0, 870.0, 720.0, 880.0, 720.0, 880.0, 520.0});
+        slideBody4.setFill(Color.WHITE);
+        slideBody4.setStroke(Color.RED);
+        slideBody4.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd4 = new Circle(875,725, 20);
+        slideEnd4.setFill(Color.WHITE);
+        slideEnd4.setStroke(Color.RED);
+        slideEnd4.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody4);
+        root.getChildren().add(slideEnd4);
+        root.getChildren().add(slideArrow4);
+
+        Polygon slideArrow5 = new Polygon();
+        slideArrow5.getPoints().addAll(new Double[]{845.0, 805.0, 845.0, 845.0, 810.0, 825.0});
+        slideArrow5.setFill(Color.WHITE);
+        slideArrow5.setStroke(Color.RED);
+        slideArrow5.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody5 = new Polygon();
+        slideBody5.getPoints().addAll(new Double[]{820.0, 820.0, 670.0, 820.0, 670.0, 830.0, 820.0, 830.0});
+        slideBody5.setFill(Color.WHITE);
+        slideBody5.setStroke(Color.RED);
+        slideBody5.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd5 = new Circle(675,825, 20);
+        slideEnd5.setFill(Color.WHITE);
+        slideEnd5.setStroke(Color.RED);
+        slideEnd5.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody5);
+        root.getChildren().add(slideEnd5);
+        root.getChildren().add(slideArrow5);
+
+        Polygon slideArrow6 = new Polygon();
+        slideArrow6.getPoints().addAll(new Double[]{445.0, 805.0, 445.0, 845.0, 410.0, 825.0});
+        slideArrow6.setFill(Color.WHITE);
+        slideArrow6.setStroke(Color.RED);
+        slideArrow6.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody6 = new Polygon();
+        slideBody6.getPoints().addAll(new Double[]{420.0, 820.0, 220.0, 820.0, 220.0, 830.0, 420.0, 830.0});
+        slideBody6.setFill(Color.WHITE);
+        slideBody6.setStroke(Color.RED);
+        slideBody6.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd6 = new Circle(225,825, 20);
+        slideEnd6.setFill(Color.WHITE);
+        slideEnd6.setStroke(Color.RED);
+        slideEnd6.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody6);
+        root.getChildren().add(slideEnd6);
+        root.getChildren().add(slideArrow6);
+
+        Polygon slideArrow7 = new Polygon();
+        slideArrow7.getPoints().addAll(new Double[]{105.0, 795.0, 145.0, 795.0, 125.0, 760.0});
+        slideArrow7.setFill(Color.WHITE);
+        slideArrow7.setStroke(Color.RED);
+        slideArrow7.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody7 = new Polygon();
+        slideBody7.getPoints().addAll(new Double[]{120.0, 770.0, 120.0, 630.0, 130.0, 630.0, 130.0, 770.0});
+        slideBody7.setFill(Color.WHITE);
+        slideBody7.setStroke(Color.RED);
+        slideBody7.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd7 = new Circle(125,625, 20);
+        slideEnd7.setFill(Color.WHITE);
+        slideEnd7.setStroke(Color.RED);
+        slideEnd7.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody7);
+        root.getChildren().add(slideEnd7);
+        root.getChildren().add(slideArrow7);
+
+        Polygon slideArrow8 = new Polygon();
+        slideArrow8.getPoints().addAll(new Double[]{105.0, 395.0, 145.0, 395.0, 125.0, 360.0});
+        slideArrow8.setFill(Color.WHITE);
+        slideArrow8.setStroke(Color.RED);
+        slideArrow8.setStrokeWidth(new Double(3.0));
+
+        Polygon slideBody8 = new Polygon();
+        slideBody8.getPoints().addAll(new Double[]{120.0, 370.0, 120.0, 180.0, 130.0, 180.0, 130.0, 370.0});
+        slideBody8.setFill(Color.WHITE);
+        slideBody8.setStroke(Color.RED);
+        slideBody8.setStrokeWidth(new Double(3.0));
+
+        Circle slideEnd8 = new Circle(125,175, 20);
+        slideEnd8.setFill(Color.WHITE);
+        slideEnd8.setStroke(Color.RED);
+        slideEnd8.setStrokeWidth(new Double(3.0));
+
+        root.getChildren().add(slideBody8);
+        root.getChildren().add(slideEnd8);
+        root.getChildren().add(slideArrow8);
 
         // this function gets the pawns to be displayed from the PlayerBoard object
         Group boardDisplay = board.displayPawns();
@@ -269,6 +452,7 @@ public class Main extends Application {
 
         //Label label1;
         if (card.getNumber() == 0) {
+
             cardNumber = new Label("Card: Sorry!");
             cardNumber.setTranslateY(100);
             cardNumber.setTranslateX(1180);
@@ -280,6 +464,12 @@ public class Main extends Application {
             cardNumber.setTranslateX(1180);
             cardNumber.setFont(new Font("Times New Roman", 30));
             root.getChildren().add(cardNumber);
+
+            cardNumber = new Label("Card: Sorry!");
+            cardNumber.setTranslateY(100);
+            cardNumber.setTranslateX(1180);
+            cardNumber.setFont(new Font("Times New Roman", 30));
+            //root.getChildren().add(label1);
         }
 
         cardDescription = new Label("Description: " + card.getDescription());
@@ -288,11 +478,15 @@ public class Main extends Application {
         cardDescription.setMaxWidth(375);
         cardDescription.setFont(new Font("Times New Roman", 20));
 
-        remainingCards =  new Label("Cards remaining in deck: ");
+        //remainingCards =  new Label("Cards left: " + Game.cardsRemaining());
         remainingCards.setTranslateY(835);
         remainingCards.setTranslateX(1050);
         remainingCards.setMaxWidth(375);
+
         remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(Game.cardsLeft()).asString()));
+
+        //remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
+
 
         sideBar.getChildren().add(bar);
         sideBar.getChildren().add(cardNumber);
@@ -308,7 +502,7 @@ public class Main extends Application {
 
         BorderPane theButton = new BorderPane();
         theButton.setPrefSize(1600, 900);
-        theButton.setPadding(new Insets(830, 350, 0, 10));
+        theButton.setPadding(new Insets(830, 165, 0, 10));
         
         theButton.setRight(exitButton);
         theButton.getChildren().add(hbButton);
