@@ -21,7 +21,6 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.util.Random;
 
 @SuppressWarnings("Duplicates")
@@ -92,8 +91,8 @@ public class Main extends Application {
 
                     try {
                         //Moves the pawn and remakes the board
-                        if (board.canMovePawn(board.getTileID(x, y), 1)) {
-                            board.movePawn(board.getTileID(x, y), 1);
+                        if (board.canMovePawn(board.getTileID(x, y), -1)) {
+                            board.movePawn(board.getTileID(x, y), -1);
                         }
 
                         int[] bumped = board.checkSlide();
@@ -240,168 +239,168 @@ public class Main extends Application {
         // code to display the slides
 
         Polygon slideArrow = new Polygon();
-        slideArrow.getPoints().addAll(new Double[]{560.0, 55.0, 560.0, 95.0, 590.0, 75.0});
+        slideArrow.getPoints().addAll(560.0, 55.0, 560.0, 95.0, 590.0, 75.0);
         slideArrow.setFill(Color.WHITE);
         slideArrow.setStroke(Color.RED);
-        slideArrow.setStrokeWidth(new Double(3.0));
+        slideArrow.setStrokeWidth(3.0);
 
         Polygon slideBody = new Polygon();
-        slideBody.getPoints().addAll(new Double[]{570.0, 70.0, 570.0, 80.0, 770.0, 80.0, 770.0, 70.0});
+        slideBody.getPoints().addAll(570.0, 70.0, 570.0, 80.0, 770.0, 80.0, 770.0, 70.0);
         slideBody.setFill(Color.WHITE);
         slideBody.setStroke(Color.RED);
-        slideBody.setStrokeWidth(new Double(3.0));
+        slideBody.setStrokeWidth(3.0);
 
         Circle slideEnd = new Circle(775,75, 20);
         slideEnd.setFill(Color.WHITE);
         slideEnd.setStroke(Color.RED);
-        slideEnd.setStrokeWidth(new Double(3.0));
+        slideEnd.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody);
         root.getChildren().add(slideEnd);
         root.getChildren().add(slideArrow);
 
         Polygon slideArrow2 = new Polygon();
-        slideArrow2.getPoints().addAll(new Double[]{160.0, 55.0, 160.0, 95.0, 190.0, 75.0});
+        slideArrow2.getPoints().addAll(160.0, 55.0, 160.0, 95.0, 190.0, 75.0);
         slideArrow2.setFill(Color.WHITE);
         slideArrow2.setStroke(Color.RED);
-        slideArrow2.setStrokeWidth(new Double(3.0));
+        slideArrow2.setStrokeWidth(3.0);
 
         Polygon slideBody2 = new Polygon();
-        slideBody2.getPoints().addAll(new Double[]{170.0, 70.0, 170.0, 80.0, 320.0, 80.0, 320.0, 70.0});
+        slideBody2.getPoints().addAll(170.0, 70.0, 170.0, 80.0, 320.0, 80.0, 320.0, 70.0);
         slideBody2.setFill(Color.WHITE);
         slideBody2.setStroke(Color.RED);
-        slideBody2.setStrokeWidth(new Double(3.0));
+        slideBody2.setStrokeWidth(3.0);
 
         Circle slideEnd2 = new Circle(325,75, 20);
         slideEnd2.setFill(Color.WHITE);
         slideEnd2.setStroke(Color.RED);
-        slideEnd2.setStrokeWidth(new Double(3.0));
+        slideEnd2.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody2);
         root.getChildren().add(slideEnd2);
         root.getChildren().add(slideArrow2);
 
         Polygon slideArrow3 = new Polygon();
-        slideArrow3.getPoints().addAll(new Double[]{855.0, 105.0, 895.0, 105.0, 875.0, 140.0});
+        slideArrow3.getPoints().addAll(855.0, 105.0, 895.0, 105.0, 875.0, 140.0);
         slideArrow3.setFill(Color.WHITE);
         slideArrow3.setStroke(Color.RED);
-        slideArrow3.setStrokeWidth(new Double(3.0));
+        slideArrow3.setStrokeWidth(3.0);
 
         Polygon slideBody3 = new Polygon();
-        slideBody3.getPoints().addAll(new Double[]{870.0, 120.0, 870.0, 270.0, 880.0, 270.0, 880.0, 120.0});
+        slideBody3.getPoints().addAll(870.0, 120.0, 870.0, 270.0, 880.0, 270.0, 880.0, 120.0);
         slideBody3.setFill(Color.WHITE);
         slideBody3.setStroke(Color.RED);
-        slideBody3.setStrokeWidth(new Double(3.0));
+        slideBody3.setStrokeWidth(3.0);
 
         Circle slideEnd3 = new Circle(875,275, 20);
         slideEnd3.setFill(Color.WHITE);
         slideEnd3.setStroke(Color.RED);
-        slideEnd3.setStrokeWidth(new Double(3.0));
+        slideEnd3.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody3);
         root.getChildren().add(slideEnd3);
         root.getChildren().add(slideArrow3);
 
         Polygon slideArrow4 = new Polygon();
-        slideArrow4.getPoints().addAll(new Double[]{855.0, 505.0, 895.0, 505.0, 875.0, 540.0});
+        slideArrow4.getPoints().addAll(855.0, 505.0, 895.0, 505.0, 875.0, 540.0);
         slideArrow4.setFill(Color.WHITE);
         slideArrow4.setStroke(Color.RED);
-        slideArrow4.setStrokeWidth(new Double(3.0));
+        slideArrow4.setStrokeWidth(3.0);
 
         Polygon slideBody4 = new Polygon();
-        slideBody4.getPoints().addAll(new Double[]{870.0, 520.0, 870.0, 720.0, 880.0, 720.0, 880.0, 520.0});
+        slideBody4.getPoints().addAll(870.0, 520.0, 870.0, 720.0, 880.0, 720.0, 880.0, 520.0);
         slideBody4.setFill(Color.WHITE);
         slideBody4.setStroke(Color.RED);
-        slideBody4.setStrokeWidth(new Double(3.0));
+        slideBody4.setStrokeWidth(3.0);
 
         Circle slideEnd4 = new Circle(875,725, 20);
         slideEnd4.setFill(Color.WHITE);
         slideEnd4.setStroke(Color.RED);
-        slideEnd4.setStrokeWidth(new Double(3.0));
+        slideEnd4.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody4);
         root.getChildren().add(slideEnd4);
         root.getChildren().add(slideArrow4);
 
         Polygon slideArrow5 = new Polygon();
-        slideArrow5.getPoints().addAll(new Double[]{845.0, 805.0, 845.0, 845.0, 810.0, 825.0});
+        slideArrow5.getPoints().addAll(845.0, 805.0, 845.0, 845.0, 810.0, 825.0);
         slideArrow5.setFill(Color.WHITE);
         slideArrow5.setStroke(Color.RED);
-        slideArrow5.setStrokeWidth(new Double(3.0));
+        slideArrow5.setStrokeWidth(3.0);
 
         Polygon slideBody5 = new Polygon();
-        slideBody5.getPoints().addAll(new Double[]{820.0, 820.0, 670.0, 820.0, 670.0, 830.0, 820.0, 830.0});
+        slideBody5.getPoints().addAll(820.0, 820.0, 670.0, 820.0, 670.0, 830.0, 820.0, 830.0);
         slideBody5.setFill(Color.WHITE);
         slideBody5.setStroke(Color.RED);
-        slideBody5.setStrokeWidth(new Double(3.0));
+        slideBody5.setStrokeWidth(3.0);
 
         Circle slideEnd5 = new Circle(675,825, 20);
         slideEnd5.setFill(Color.WHITE);
         slideEnd5.setStroke(Color.RED);
-        slideEnd5.setStrokeWidth(new Double(3.0));
+        slideEnd5.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody5);
         root.getChildren().add(slideEnd5);
         root.getChildren().add(slideArrow5);
 
         Polygon slideArrow6 = new Polygon();
-        slideArrow6.getPoints().addAll(new Double[]{445.0, 805.0, 445.0, 845.0, 410.0, 825.0});
+        slideArrow6.getPoints().addAll(445.0, 805.0, 445.0, 845.0, 410.0, 825.0);
         slideArrow6.setFill(Color.WHITE);
         slideArrow6.setStroke(Color.RED);
-        slideArrow6.setStrokeWidth(new Double(3.0));
+        slideArrow6.setStrokeWidth(3.0);
 
         Polygon slideBody6 = new Polygon();
-        slideBody6.getPoints().addAll(new Double[]{420.0, 820.0, 220.0, 820.0, 220.0, 830.0, 420.0, 830.0});
+        slideBody6.getPoints().addAll(420.0, 820.0, 220.0, 820.0, 220.0, 830.0, 420.0, 830.0);
         slideBody6.setFill(Color.WHITE);
         slideBody6.setStroke(Color.RED);
-        slideBody6.setStrokeWidth(new Double(3.0));
+        slideBody6.setStrokeWidth(3.0);
 
         Circle slideEnd6 = new Circle(225,825, 20);
         slideEnd6.setFill(Color.WHITE);
         slideEnd6.setStroke(Color.RED);
-        slideEnd6.setStrokeWidth(new Double(3.0));
+        slideEnd6.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody6);
         root.getChildren().add(slideEnd6);
         root.getChildren().add(slideArrow6);
 
         Polygon slideArrow7 = new Polygon();
-        slideArrow7.getPoints().addAll(new Double[]{105.0, 795.0, 145.0, 795.0, 125.0, 760.0});
+        slideArrow7.getPoints().addAll(105.0, 795.0, 145.0, 795.0, 125.0, 760.0);
         slideArrow7.setFill(Color.WHITE);
         slideArrow7.setStroke(Color.RED);
-        slideArrow7.setStrokeWidth(new Double(3.0));
+        slideArrow7.setStrokeWidth(3.0);
 
         Polygon slideBody7 = new Polygon();
-        slideBody7.getPoints().addAll(new Double[]{120.0, 770.0, 120.0, 630.0, 130.0, 630.0, 130.0, 770.0});
+        slideBody7.getPoints().addAll(120.0, 770.0, 120.0, 630.0, 130.0, 630.0, 130.0, 770.0);
         slideBody7.setFill(Color.WHITE);
         slideBody7.setStroke(Color.RED);
-        slideBody7.setStrokeWidth(new Double(3.0));
+        slideBody7.setStrokeWidth(3.0);
 
         Circle slideEnd7 = new Circle(125,625, 20);
         slideEnd7.setFill(Color.WHITE);
         slideEnd7.setStroke(Color.RED);
-        slideEnd7.setStrokeWidth(new Double(3.0));
+        slideEnd7.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody7);
         root.getChildren().add(slideEnd7);
         root.getChildren().add(slideArrow7);
 
         Polygon slideArrow8 = new Polygon();
-        slideArrow8.getPoints().addAll(new Double[]{105.0, 395.0, 145.0, 395.0, 125.0, 360.0});
+        slideArrow8.getPoints().addAll(105.0, 395.0, 145.0, 395.0, 125.0, 360.0);
         slideArrow8.setFill(Color.WHITE);
         slideArrow8.setStroke(Color.RED);
-        slideArrow8.setStrokeWidth(new Double(3.0));
+        slideArrow8.setStrokeWidth(3.0);
 
         Polygon slideBody8 = new Polygon();
-        slideBody8.getPoints().addAll(new Double[]{120.0, 370.0, 120.0, 180.0, 130.0, 180.0, 130.0, 370.0});
+        slideBody8.getPoints().addAll(120.0, 370.0, 120.0, 180.0, 130.0, 180.0, 130.0, 370.0);
         slideBody8.setFill(Color.WHITE);
         slideBody8.setStroke(Color.RED);
-        slideBody8.setStrokeWidth(new Double(3.0));
+        slideBody8.setStrokeWidth(3.0);
 
         Circle slideEnd8 = new Circle(125,175, 20);
         slideEnd8.setFill(Color.WHITE);
         slideEnd8.setStroke(Color.RED);
-        slideEnd8.setStrokeWidth(new Double(3.0));
+        slideEnd8.setStrokeWidth(3.0);
 
         root.getChildren().add(slideBody8);
         root.getChildren().add(slideEnd8);
@@ -455,32 +454,14 @@ public class Main extends Application {
         sideBar.getChildren().add(cardDescription);
         sideBar.getChildren().add(remainingCards);
 
-        //create Button to exit the game
-        Button exitButton = new Button("Exit Game");
-        HBox hbButton = new HBox();
-        hbButton.getChildren().add(exitButton);
-        hbButton.setAlignment(Pos.CENTER_RIGHT);
-        exitButton.setOnAction(event ->Platform.exit());
-
-        BorderPane theButton = new BorderPane();
-        theButton.setPrefSize(1600, 900);
-        theButton.setPadding(new Insets(830, 165, 0, 10));
-        
-        theButton.setRight(exitButton);
-        theButton.getChildren().add(hbButton);
-        sideBar.getChildren().add(theButton);
-
-
+        Button endGame = new Button("Exit Game");
+        endGame.setTranslateX(1350);
+        endGame.setTranslateY(835);
+        sideBar.getChildren().add(endGame);
+        endGame.setOnMouseClicked(event ->Platform.exit());
 
         root.getChildren().add(sideBar);
-
-       /* root.getChildren().add(bar);
-        root.getChildren().add(cardDescription);
-        root.getChildren().add(remainingCards);*/
-
-
-
-       // root.setTop(sideBar);
+        
     }
 
 
