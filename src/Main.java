@@ -358,7 +358,7 @@ public class Main extends Application {
         slideArrow5.getPoints().addAll(845.0, 805.0, 845.0, 845.0, 810.0, 825.0);
         slideArrow5.setFill(Color.YELLOW);
         slideArrow5.setStroke(Color.YELLOW);
-        slideArrow5.setStrokeWidth(new Double(3.0));
+        slideArrow5.setStrokeWidth(3.0);
 
         Polygon slideBody5 = new Polygon();
         slideBody5.getPoints().addAll(820.0, 820.0, 670.0, 820.0, 670.0, 830.0, 820.0, 830.0);
@@ -380,7 +380,7 @@ public class Main extends Application {
          slideArrow6.getPoints().addAll(445.0, 805.0, 445.0, 845.0, 410.0, 825.0);
         slideArrow6.setFill(Color.YELLOW);
         slideArrow6.setStroke(Color.YELLOW);
-        slideArrow6.setStrokeWidth(new Double(3.0));
+        slideArrow6.setStrokeWidth(3.0);
 
         Polygon slideBody6 = new Polygon();
         slideBody6.getPoints().addAll(420.0, 820.0, 220.0, 820.0, 220.0, 830.0, 420.0, 830.0);
