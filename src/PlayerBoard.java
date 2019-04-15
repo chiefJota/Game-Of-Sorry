@@ -334,4 +334,8 @@ public class PlayerBoard {
         return -1;
     }
 
+    public int getRotation(){
+        return rotation;
+    }
+
 }
