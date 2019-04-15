@@ -57,7 +57,7 @@ public class PlayerBoard {
             boardTiles[i].setNextTile(boardTiles[i + 1]);
         }
 
-        boardTiles[0].setLastTile(boardTiles[1]);
+        boardTiles[0].setLastTile(boardTiles[59]);
 
         boardTiles[1].addPawn();
         boardTiles[2].addPawn();
@@ -123,10 +123,12 @@ public class PlayerBoard {
             if (moves > 0) {
                 for (int i = 0; i < moves; i++) {
                     activeTile = activeTile.getNextTile();
+                    System.out.println("hi");
                 }
             } else {
                 for (int i = 0; i > moves; i--) {
                     activeTile = activeTile.getLastTile();
+                    System.out.println("hello");
                 }
             }
 
