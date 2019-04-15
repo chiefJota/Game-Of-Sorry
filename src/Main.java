@@ -244,7 +244,7 @@ public class Main extends Application {
         sorryRules.getChildren().add(howToPlay2);
         sorryRules.getChildren().add(howToPlay);
 
-        Image background = new Image("/Sorry!.jpg", true);
+        Image background = new Image("/SorryGameMenuImage.jpg", true);
         ImageView back1 = new ImageView(background);
         back1.setFitHeight(500);
         back1.setFitWidth(800);
@@ -255,16 +255,17 @@ public class Main extends Application {
 
     private void makeBoard(BorderPane root, PlayerBoard board) {
 
-        root.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-   /*     HBox SorryBox = new HBox();
-        //SorryBox.setAlignment(Pos.CENTER);
-        Label SorryLabel = new Label("Sorry!");
-        SorryLabel.setFont(new Font("Times New Roman", 30));
-        SorryBox.setTranslateX(700);
-        SorryBox.setTranslateY(450);
-        SorryBox.getChildren().add(SorryLabel);
-        root.getChildren().add(SorryBox);
-*/
+        root.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+
+        //Place SorryCenterGameImage in the center of the board
+        Image centerImage = new Image("/SorryCenterGameImage.png", true);
+        ImageView center = new ImageView(centerImage);
+        center.setFitHeight(264);
+        center.setFitWidth(408);
+        center.setX(300);
+        center.setY(300);
+        root.getChildren().add(center);
+
         // Code to create the board display, don't be afraid to put this in a function or something i'm just lazy
         Circle start1 = new Circle(325, 150, 50, Color.RED);
         start1.setStroke(Color.BLACK);
