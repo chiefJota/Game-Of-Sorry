@@ -114,7 +114,7 @@ public class PlayerBoard {
 
     // Takes the id of the tile and if there's a pawn on it move it a certain amount foward
     // cannot currently move backwards, but will not move tile off board(that will actually cause a crash)
-    public void movePawn(int tileID, int moves) {
+    public int movePawn(int tileID, int moves) {
         BoardTile activeTile = this.boardTiles[tileID];
 
         if (activeTile.getHasPawn()) {
@@ -131,7 +131,9 @@ public class PlayerBoard {
             }
 
             activeTile.addPawn();
+            return activeTile.getTileID();
         }
+        return -1;
     }
 
     public int[] checkSlide() {
