@@ -123,12 +123,10 @@ public class PlayerBoard {
             if (moves > 0) {
                 for (int i = 0; i < moves; i++) {
                     activeTile = activeTile.getNextTile();
-                    System.out.println("hi");
                 }
             } else {
                 for (int i = 0; i > moves; i--) {
                     activeTile = activeTile.getLastTile();
-                    System.out.println("hello");
                 }
             }
 
