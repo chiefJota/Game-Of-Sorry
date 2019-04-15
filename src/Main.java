@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import java.util.Random;
 
 @SuppressWarnings("Duplicates")
@@ -29,6 +30,9 @@ public class Main extends Application {
     private SorryDeck deck;
     private SorryCard card;
     private int turn = 0;
+    private boolean endGame = false;
+    EventHandler<MouseEvent> eventHandler;
+    EventHandler<MouseEvent> eventHandler1;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -70,17 +74,12 @@ public class Main extends Application {
         deck.shuffle();
 
         //Choose first player to go
-
         Random rand = new Random();
-        turn = rand.nextInt(4);
+        //turn = rand.nextInt(4);
+        turn = 0;
         System.out.println(turn);
 
-        card = deck.getTopCard();
-
-        makeSidebar(root, card);
-
-        //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
-        EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
+        eventHandler = new EventHandler<MouseEvent>() {
 
             int x, y;
 
@@ -103,49 +102,98 @@ public class Main extends Application {
                     //System.out.println(deck.getTopCard().getNumber());
 
                     makeBoard(root, board);
-                    //makeSidebar(root, deck.getTopCard());
+                    //root.getChildren().add(board1.displayPawns());
+                    makeBoard(root, board1);
+                    //root.getChildren().add(board.displayPawns());
+
+                    card = deck.getTopCard();
+
+                    //TODO: Put timer to delay sidebar update
+                    makeSidebar(root, card);
+
+                    //++turn;
+                    root.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
+
                 } catch (Exception exception) {
                     System.out.println("You did not click on a board tile.");
                 }
-                if (turn != 3){
-                    ++turn;
-                } else {
-                    turn = 0;
-                }
+
             }
 
         };
 
-        root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+        eventHandler1 = new EventHandler<MouseEvent>() {
 
-/*Put a loop around this to allow multiple turns
+            int x, y;
+
+            @Override
+            public void handle(MouseEvent e) {
+
+                //Calculates the coordinates of your click
+                x = (int) e.getX();
+                y = (int) e.getY();
+
+
+                try {
+                    //Moves the pawn and remakes the board
+                    if (board1.canMovePawn(board1.getTileID(x, y), card.getNumber())) {
+                        board1.movePawn(board1.getTileID(x, y), card.getNumber());
+                    }
+
+                    int[] bumped = board1.checkSlide();
+                    //print out every card
+                    //System.out.println(deck.getTopCard().getNumber());
+
+                    makeBoard(root, board1);
+                    makeBoard(root, board);
+
+                    card = deck.getTopCard();
+
+                    //TODO: Put timer to delay sidebar update
+                    makeSidebar(root, card);
+
+                    //++turn;
+                    root.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
+                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+
+                } catch (Exception exception) {
+                    System.out.println("You did not click on a board.");
+                }
+
+            }
+
+        };
+
+        //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
 
         card = deck.getTopCard();
 
         makeSidebar(root, card);
 
-     if (turn == board.getRotation()) {
-         root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-     } else if (turn == board1.getRotation()){
-         //Add three more event filters for the different boards
-         //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
-     } else if (turn == board2.getRotation()){
-         //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler2);
-     } else {
-         //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler3);
-     }
-*/
+        if (turn == board.getRotation()) {
+            root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+        } else if (turn == board1.getRotation()) {
+            //Add three more event filters for the different boards
+            //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
+        } else if (turn == board2.getRotation()) {
+            //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler2);
+        } else {
+            //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler3);
+        }
+
+
 
             /* Possibly use this to highlight where your pawns can move
             root.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
 
                     }
                     );
-                    */
+                  */
 
 
         // this removes the pawns
-            //root.getChildren().remove(boardDisplay);
+        //root.getChildren().remove(boardDisplay);
 
 
     }
@@ -207,7 +255,7 @@ public class Main extends Application {
 
     private void makeBoard(BorderPane root, PlayerBoard board) {
 
-        root.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE,  CornerRadii.EMPTY, Insets.EMPTY)));
+        root.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
    /*     HBox SorryBox = new HBox();
         //SorryBox.setAlignment(Pos.CENTER);
         Label SorryLabel = new Label("Sorry!");
@@ -318,7 +366,7 @@ public class Main extends Application {
         root.getChildren().add(slideArrow);
 
         Polygon slideArrow2 = new Polygon();
-      
+
         slideArrow2.getPoints().addAll(160.0, 55.0, 160.0, 95.0, 190.0, 75.0);
         slideArrow2.setFill(Color.RED);
 
@@ -326,7 +374,7 @@ public class Main extends Application {
         slideArrow2.setStrokeWidth(3.0);
 
         Polygon slideBody2 = new Polygon();
-      
+
         slideBody2.getPoints().addAll(170.0, 70.0, 170.0, 80.0, 320.0, 80.0, 320.0, 70.0);
         slideBody2.setFill(Color.RED);
 
@@ -410,7 +458,7 @@ public class Main extends Application {
 
         Polygon slideArrow6 = new Polygon();
 
-         slideArrow6.getPoints().addAll(445.0, 805.0, 445.0, 845.0, 410.0, 825.0);
+        slideArrow6.getPoints().addAll(445.0, 805.0, 445.0, 845.0, 410.0, 825.0);
         slideArrow6.setFill(Color.YELLOW);
         slideArrow6.setStroke(Color.YELLOW);
         slideArrow6.setStrokeWidth(3.0);
@@ -453,7 +501,7 @@ public class Main extends Application {
         root.getChildren().add(slideArrow7);
 
         Polygon slideArrow8 = new Polygon();
-      
+
         slideArrow8.getPoints().addAll(105.0, 395.0, 145.0, 395.0, 125.0, 360.0);
         slideArrow8.setFill(Color.GREEN);
         slideArrow8.setStroke(Color.GREEN);
@@ -533,10 +581,10 @@ public class Main extends Application {
         endGame.setTranslateX(1350);
         endGame.setTranslateY(835);
         sideBar.getChildren().add(endGame);
-        endGame.setOnMouseClicked(event ->Platform.exit());
+        endGame.setOnMouseClicked(event -> Platform.exit());
 
         root.getChildren().add(sideBar);
-        
+
     }
 
 
