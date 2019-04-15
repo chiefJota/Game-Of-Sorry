@@ -93,10 +93,10 @@ public class PlayerBoard {
     }
 
     public Boolean canMovePawn(int tileID, int moves) {
-        if (tileID + moves > 65) {
+        if (tileID + moves > 65 || !boardTiles[tileID].getHasPawn()) {
             return false;
         } else {
-            BoardTile activeTile = this.boardTiles[tileID];
+            BoardTile activeTile = boardTiles[tileID];
 
             if (moves > 0) {
                 for (int i = 0; i < moves; i++) {
