@@ -94,8 +94,8 @@ public class Main extends Application {
 
                 try {
                     //Moves the pawn and remakes the board
-                    if (board.canMovePawn(board.getTileID(x, y), card.getNumber())) {
-                        board.movePawn(board.getTileID(x, y), card.getNumber());
+                    if (board.canMovePawn(board.getTileID(x, y), -1)) {
+                        board.movePawn(board.getTileID(x, y), -1);
                     }
 
                     int[] bumped = board.checkSlide();
