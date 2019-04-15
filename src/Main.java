@@ -98,47 +98,46 @@ public class Main extends Application {
                 y = (int) e.getY();
 
 
-
                 try {
-                    //Moves the pawn and remakes the board
                     if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
-                        int bumped1 = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
-                        int[] bumped11 = new int[]{bumped1};
-                        for (PlayerBoard board : boards) {
-                            if (!(board.getRotation() == turn%2)) {
-                                board.bump(bumped11, turn%2);
+                        //Moves the pawn and remakes the board
+                        if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
+                            int bumped1 = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
+                            int[] bumped11 = new int[]{bumped1};
+                            for (PlayerBoard board : boards) {
+                                if (!(board.getRotation() == turn % 2)) {
+                                    board.bump(bumped11, turn % 2);
+                                }
                             }
                         }
-                    }
 
-                    int[] bumped = activeBoard.checkSlide();
+                        int[] bumped = activeBoard.checkSlide();
 
-                    for (PlayerBoard board : boards) {
-                        if (!(board.getRotation() == turn%2)) {
-                            board.bump(bumped, turn%2);
+                        for (PlayerBoard board : boards) {
+                            if (!(board.getRotation() == turn % 2)) {
+                                board.bump(bumped, turn % 2);
+                            }
                         }
+                        //print out every card
+                        //System.out.println(deck.getTopCard().getNumber());
+
+                        makeBoard(root);
+
+                        for (PlayerBoard board : boards) {
+                            Group pawns = board.displayPawns();
+                            root.getChildren().add(pawns);
+                        }
+
+                        card = deck.getTopCard();
+
+                        //TODO: Put timer to delay sidebar update
+                        makeSidebar(root, card);
+
+                        ++turn;
                     }
-                    //print out every card
-                    //System.out.println(deck.getTopCard().getNumber());
-
-                    makeBoard(root);
-
-                    for (PlayerBoard board : boards) {
-                        Group pawns = board.displayPawns();
-                        root.getChildren().add(pawns);
-                    }
-
-                    card = deck.getTopCard();
-
-                    //TODO: Put timer to delay sidebar update
-                    makeSidebar(root, card);
-
-                    ++turn;
-
                 } catch (Exception exception) {
                     System.out.println("You did not click on a board tile.");
                 }
-
             }
 
         };
