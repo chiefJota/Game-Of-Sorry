@@ -26,10 +26,9 @@ import java.util.Random;
 @SuppressWarnings("Duplicates")
 public class Main extends Application {
 
-    private Label remainingCards;
     private SorryDeck deck;
-    private Label cardDescription;
-    private Label cardNumber;
+    private SorryCard card;
+    private int turn = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -53,29 +52,32 @@ public class Main extends Application {
 
         makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage);
 
-        //TODO:Every single time a player moves, we should remake the board
-        // and have the locations of all the pawns and everything
-        // PlayerBoard object, don't worry about this for now
         PlayerBoard board = new PlayerBoard(0, Color.RED);
-
+        PlayerBoard board1 = new PlayerBoard(1, Color.BLUE);
+        PlayerBoard board2 = new PlayerBoard(2, Color.YELLOW);
+        //PlayerBoard board3 = new PlayerBoard(3, Color.GREEN);
 
         makeBoard(root, board);
-
-        //create new Sorry! game deck
-        makeSidebar(root, deck.getTopCard());
 
         // this displays the scene with the resolution.
         primaryStage.setScene(startMenu);
         primaryStage.show();
 
-        //Choose first player to go
-        /*
-        Random rand = new Random();
-        int firstPlayer = rand.nextInt(4);
-        if (firstPlayer == 0){
+        //create new Sorry! game deck
+        deck = new SorryDeck();
 
-        }
-        */
+        //shuffle the deck
+        deck.shuffle();
+
+        //Choose first player to go
+
+        Random rand = new Random();
+        turn = rand.nextInt(4);
+        System.out.println(turn);
+
+        card = deck.getTopCard();
+
+        makeSidebar(root, card);
 
         //Part of this function was taken from https://www.tutorialspoint.com/javafx/javafx_event_handling.htm
         EventHandler<MouseEvent> eventHandler = new EventHandler<MouseEvent>() {
@@ -90,30 +92,61 @@ public class Main extends Application {
                 y = (int) e.getY();
 
 
-                    try {
-                        //Moves the pawn and remakes the board
-                        if (board.canMovePawn(board.getTileID(x, y), -1)) {
-                            board.movePawn(board.getTileID(x, y), -1);
-                        }
-
+                try {
+                    //Moves the pawn and remakes the board
+                    if (board.canMovePawn(board.getTileID(x, y), card.getNumber())) {
+                        board.movePawn(board.getTileID(x, y), card.getNumber());
+                    }
 
                     int[] bumped = board.checkSlide();
                     //print out every card
-                    System.out.println(deck.getTopCard().getNumber());
+                    //System.out.println(deck.getTopCard().getNumber());
 
                     makeBoard(root, board);
-                    makeSidebar(root, deck.getTopCard());
-
+                    //makeSidebar(root, deck.getTopCard());
                 } catch (Exception exception) {
                     System.out.println("You did not click on a board tile.");
                 }
+                if (turn != 3){
+                    ++turn;
+                } else {
+                    turn = 0;
+                }
             }
+
         };
 
-
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+
+/*Put a loop around this to allow multiple turns
+
+        card = deck.getTopCard();
+
+        makeSidebar(root, card);
+
+     if (turn == board.getRotation()) {
+         root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
+     } else if (turn == board1.getRotation()){
+         //Add three more event filters for the different boards
+         //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
+     } else if (turn == board2.getRotation()){
+         //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler2);
+     } else {
+         //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler3);
+     }
+*/
+
+            /* Possibly use this to highlight where your pawns can move
+            root.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
+
+                    }
+                    );
+                    */
+
+
         // this removes the pawns
-        //root.getChildren().remove(boardDisplay);
+            //root.getChildren().remove(boardDisplay);
+
 
     }
 
@@ -453,29 +486,25 @@ public class Main extends Application {
     private void makeSidebar(BorderPane root, SorryCard card) {
         Rectangle bar = new Rectangle(1000, 0, 25, 900);
         bar.setFill(Color.BLACK);
+        Rectangle white = new Rectangle(1025, 0, 425, 900);
+        white.setFill(Color.WHITE);
 
-        //make a pane and place all the labels and exitbutton in it
-        Pane sideBar = new Pane();
+        Group sideBar = new Group();
+        Label remainingCards;
+        Label cardDescription;
+        Label cardNumber;
 
-        /*sideBar.getChildren().remove(cardDescription);
-        sideBar.getChildren().remove(cardNumber);
-        sideBar.getChildren().remove(remainingCards);
-*/
 
-        //Label label1;
         if (card.getNumber() == 0) {
-
             cardNumber = new Label("Card: Sorry!");
             cardNumber.setTranslateY(100);
             cardNumber.setTranslateX(1180);
             cardNumber.setFont(new Font("Times New Roman", 30));
-            root.getChildren().add(cardNumber);
         } else {
             cardNumber = new Label("Card: " + card.getNumber());
             cardNumber.setTranslateY(100);
             cardNumber.setTranslateX(1180);
             cardNumber.setFont(new Font("Times New Roman", 30));
-            root.getChildren().add(cardNumber);
         }
 
         cardDescription = new Label("Description: " + card.getDescription());
@@ -494,6 +523,7 @@ public class Main extends Application {
         //remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
 
+        sideBar.getChildren().add(white);
         sideBar.getChildren().add(bar);
         sideBar.getChildren().add(cardNumber);
         sideBar.getChildren().add(cardDescription);
