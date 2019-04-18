@@ -88,8 +88,8 @@ public class PlayerBoard {
     }
 
     // checks if there is a pawn at the tile
-    public Boolean hasPawnAt(int tileID) {
-        return boardTiles[tileID].getHasPawn();
+    public Boolean hasPawnAt(int tileID, int initRot ) {
+        return boardTiles[tileIDRotation(tileID, initRot, rotation)].getHasPawn();
     }
 
     public Boolean canMovePawn(int tileID, int moves) {
@@ -114,7 +114,7 @@ public class PlayerBoard {
 
     // Takes the id of the tile and if there's a pawn on it move it a certain amount foward
     // cannot currently move backwards, but will not move tile off board(that will actually cause a crash)
-    public void movePawn(int tileID, int moves) {
+    public int movePawn(int tileID, int moves) {
         BoardTile activeTile = this.boardTiles[tileID];
 
         if (activeTile.getHasPawn()) {
@@ -131,7 +131,9 @@ public class PlayerBoard {
             }
 
             activeTile.addPawn();
+            return activeTile.getTileID();
         }
+        return -1;
     }
 
     public int[] checkSlide() {
@@ -158,6 +160,10 @@ public class PlayerBoard {
         startPawns--;
     }
 
+    public int getStartPawns() {
+        return startPawns;
+    }
+
     public void moveToHome() {
         if (boardTiles[65].getHasPawn()) {
             boardTiles[65].removePawn();
@@ -170,6 +176,15 @@ public class PlayerBoard {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void bump(int tileID, int initRot) {
+        int rotatedID = tileIDRotation(tileID, initRot, rotation);
+        if (boardTiles[rotatedID].getHasPawn()) {
+            boardTiles[rotatedID].removePawn();
+
+            startPawns++;
         }
     }
 
@@ -243,6 +258,11 @@ public class PlayerBoard {
         return new int[]{finalX, finalY};
     }
 
+    private int tileIDRotation(int initTileID, int initRot, int finalRot) {
+        int[] initTileIDs = new int[]{initTileID};
+        int[] rotatedIDs = tileIDRotation(initTileIDs, initRot, finalRot);
+        return rotatedIDs[1];
+    }
 
     private int[] tileIDRotation(int[] initTileIDs, int initRot, int finalRot) {
         int rotation = (finalRot - initRot + 4)%4;

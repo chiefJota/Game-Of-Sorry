@@ -21,6 +21,10 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.animation.Timeline;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.AnimationTimer;
 
 import java.util.Random;
 
@@ -30,9 +34,9 @@ public class Main extends Application {
     private SorryDeck deck;
     private SorryCard card;
     private int turn = 0;
+    private int x = 0;
+    private int y = 0;
     private boolean endGame = false;
-    EventHandler<MouseEvent> eventHandler;
-    EventHandler<MouseEvent> eventHandler1;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -56,12 +60,17 @@ public class Main extends Application {
 
         makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage);
 
-        PlayerBoard board = new PlayerBoard(0, Color.RED);
-        PlayerBoard board1 = new PlayerBoard(1, Color.BLUE);
-        PlayerBoard board2 = new PlayerBoard(2, Color.YELLOW);
+        PlayerBoard[] boards = new PlayerBoard[2];
+        boards[0] = new PlayerBoard(0, Color.RED);
+        boards[1] = new PlayerBoard(1, Color.BLUE);
         //PlayerBoard board3 = new PlayerBoard(3, Color.GREEN);
 
-        makeBoard(root, board);
+        makeBoard(root);
+
+        for (PlayerBoard board : boards) {
+            Group pawns = board.displayPawns();
+            root.getChildren().add(pawns);
+        }
 
         // this displays the scene with the resolution.
         primaryStage.setScene(startMenu);
@@ -79,108 +88,101 @@ public class Main extends Application {
         turn = 0;
         System.out.println(turn);
 
-        eventHandler = new EventHandler<MouseEvent>() {
-
-            int x, y;
-
+        EventHandler<MouseEvent> getcoords = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-
                 //Calculates the coordinates of your click
                 x = (int) e.getX();
                 y = (int) e.getY();
 
+                System.out.println("click");
+            }
+        };
+
+        new AnimationTimer() {
+            public void handle(long currentNanoTime) {
 
                 try {
-                    //Moves the pawn and remakes the board
-                    if (board.canMovePawn(board.getTileID(x, y), -1)) {
-                        board.movePawn(board.getTileID(x, y), -1);
+
+                    PlayerBoard activeBoard = boards[turn % 2];
+
+                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+                    switch(card.getNumber()) {
+                        case 0:
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            break;
+                        case 4:
+                            break;
+                        case 7:
+                            break;
+                        case 10:
+                            break;
+                        case 11:
+                            break;
+                        case 12:
+                            break;
+                        default:
                     }
 
-                    int[] bumped = board.checkSlide();
-                    //print out every card
-                    //System.out.println(deck.getTopCard().getNumber());
+                    if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
+                        System.out.println(x);
+                        System.out.println(y);
+                        System.out.println(turn);
+                        System.out.println("hi");
 
-                    makeBoard(root, board);
-                    //root.getChildren().add(board1.displayPawns());
-                    makeBoard(root, board1);
-                    //root.getChildren().add(board.displayPawns());
+                        if (!(card.getNumber() == 0)) {
+                            //Moves the pawn and remakes the board
+                            if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
+                                int singleBumped = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
+                                for (PlayerBoard board : boards) {
+                                    if (!(board.getRotation() == turn % 2)) {
+                                        board.bump(singleBumped, turn % 2);
+                                    }
+                                }
+                            }
 
-                    card = deck.getTopCard();
+                            int[] multiBumped = activeBoard.checkSlide();
 
-                    //TODO: Put timer to delay sidebar update
-                    makeSidebar(root, card);
+                            for (PlayerBoard board : boards) {
+                                if (!(board.getRotation() == turn % 2)) {
+                                    board.bump(multiBumped, turn % 2);
+                                }
+                            }
+                            //print out every card
+                            //System.out.println(deck.getTopCard().getNumber());
 
-                    //++turn;
-                    root.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
+                            makeBoard(root);
 
+                            for (PlayerBoard board : boards) {
+                                Group pawns = board.displayPawns();
+                                root.getChildren().add(pawns);
+                            }
+                            ++turn;
+                        }
+
+                        card = deck.getTopCard();
+
+                        //TODO: Put timer to delay sidebar update
+                        makeSidebar(root, card);
+
+                        root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+                    }
                 } catch (Exception exception) {
                     System.out.println("You did not click on a board tile.");
                 }
 
             }
+        }.start();
 
-        };
-
-        eventHandler1 = new EventHandler<MouseEvent>() {
-
-            int x, y;
-
-            @Override
-            public void handle(MouseEvent e) {
-
-                //Calculates the coordinates of your click
-                x = (int) e.getX();
-                y = (int) e.getY();
-
-
-                try {
-                    //Moves the pawn and remakes the board
-                    if (board1.canMovePawn(board1.getTileID(x, y), card.getNumber())) {
-                        board1.movePawn(board1.getTileID(x, y), card.getNumber());
-                    }
-
-                    int[] bumped = board1.checkSlide();
-                    //print out every card
-                    //System.out.println(deck.getTopCard().getNumber());
-
-                    makeBoard(root, board1);
-                    makeBoard(root, board);
-
-                    card = deck.getTopCard();
-
-                    //TODO: Put timer to delay sidebar update
-                    makeSidebar(root, card);
-
-                    //++turn;
-                    root.removeEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
-                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-
-                } catch (Exception exception) {
-                    System.out.println("You did not click on a board.");
-                }
-
-            }
-
-        };
-
-        //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
 
         card = deck.getTopCard();
 
         makeSidebar(root, card);
-
-        if (turn == board.getRotation()) {
-            root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
-        } else if (turn == board1.getRotation()) {
-            //Add three more event filters for the different boards
-            //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler1);
-        } else if (turn == board2.getRotation()) {
-            //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler2);
-        } else {
-            //root.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler3);
-        }
 
 
 
@@ -253,7 +255,7 @@ public class Main extends Application {
         menu.getChildren().add(back1);
     }
 
-    private void makeBoard(BorderPane root, PlayerBoard board) {
+    private void makeBoard(BorderPane root) {
 
         root.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -522,13 +524,6 @@ public class Main extends Application {
         root.getChildren().add(slideBody8);
         root.getChildren().add(slideEnd8);
         root.getChildren().add(slideArrow8);
-
-        // this function gets the pawns to be displayed from the PlayerBoard object
-        Group boardDisplay = board.displayPawns();
-
-        // this adds the pawns to the board
-        root.getChildren().add(boardDisplay);
-
 
     }
 
