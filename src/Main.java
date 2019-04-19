@@ -108,26 +108,6 @@ public class Main extends Application {
 
                     root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-                    switch(card.getNumber()) {
-                        case 0:
-                            break;
-                        case 1:
-                            break;
-                        case 2:
-                            break;
-                        case 4:
-                            break;
-                        case 7:
-                            break;
-                        case 10:
-                            break;
-                        case 11:
-                            break;
-                        case 12:
-                            break;
-                        default:
-                    }
-
                     if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
                         System.out.println(x);
                         System.out.println(y);
@@ -136,20 +116,18 @@ public class Main extends Application {
 
                         if (!(card.getNumber() == 0)) {
                             //Moves the pawn and remakes the board
-                            if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
-                                int singleBumped = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
-                                for (PlayerBoard board : boards) {
-                                    if (!(board.getRotation() == turn % 2)) {
-                                        board.bump(singleBumped, turn % 2);
-                                    }
+                            int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
+                            for (PlayerBoard board : boards) {
+                                if (!(board.getRotation() == turn % 2)) {
+                                    board.bump(shortBump, turn % 2);
                                 }
                             }
 
-                            int[] multiBumped = activeBoard.checkSlide();
+                            int[] longBump = activeBoard.checkSlide();
 
                             for (PlayerBoard board : boards) {
                                 if (!(board.getRotation() == turn % 2)) {
-                                    board.bump(multiBumped, turn % 2);
+                                    board.bump(longBump, turn % 2);
                                 }
                             }
                             //print out every card
