@@ -36,6 +36,8 @@ public class Main extends Application {
     private int turn = 0;
     private int x = 0;
     private int y = 0;
+    private int x2 = 0;
+    private int y2 = 0;
     private boolean endGame = false;
 
     @Override
@@ -99,6 +101,17 @@ public class Main extends Application {
             }
         };
 
+        EventHandler<MouseEvent> getcoords2 = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                //Calculates the coordinates of your click
+                x2 = (int) e.getX();
+                y2 = (int) e.getY();
+
+                System.out.println("click2");
+            }
+        };
+
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
 
@@ -106,11 +119,11 @@ public class Main extends Application {
 
                     PlayerBoard activeBoard = boards[turn % 2];
 
-                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+                    root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);;
+                    System.out.println(activeBoard.getTileID(x, y));
 
-                    if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
-                        System.out.println(x);
-                        System.out.println(y);
+                    if (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) {
+
                         System.out.println(turn);
                         System.out.println("hi");
 
