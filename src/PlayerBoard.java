@@ -259,10 +259,9 @@ public class PlayerBoard {
     }
 
     private int tileIDRotation(int initTileID, int initRot, int finalRot) {
-        int rotation = (finalRot - initRot + 4)%4;
-
-        int rotatedID = (initTileID + 15 * (4 - rotation)) % 60;
-        return rotatedID;
+        int[] initTileIDs = new int[]{initTileID};
+        int[] rotatedIDs = tileIDRotation(initTileIDs, initRot, finalRot);
+        return rotatedIDs[0];
     }
 
     private int[] tileIDRotation(int[] initTileIDs, int initRot, int finalRot) {
