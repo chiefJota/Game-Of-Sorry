@@ -856,7 +856,7 @@ public class Main extends Application {
 
         int pawnID = activeBoard.getTileID(x, y);
 
-        if ((choice == 0) && (activeBoard.hasPawnAt(pawnID))) {
+        if ((choice == 0) && (activeBoard.hasPawnAt(pawnID, turn %2))) {
             if (activeBoard.canMovePawn(pawnID, 10)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 10);
@@ -865,6 +865,7 @@ public class Main extends Application {
                         board.bump(shortBump, turn % 2);
                     }
                 }
+                activeBoard.
 
                 int[] longBump = activeBoard.checkSlide();
 

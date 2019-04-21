@@ -165,6 +165,8 @@ public class PlayerBoard {
         startPawns--;
     }
 
+    public void removeStartPawn() {startPawns--;}
+
     public int getStartPawns() {
         return startPawns;
     }
