@@ -36,6 +36,8 @@ public class Main extends Application {
     private int turn = 0;
     private int x = 0;
     private int y = 0;
+    private int x2 = 0;
+    private int y2 = 0;
     private boolean endGame = false;
 
     @Override
@@ -96,6 +98,17 @@ public class Main extends Application {
                 y = (int) e.getY();
 
                 System.out.println("click");
+            }
+        };
+
+        EventHandler<MouseEvent> getcoords2 = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                //Calculates the coordinates of your click
+                x2 = (int) e.getX();
+                y2 = (int) e.getY();
+
+                System.out.println("click2");
             }
         };
 
