@@ -89,6 +89,7 @@ public class PlayerBoard {
 
     // checks if there is a pawn at the tile
     public Boolean hasPawnAt(int tileID, int initRot ) {
+        System.out.println(tileIDRotation(tileID, initRot, rotation));
         return boardTiles[tileIDRotation(tileID, initRot, rotation)].getHasPawn();
     }
 
@@ -261,7 +262,7 @@ public class PlayerBoard {
     private int tileIDRotation(int initTileID, int initRot, int finalRot) {
         int[] initTileIDs = new int[]{initTileID};
         int[] rotatedIDs = tileIDRotation(initTileIDs, initRot, finalRot);
-        return rotatedIDs[1];
+        return rotatedIDs[0];
     }
 
     private int[] tileIDRotation(int[] initTileIDs, int initRot, int finalRot) {
