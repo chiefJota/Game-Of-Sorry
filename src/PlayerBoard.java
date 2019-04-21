@@ -88,6 +88,11 @@ public class PlayerBoard {
     }
 
     // checks if there is a pawn at the tile
+    public Boolean hasPawnAt(int tileID) {
+        return boardTiles[tileID].getHasPawn();
+    }
+
+    // checks if there is a pawn at the tile
     public Boolean hasPawnAt(int tileID, int initRot ) {
         return boardTiles[tileIDRotation(tileID, initRot, rotation)].getHasPawn();
     }
