@@ -143,7 +143,7 @@ public class Main extends Application {
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
                             ;
 
-                            if (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) {
+                            if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
 
                                 System.out.println(turn);
                                 System.out.println("hi");
