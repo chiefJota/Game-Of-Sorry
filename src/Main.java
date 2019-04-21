@@ -865,7 +865,6 @@ public class Main extends Application {
                         board.bump(shortBump, turn % 2);
                     }
                 }
-                activeBoard.
 
                 int[] longBump = activeBoard.checkSlide();
 

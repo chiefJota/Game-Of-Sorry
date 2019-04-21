@@ -1,6 +1,7 @@
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Arrays;
 
@@ -66,6 +67,21 @@ public class PlayerBoard {
         boardTiles[23].addPawn();
         boardTiles[24].addPawn();
         boardTiles[25].addPawn();
+    }
+
+    public void highlightTiles(int[] tilesHighlighted, Group root) {
+        for (int tileID:tilesHighlighted) {
+            if (boardTiles[tileID].getHasPawn()) {
+                int[] coords = getLocation(tileID);
+                int x = coords[0] -25;
+                int y = coords[1] -25;
+                Rectangle highlight = new Rectangle(x, y, 50, 50);
+                highlight.setFill(Color.rgb(200, 200, 200, 0.5));
+                highlight.setStrokeWidth(new Double(2.0));
+
+                root.getChildren().add(highlight);
+            }
+        }
     }
 
     public Group displayPawns() {
