@@ -181,7 +181,14 @@ public class PlayerBoard {
         startPawns--;
     }
 
-    public void removeStartPawn() {startPawns--;}
+    public void movePawnTo(int tileID) {
+        BoardTile activeTile = this.boardTiles[tileID];
+
+        activeTile.addPawn();
+
+        startPawns--;
+    }
+
 
     public int getStartPawns() {
         return startPawns;
