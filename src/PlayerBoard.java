@@ -76,7 +76,7 @@ public class PlayerBoard {
                 int x = coords[0] -25;
                 int y = coords[1] -25;
                 Rectangle highlight = new Rectangle(x, y, 50, 50);
-                highlight.setFill(Color.rgb(200, 200, 200, 0.5));
+                highlight.setFill(Color.rgb(255, 255, 0, 0.5));
                 highlight.setStrokeWidth(new Double(2.0));
 
                 root.getChildren().add(highlight);
@@ -182,11 +182,16 @@ public class PlayerBoard {
     }
 
     public void movePawnTo(int tileID) {
-        BoardTile activeTile = this.boardTiles[tileID];
+        System.out.println(tileID);
 
-        activeTile.addPawn();
+        boardTiles[tileID].addPawn();
+
+        System.out.println(startPawns);
 
         startPawns--;
+
+        System.out.println(startPawns);
+
     }
 
 
