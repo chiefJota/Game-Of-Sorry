@@ -92,7 +92,6 @@ public class Main extends Application {
         Random rand = new Random();
         //turn = rand.nextInt(4);
         turn = 0;
-        System.out.println(turn);
 
         EventHandler<MouseEvent> getcoords = new EventHandler<MouseEvent>() {
             @Override
@@ -123,23 +122,11 @@ public class Main extends Application {
 
                 try {
 
-                    // System.out.println(choice);
-
-                    if (card.getNumber() == 0) {
-
-                        //Skips the sorry card
-                        ++turn;
-
-                        if (deck.cardsRemaining() == 0) {
-                            deck.shuffle();
-                        }
-                        card = deck.getTopCard();
-
-                        makeSidebar(root, card);
-
-                    }
 
                     switch (card.getNumber()) {
+                        case 0:
+                            moveSorry(boards, root, getcoords);
+                            break;
                         case 1:
                             move1(boards, root, getcoords);
                             break;
@@ -1118,6 +1105,65 @@ public class Main extends Application {
             }
         }
     }
+
+    void moveSorry(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
+
+        root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+        PlayerBoard activeBoard = boards[turn % 2];
+
+        int pawnID = activeBoard.getTileID(x, y);
+
+        System.out.println(pawnID);
+
+
+        boolean done = false;
+        //loop through other player board
+        //check every tile to see
+        //if there is a pawn on it
+        for (PlayerBoard board : boards) {
+            if (!(board.getRotation() == turn % 2)) {
+                if (board.hasPawnAt(pawnID, turn % 2)) {
+                    activeBoard.movePawnTo(pawnID);
+
+                    done = true;
+                }
+            }
+        }
+        if (done) {
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    board.bump(pawnID, turn % 2);
+                }
+            }
+
+            int[] longBump = activeBoard.checkSlide();
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    board.bump(longBump, turn % 2);
+                }
+            }
+
+            //increment the turn
+            turn++;
+
+            if(deck.isEmpty()){
+                deck.shuffle();
+            }
+
+            card = deck.getTopCard();
+
+            //TODO: Put timer to delay sidebar update
+            makeSidebar(root, card);
+
+            root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+        }
+    }
+
+
+
+
 
     public static void main(String[] args) {
         Application.launch(args);
