@@ -39,6 +39,10 @@ public class Main extends Application {
     private int x2 = 0;
     private int y2 = 0;
     private int choice = 0;
+    private int click2 = 0;
+    private int pawnIDs = -1;
+    private int pawnID2 = -1;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -94,9 +98,10 @@ public class Main extends Application {
             @Override
             public void handle(MouseEvent e) {
                 //Calculates the coordinates of your click
-                x = (int) e.getX();
-                y = (int) e.getY();
-
+                if (e.getX() < 1000) {
+                    x = (int) e.getX();
+                    y = (int) e.getY();
+                }
                 System.out.println("click");
             }
         };
@@ -105,9 +110,10 @@ public class Main extends Application {
             @Override
             public void handle(MouseEvent e) {
                 //Calculates the coordinates of your click
-                x2 = (int) e.getX();
-                y2 = (int) e.getY();
-
+                if (e.getX() < 1000) {
+                    x2 = (int) e.getX();
+                    y2 = (int) e.getY();
+                }
                 System.out.println("click2");
             }
         };
@@ -117,7 +123,7 @@ public class Main extends Application {
 
                 try {
 
-                    System.out.println(choice);
+                    // System.out.println(choice);
 
                     if (card.getNumber() == 0) {
 
@@ -142,6 +148,9 @@ public class Main extends Application {
                             break;
                         case 4:
                             move4(boards, root, getcoords);
+                            break;
+                        case 7:
+                            moveSeven(boards, root, getcoords, getcoords2);
                             break;
                         case 10:
                             moveTen(boards, root, getcoords);
@@ -193,7 +202,7 @@ public class Main extends Application {
                     }
 
                 } catch (Exception exception) {
-                    System.out.println("You did not click on a board tile.");
+                    //System.out.println("You did not click on a board tile.");
                 }
 
             }
@@ -549,7 +558,22 @@ public class Main extends Application {
 
     private void makeSidebar(BorderPane root, SorryCard card) {
         Rectangle bar = new Rectangle(1000, 0, 25, 900);
-        bar.setFill(Color.BLACK);
+        Rectangle bar2 = new Rectangle(1000, 0, 4, 900);
+        Rectangle bar3 = new Rectangle(1025, 0, 4, 900);
+        bar2.setFill(Color.BLACK);
+        bar3.setFill(Color.BLACK);
+
+        if (turn % 2 == 0) {
+            bar.setFill(Color.RED);
+        } else if (turn % 2 == 1) {
+            bar.setFill(Color.BLUE);
+        } else if (turn % 2 == 2) {
+            bar.setFill(Color.YELLOW);
+        } else if (turn % 2 == 3) {
+            bar.setFill(Color.GREEN);
+        }
+
+
         Rectangle white = new Rectangle(1025, 0, 425, 900);
         white.setFill(Color.WHITE);
 
@@ -589,6 +613,8 @@ public class Main extends Application {
 
         sideBar.getChildren().add(white);
         sideBar.getChildren().add(bar);
+        sideBar.getChildren().add(bar2);
+        sideBar.getChildren().add(bar3);
         sideBar.getChildren().add(cardNumber);
         sideBar.getChildren().add(cardDescription);
         sideBar.getChildren().add(remainingCards);
@@ -597,57 +623,118 @@ public class Main extends Application {
         switch (card.getNumber()) {
             case 1:
                 Button button1 = new Button("Move pawn from Start");
-                button1.setTranslateX(1200);
-                button1.setTranslateY(700);
+                button1.setTranslateX(1150);
+                button1.setTranslateY(400);
                 sideBar.getChildren().add(button1);
-                button1.setOnMouseClicked(event -> {choice = 0;});
-                Button button2 = new Button("Move foward 1");
-                button2.setTranslateX(1200);
-                button2.setTranslateY(770);
+                button1.setOnMouseClicked(event -> {
+                    choice = 0;
+                });
+                Button button2 = new Button("Move forward 1");
+                button2.setTranslateX(1160);
+                button2.setTranslateY(450);
                 sideBar.getChildren().add(button2);
-                button2.setOnMouseClicked(event -> {choice = 1;});
+                button2.setOnMouseClicked(event -> {
+                    choice = 1;
+                });
                 break;
-                case 2:
+            case 2:
                 Button button3 = new Button("Move pawn from Start");
-                button3.setTranslateX(1200);
-                button3.setTranslateY(700);
+                button3.setTranslateX(1150);
+                button3.setTranslateY(400);
                 sideBar.getChildren().add(button3);
-                button3.setOnMouseClicked(event -> {choice = 0;});
-                Button button4 = new Button("Move foward 2");
-                button4.setTranslateX(1200);
-                button4.setTranslateY(750);
+                button3.setOnMouseClicked(event -> {
+                    choice = 0;
+                });
+                Button button4 = new Button("Move forward 2");
+                button4.setTranslateX(1160);
+                button4.setTranslateY(450);
                 sideBar.getChildren().add(button4);
-                button4.setOnMouseClicked(event -> {choice = 1;});
-                    break;
+                button4.setOnMouseClicked(event -> {
+                    choice = 1;
+                });
+                break;
             case 7:
-                Button butoon = new Button("Exit Game");
-                butoon.setTranslateX(1200);
-                butoon.setTranslateY(700);
-                sideBar.getChildren().add(butoon);
+                Button move1 = new Button("Move 1");
+                move1.setTranslateX(1195);
+                move1.setTranslateY(400);
+                sideBar.getChildren().add(move1);
+                move1.setOnMouseClicked(event -> {
+                    choice = 0;
+                });
+                Button move2 = new Button("Move 2");
+                move2.setTranslateX(1195);
+                move2.setTranslateY(450);
+                sideBar.getChildren().add(move2);
+                move2.setOnMouseClicked(event -> {
+                    choice = 1;
+                });
+                Button move3 = new Button("Move 3");
+                move3.setTranslateX(1195);
+                move3.setTranslateY(500);
+                sideBar.getChildren().add(move3);
+                move3.setOnMouseClicked(event -> {
+                    choice = 2;
+                });
+                Button move4 = new Button("Move 4");
+                move4.setTranslateX(1195);
+                move4.setTranslateY(550);
+                sideBar.getChildren().add(move4);
+                move4.setOnMouseClicked(event -> {
+                    choice = 3;
+                });
+                Button move5 = new Button("Move 5");
+                move5.setTranslateX(1195);
+                move5.setTranslateY(600);
+                sideBar.getChildren().add(move5);
+                move5.setOnMouseClicked(event -> {
+                    choice = 4;
+                });
+                Button move6 = new Button("Move 6");
+                move6.setTranslateX(1195);
+                move6.setTranslateY(650);
+                sideBar.getChildren().add(move6);
+                move6.setOnMouseClicked(event -> {
+                    choice = 5;
+                });
+                Button move7 = new Button("Move 7");
+                move7.setTranslateX(1195);
+                move7.setTranslateY(700);
+                sideBar.getChildren().add(move7);
+                move7.setOnMouseClicked(event -> {
+                    choice = 6;
+                });
                 break;
             case 10:
-                Button button5 = new Button("Move foward 10");
-                button5.setTranslateX(1200);
-                button5.setTranslateY(700);
+                Button button5 = new Button("Move forward 10");
+                button5.setTranslateX(1150);
+                button5.setTranslateY(350);
                 sideBar.getChildren().add(button5);
-                button5.setOnMouseClicked(event -> {choice = 0;});
+                button5.setOnMouseClicked(event -> {
+                    choice = 0;
+                });
                 Button button6 = new Button("Move back 1");
-                button6.setTranslateX(1200);
-                button6.setTranslateY(750);
+                button6.setTranslateX(1160);
+                button6.setTranslateY(400);
                 sideBar.getChildren().add(button6);
-                button6.setOnMouseClicked(event -> {choice = 1;});
+                button6.setOnMouseClicked(event -> {
+                    choice = 1;
+                });
                 break;
             case 11:
-                Button button7 = new Button("Move foward 11");
-                button7.setTranslateX(1200);
-                button7.setTranslateY(700);
+                Button button7 = new Button("Move forward 11");
+                button7.setTranslateX(1150);
+                button7.setTranslateY(400);
                 sideBar.getChildren().add(button7);
-                button7.setOnMouseClicked(event -> {choice = 0;});
+                button7.setOnMouseClicked(event -> {
+                    choice = 0;
+                });
                 Button button8 = new Button("Swap");
-                button8.setTranslateX(1200);
-                button8.setTranslateY(750);
+                button8.setTranslateX(1190);
+                button8.setTranslateY(450);
                 sideBar.getChildren().add(button8);
-                button8.setOnMouseClicked(event -> {choice = 1;});
+                button8.setOnMouseClicked(event -> {
+                    choice = 1;
+                });
                 break;
         }
 
@@ -671,16 +758,23 @@ public class Main extends Application {
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
 
+            makeBoard(root);
+
+            for (PlayerBoard board : boards) {
+                Group pawns = board.displayPawns();
+                root.getChildren().add(pawns);
+            }
+
             if (deck.isEmpty()) {
                 deck.shuffle();
             }
 
             card = deck.getTopCard();
 
+            turn++;
             //TODO: Put timer to delay sidebar update
             makeSidebar(root, card);
 
-            turn++;
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
@@ -718,10 +812,10 @@ public class Main extends Application {
 
                 card = deck.getTopCard();
 
+                ++turn;
                 //TODO: Put timer to delay sidebar update
                 makeSidebar(root, card);
 
-                ++turn;
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
@@ -743,10 +837,16 @@ public class Main extends Application {
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
 
+            makeBoard(root);
+
+            for (PlayerBoard board : boards) {
+                Group pawns = board.displayPawns();
+                root.getChildren().add(pawns);
+            }
+
             if (deck.isEmpty()) {
                 deck.shuffle();
             }
-
             card = deck.getTopCard();
 
             //TODO: Put timer to delay sidebar update
@@ -846,6 +946,84 @@ public class Main extends Application {
         }
     }
 
+    void moveSeven(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, EventHandler<MouseEvent> getcoords2) {
+
+        root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+        PlayerBoard activeBoard = boards[turn % 2];
+
+        if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) && (activeBoard.getTileID(x, y)!=-1)){
+            pawnIDs = activeBoard.getTileID(x, y);
+        }
+
+        if (pawnIDs != -1) {
+            ++click2;
+        }
+        if ((click2 != 0) && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2))){
+            pawnID2 = activeBoard.getTileID(x, y);
+        }
+
+        if ((activeBoard.hasPawnAt(pawnIDs, turn % 2)) && activeBoard.hasPawnAt(pawnID2, turn % 2)) {
+            if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice+1))) {
+
+                int shortBump = activeBoard.movePawn(pawnIDs, choice + 1);
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        board.bump(shortBump, turn % 2);
+                    }
+                }
+
+                int[] longBump = activeBoard.checkSlide();
+
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        board.bump(longBump, turn % 2);
+                    }
+                }
+
+                int shortBump1 = activeBoard.movePawn(pawnID2, 7 - (choice + 1));
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        board.bump(shortBump1, turn % 2);
+                    }
+                }
+
+                int[] longBump1 = activeBoard.checkSlide();
+
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        board.bump(longBump1, turn % 2);
+                    }
+                }
+
+                makeBoard(root);
+
+                for (PlayerBoard board : boards) {
+                    Group pawns = board.displayPawns();
+                    root.getChildren().add(pawns);
+                }
+                ++turn;
+
+                if (deck.isEmpty()) {
+                    deck.shuffle();
+                }
+
+                card = deck.getTopCard();
+
+                //TODO: Put timer to delay sidebar update
+                makeSidebar(root, card);
+
+                root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+
+                choice = -1;
+                click2 = 0;
+                pawnIDs = -1;
+                pawnID2 = -1;
+            }
+        }
+
+    }
 
 
     void moveTen(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
@@ -856,7 +1034,7 @@ public class Main extends Application {
 
         int pawnID = activeBoard.getTileID(x, y);
 
-        if ((choice == 0) && (activeBoard.hasPawnAt(pawnID, turn %2))) {
+        if ((choice == 0) && (activeBoard.hasPawnAt(pawnID, turn % 2))) {
             if (activeBoard.canMovePawn(pawnID, 10)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 10);
