@@ -36,8 +36,6 @@ public class Main extends Application {
     private int turn = 0;
     private int x = 0;
     private int y = 0;
-    private int x2 = 0;
-    private int y2 = 0;
     private int choice = 0;
     private int click2 = 0;
     private int pawnIDs = -1;
@@ -105,17 +103,17 @@ public class Main extends Application {
             }
         };
 
-        EventHandler<MouseEvent> getcoords2 = new EventHandler<MouseEvent>() {
+       /* EventHandler<MouseEvent> getcoords2 = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
                 //Calculates the coordinates of your click
                 if (e.getX() < 1000) {
-                    x2 = (int) e.getX();
-                    y2 = (int) e.getY();
+                   // x2 = (int) e.getX();
+                   // y2 = (int) e.getY();
                 }
                 System.out.println("click2");
             }
-        };
+        };*/
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
@@ -137,7 +135,7 @@ public class Main extends Application {
                             move4(boards, root, getcoords);
                             break;
                         case 7:
-                            moveSeven(boards, root, getcoords, getcoords2);
+                            moveSeven(boards, root, getcoords);
                             break;
                         case 10:
                             moveTen(boards, root, getcoords);
@@ -146,11 +144,10 @@ public class Main extends Application {
                             PlayerBoard activeBoard = boards[turn % 2];
 
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
-                            ;
+
 
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
 
-                                if (!(card.getNumber() == 0)) {
                                     //Moves the pawn and remakes the board
                                     int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
                                     for (PlayerBoard board : boards) {
@@ -176,7 +173,7 @@ public class Main extends Application {
                                         root.getChildren().add(pawns);
                                     }
                                     ++turn;
-                                }
+
 
                                 card = deck.getTopCard();
 
@@ -725,6 +722,27 @@ public class Main extends Application {
                 break;
         }
 
+
+        Button forfeitTurn = new Button("Forfeit turn");
+        forfeitTurn.setTranslateX(1250);
+        forfeitTurn.setTranslateY(835);
+        sideBar.getChildren().add(forfeitTurn);
+
+        //TODO: skipping turn but moving with previous
+        //card instead of moving with new card
+        //declare final variable outside
+
+        //card = card2;
+        forfeitTurn.setOnMouseClicked(event -> {
+            //increment turn to
+            //be opposing players
+            ++turn;
+
+            //update the sidebar
+            makeSidebar(root, changeCard());
+
+        });
+
         Button endGame = new Button("Exit Game");
         endGame.setTranslateX(1350);
         endGame.setTranslateY(835);
@@ -810,6 +828,15 @@ public class Main extends Application {
             }
         }
 
+    }
+
+    /**
+     * Work around for lambda expression
+     * @return
+     */
+    public SorryCard changeCard(){
+        card = deck.getTopCard();
+        return card;
     }
 
 
@@ -933,7 +960,7 @@ public class Main extends Application {
         }
     }
 
-    void moveSeven(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, EventHandler<MouseEvent> getcoords2) {
+    void moveSeven(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
@@ -1156,6 +1183,8 @@ public class Main extends Application {
 
             //TODO: Put timer to delay sidebar update
             makeSidebar(root, card);
+            makeBoard(root);
+
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
         }
