@@ -157,6 +157,29 @@ public class PlayerBoard {
         return -1;
     }
 
+    public int movePawn(int tileID, int moves, int rotate) {
+        int rotatedID = tileIDRotation(tileID, rotate , rotation);
+        BoardTile activeTile = this.boardTiles[rotatedID];
+
+        if (activeTile.getHasPawn()) {
+            activeTile.removePawn();
+
+            if (moves > 0) {
+                for (int i = 0; i < moves; i++) {
+                    activeTile = activeTile.getNextTile();
+                }
+            } else {
+                for (int i = 0; i > moves; i--) {
+                    activeTile = activeTile.getLastTile();
+                }
+            }
+
+            activeTile.addPawn();
+            return activeTile.getTileID();
+        }
+        return -1;
+    }
+
     public int[] checkSlide() {
         for (int i = 0; i < 64; i++) {
             if (boardTiles[i].getHasPawn()){

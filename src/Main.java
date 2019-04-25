@@ -36,7 +36,7 @@ public class Main extends Application {
     private int turn = 0;
     private int x = 0;
     private int y = 0;
-    private int choice = 0;
+    private int choice = -1;
     private int click2 = 0;
     private int pawnIDs = -1;
     private int pawnID2 = -1;
@@ -151,6 +151,10 @@ public class Main extends Application {
                             break;
                         case 10:
                             moveTen(boards, root, getcoords);
+                            break;
+                        case 11:
+                            //click2 = 0;
+                            moveEleven(boards, root, getcoords);
                             break;
                         default:
                             PlayerBoard activeBoard = boards[turn % 2];
@@ -967,6 +971,7 @@ public class Main extends Application {
             makeSidebar(root, card);
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+            choice = -1;
 
         }
     }
@@ -987,6 +992,9 @@ public class Main extends Application {
         if ((click2 != 0) && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2))) {
             pawnID2 = activeBoard.getTileID(x, y);
         }
+
+        System.out.println(pawnIDs);
+        System.out.println(pawnID2);
 
         if ((activeBoard.hasPawnAt(pawnIDs, turn % 2)) && activeBoard.hasPawnAt(pawnID2, turn % 2)) {
             if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1))) {
@@ -1144,6 +1152,136 @@ public class Main extends Application {
         }
     }
 
+    void moveEleven(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
+
+        root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+        PlayerBoard activeBoard = boards[turn % 2];
+
+        if (choice == 0){
+            System.out.println("Choice is 0");
+
+            if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), 11)) {
+
+
+                //Moves the pawn and remakes the board
+                int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 11);
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        board.bump(shortBump, turn % 2);
+                    }
+                }
+
+                int[] longBump = activeBoard.checkSlide();
+
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        board.bump(longBump, turn % 2);
+                    }
+                }
+
+                makeBoard(root);
+
+                for (PlayerBoard board : boards) {
+                    Group pawns = board.displayPawns();
+                    root.getChildren().add(pawns);
+                }
+
+                ++turn;
+
+                if (deck.isEmpty()) {
+                    deck.shuffle();
+                }
+
+                card = deck.getTopCard();
+
+                //TODO: Put timer to delay sidebar update
+                makeSidebar(root, card);
+
+                root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+                reset();
+            }
+
+
+        } else if (choice == 1) {
+
+            //reset();
+
+            if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) && (activeBoard.getTileID(x, y)!=-1)){
+                pawnIDs = activeBoard.getTileID(x, y);
+
+            }
+            if (pawnIDs != -1) {
+                ++click2;
+            }
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    if (board.hasPawnAt(board.getTileID(x,y))){
+                        pawnID2 = activeBoard.getTileID(x, y);
+                    }
+                }
+            }
+
+            boolean done1 = false;
+            System.out.println(pawnIDs);
+            System.out.println(pawnID2);
+
+            if ((activeBoard.hasPawnAt(pawnIDs, turn % 2))) {
+
+                for (PlayerBoard board : boards) {
+                    if (!(board.getRotation() == turn % 2)) {
+                        if (board.hasPawnAt(pawnID2, turn%2)) {
+                            done1 = true;
+                        }
+                    }
+                }
+
+                if (done1) {
+
+                    int spaces = pawnID2 - pawnIDs;
+
+                    activeBoard.movePawn(pawnIDs, spaces);
+                    //spaces = -(spaces);
+
+                    for (PlayerBoard board : boards) {
+                        if (!(board.getRotation() == turn % 2)) {
+                            if (board.hasPawnAt(pawnID2, turn % 2)) {
+                                System.out.println("Help");
+                                board.movePawn(pawnID2, -(spaces), turn%2);
+
+                            }
+                        }
+                    }
+
+                    makeBoard(root);
+
+                    for (PlayerBoard board : boards) {
+                        Group pawns = board.displayPawns();
+                        root.getChildren().add(pawns);
+                    }
+
+                    ++turn;
+
+                    if (deck.isEmpty()) {
+                        deck.shuffle();
+                    }
+
+                    card = deck.getTopCard();
+
+                    //TODO: Put timer to delay sidebar update
+                    makeSidebar(root, card);
+
+                    root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+
+                    reset();
+                }
+            }
+        }
+
+    }
+
     void moveSorry(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1203,10 +1341,19 @@ public class Main extends Application {
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
         }
+        reset();
     }
 
 
+void reset(){
+    choice = -1;
+    click2 = 0;
+    pawnIDs = -1;
+    pawnID2 = -1;
+    x = -1;
+    y = -1;
 
+}
 
 
     public static void main(String[] args) {
