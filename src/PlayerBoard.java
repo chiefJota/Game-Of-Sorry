@@ -222,6 +222,8 @@ public class PlayerBoard {
         return startPawns;
     }
 
+    public int getHomePawns(){return homePawns; }
+
     public void moveToHome() {
         if (boardTiles[65].getHasPawn()) {
             boardTiles[65].removePawn();
