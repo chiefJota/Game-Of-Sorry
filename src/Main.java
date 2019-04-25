@@ -1088,6 +1088,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                 }
+
                 ++turn;
 
                 if (deck.isEmpty()) {
@@ -1143,6 +1144,13 @@ public class Main extends Application {
                 if (!(board.getRotation() == turn % 2)) {
                     board.bump(longBump, turn % 2);
                 }
+            }
+
+            makeBoard(root);
+
+            for (PlayerBoard board : boards) {
+                Group pawns = board.displayPawns();
+                root.getChildren().add(pawns);
             }
 
             //increment the turn
