@@ -994,8 +994,8 @@ public class Main extends Application {
             pawnID2 = activeBoard.getTileID(x, y);
         }
 
-        System.out.println(pawnIDs);
-        System.out.println(pawnID2);
+        //System.out.println(pawnIDs);
+        //System.out.println(pawnID2);
 
         if ((activeBoard.hasPawnAt(pawnIDs, turn % 2)) && activeBoard.hasPawnAt(pawnID2, turn % 2)) {
             if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1))) {
@@ -1161,7 +1161,7 @@ public class Main extends Application {
         PlayerBoard activeBoard = boards[turn % 2];
 
         if (choice == 0){
-            System.out.println("Choice is 0");
+            //System.out.println("Choice is 0");
 
             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), 11)) {
 
@@ -1227,8 +1227,8 @@ public class Main extends Application {
             }
 
             boolean done1 = false;
-            System.out.println(pawnIDs);
-            System.out.println(pawnID2);
+            //System.out.println(pawnIDs);
+            //System.out.println(pawnID2);
 
             if ((activeBoard.hasPawnAt(pawnIDs, turn % 2))) {
 
@@ -1292,7 +1292,7 @@ public class Main extends Application {
 
         int pawnID = activeBoard.getTileID(x, y);
 
-        System.out.println(pawnID);
+        //System.out.println(pawnID);
 
 
         boolean done = false;
