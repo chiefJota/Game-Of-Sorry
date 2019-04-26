@@ -50,10 +50,6 @@ public class Main extends Application {
     private Button move7;
 
 
-
-
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -153,7 +149,6 @@ public class Main extends Application {
                             moveTen(boards, root, getcoords);
                             break;
                         case 11:
-                            //click2 = 0;
                             moveEleven(boards, root, getcoords);
                             break;
                         default:
@@ -179,8 +174,8 @@ public class Main extends Application {
                                             board.bump(longBump, turn % 2);
                                         }
                                     }
-                                    //print out every card
-                                    //System.out.println(deck.getTopCard().getNumber());
+
+                                    activeBoard.moveToHome();
 
                                     makeBoard(root);
 
@@ -778,6 +773,8 @@ public class Main extends Application {
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
 
+            activeBoard.moveToHome();
+
             makeBoard(root);
 
             for (PlayerBoard board : boards) {
@@ -798,7 +795,7 @@ public class Main extends Application {
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-            choice = -1;
+            reset();
         } else if ((choice == 1) && (activeBoard.hasPawnAt(pawnID))) {
             if (activeBoard.canMovePawn(pawnID, 1)) {
 
@@ -816,8 +813,8 @@ public class Main extends Application {
                         board.bump(longBump, turn % 2);
                     }
                 }
-                //print out every card
-                //System.out.println(deck.getTopCard().getNumber());
+
+                activeBoard.moveToHome();
 
                 makeBoard(root);
 
@@ -839,19 +836,10 @@ public class Main extends Application {
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-                choice = -1;
+                reset();
             }
         }
 
-    }
-
-    /**
-     * Work around for lambda expression
-     * @return
-     */
-    public SorryCard changeCard(){
-        card = deck.getTopCard();
-        return card;
     }
 
 
@@ -865,6 +853,8 @@ public class Main extends Application {
 
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
+
+            activeBoard.moveToHome();
 
             makeBoard(root);
 
@@ -883,7 +873,7 @@ public class Main extends Application {
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-            choice = -1;
+            reset();
         } else if ((choice == 1) && (activeBoard.hasPawnAt(pawnID))) {
             if (activeBoard.canMovePawn(pawnID, 2)) {
 
@@ -901,8 +891,8 @@ public class Main extends Application {
                         board.bump(longBump, turn % 2);
                     }
                 }
-                //print out every card
-                //System.out.println(deck.getTopCard().getNumber());
+
+                activeBoard.moveToHome();
 
                 makeBoard(root);
 
@@ -910,6 +900,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                 }
+
 
                 if (deck.isEmpty()) {
                     deck.shuffle();
@@ -922,7 +913,7 @@ public class Main extends Application {
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-                choice = -1;
+                reset();
             }
         }
 
@@ -951,6 +942,7 @@ public class Main extends Application {
                     board.bump(bumped, turn % 2);
                 }
             }
+            activeBoard.moveToHome();
 
             makeBoard(root);
 
@@ -958,6 +950,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
             }
+
             ++turn;
 
 
@@ -971,7 +964,7 @@ public class Main extends Application {
             makeSidebar(root, card);
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
-            choice = -1;
+            reset();
 
         }
     }
@@ -996,8 +989,84 @@ public class Main extends Application {
         System.out.println(pawnIDs);
         System.out.println(pawnID2);
 
-        if ((activeBoard.hasPawnAt(pawnIDs, turn % 2)) && activeBoard.hasPawnAt(pawnID2, turn % 2)) {
-            if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1))) {
+        int checkPawn1 = pawnIDs + (choice+1);
+        int checkPawn2 = pawnID2 + (7-(choice+1));
+
+        if (choice == 6 && activeBoard.canMovePawn(pawnIDs, 7)){
+
+            int shortBump = activeBoard.movePawn(pawnIDs, 7);
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    board.bump(shortBump, turn % 2);
+                }
+            }
+
+            int[] longBump = activeBoard.checkSlide();
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    board.bump(longBump, turn % 2);
+                }
+            }
+
+            activeBoard.moveToHome();
+
+            makeBoard(root);
+
+            for (PlayerBoard board : boards) {
+                Group pawns = board.displayPawns();
+                root.getChildren().add(pawns);
+            }
+            ++turn;
+
+
+            card = deck.getTopCard();
+
+            //TODO: Put timer to delay sidebar update
+            makeSidebar(root, card);
+
+            root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+            reset();
+
+        } else if (choice == 6 && activeBoard.canMovePawn(pawnID2, 7)){
+
+            int shortBump = activeBoard.movePawn(pawnID2, 7);
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    board.bump(shortBump, turn % 2);
+                }
+            }
+
+            int[] longBump = activeBoard.checkSlide();
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 2)) {
+                    board.bump(longBump, turn % 2);
+                }
+            }
+
+            activeBoard.moveToHome();
+
+            makeBoard(root);
+
+            for (PlayerBoard board : boards) {
+                Group pawns = board.displayPawns();
+                root.getChildren().add(pawns);
+            }
+            ++turn;
+
+
+            card = deck.getTopCard();
+
+            //TODO: Put timer to delay sidebar update
+            makeSidebar(root, card);
+
+            root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
+            reset();
+
+
+        } else if ((activeBoard.hasPawnAt(pawnIDs, turn % 2)) && activeBoard.hasPawnAt(pawnID2, turn % 2)) {
+            if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1)) && checkPawn1 != checkPawn2) {
 
                 int shortBump = activeBoard.movePawn(pawnIDs, choice + 1);
                 for (PlayerBoard board : boards) {
@@ -1029,12 +1098,15 @@ public class Main extends Application {
                     }
                 }
 
+                activeBoard.moveToHome();
+
                 makeBoard(root);
 
                 for (PlayerBoard board : boards) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                 }
+
                 ++turn;
 
                 if (deck.isEmpty()) {
@@ -1049,10 +1121,7 @@ public class Main extends Application {
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
 
-                choice = -1;
-                click2 = 0;
-                pawnIDs = -1;
-                pawnID2 = -1;
+                reset();
             }
         }
 
@@ -1084,8 +1153,8 @@ public class Main extends Application {
                         board.bump(longBump, turn % 2);
                     }
                 }
-                //print out every card
-                //System.out.println(deck.getTopCard().getNumber());
+
+                activeBoard.moveToHome();
 
                 makeBoard(root);
 
@@ -1093,6 +1162,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                 }
+
                 ++turn;
 
                 if (deck.isEmpty()) {
@@ -1106,7 +1176,7 @@ public class Main extends Application {
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-                choice = -1;
+                reset();
             }
         } else if ((choice == 1) && (activeBoard.hasPawnAt(pawnID))) {
             if (activeBoard.canMovePawn(pawnID, -1)) {
@@ -1125,8 +1195,7 @@ public class Main extends Application {
                         board.bump(longBump, turn % 2);
                     }
                 }
-                //print out every card
-                //System.out.println(deck.getTopCard().getNumber());
+                activeBoard.moveToHome();
 
                 makeBoard(root);
 
@@ -1134,6 +1203,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                 }
+
                 ++turn;
 
                 if (deck.isEmpty()) {
@@ -1147,7 +1217,7 @@ public class Main extends Application {
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-                choice = -1;
+                reset();
             }
         }
     }
@@ -1159,7 +1229,6 @@ public class Main extends Application {
         PlayerBoard activeBoard = boards[turn % 2];
 
         if (choice == 0){
-            System.out.println("Choice is 0");
 
             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), 11)) {
 
@@ -1179,6 +1248,8 @@ public class Main extends Application {
                         board.bump(longBump, turn % 2);
                     }
                 }
+
+                activeBoard.moveToHome();
 
                 makeBoard(root);
 
@@ -1205,8 +1276,6 @@ public class Main extends Application {
 
 
         } else if (choice == 1) {
-
-            //reset();
 
             if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) && (activeBoard.getTileID(x, y)!=-1)){
                 pawnIDs = activeBoard.getTileID(x, y);
@@ -1248,12 +1317,12 @@ public class Main extends Application {
                     for (PlayerBoard board : boards) {
                         if (!(board.getRotation() == turn % 2)) {
                             if (board.hasPawnAt(pawnID2, turn % 2)) {
-                                System.out.println("Help");
                                 board.movePawn(pawnID2, -(spaces), turn%2);
-
                             }
                         }
                     }
+
+                    activeBoard.moveToHome();
 
                     makeBoard(root);
 
@@ -1290,8 +1359,6 @@ public class Main extends Application {
 
         int pawnID = activeBoard.getTileID(x, y);
 
-        System.out.println(pawnID);
-
 
         boolean done = false;
         //loop through other player board
@@ -1321,12 +1388,15 @@ public class Main extends Application {
                 }
             }
 
+            activeBoard.moveToHome();
+
             makeBoard(root);
 
             for (PlayerBoard board : boards) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
             }
+
             //increment the turn
             turn++;
 
@@ -1354,6 +1424,15 @@ void reset(){
     y = -1;
 
 }
+
+    /**
+     * Work around for lambda expression
+     * @return
+     */
+    public SorryCard changeCard(){
+        card = deck.getTopCard();
+        return card;
+    }
 
 
     public static void main(String[] args) {
