@@ -18,19 +18,19 @@ public class PlayerBoard {
     private Color playerColor = Color.RED;
 
     public PlayerBoard() {
-        this.boardTiles = new BoardTile[65];
+        this.boardTiles = new BoardTile[66];
 
         boardTiles[0] = new BoardTile();
         boardTiles[0].setTileID(0);
 
-        for (int i = 1; i < 65; i++) {
+        for (int i = 1; i < 66; i++) {
             boardTiles[i] = new BoardTile(i, boardTiles[i - 1]);
         }
 
         this.startTile = boardTiles[0];
-        this.endTile = boardTiles[64];
+        this.endTile = boardTiles[65];
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < 65; i++) {
             boardTiles[i].setNextTile(boardTiles[i + 1]);
         }
 
