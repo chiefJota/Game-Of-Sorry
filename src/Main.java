@@ -26,6 +26,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.AnimationTimer;
 
+import java.util.Arrays;
 import java.util.Random;
 
 @SuppressWarnings("Duplicates")
@@ -49,6 +50,7 @@ public class Main extends Application {
     private Button move6;
     private Button move7;
 
+    private Button forfeitTurn;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -156,6 +158,11 @@ public class Main extends Application {
 
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
+                            if(deck.isEmpty()){
+                                deck = new SorryDeck();
+                                deck.shuffle();
+
+                            }
 
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
 
@@ -734,14 +741,11 @@ public class Main extends Application {
         }
 
 
-        Button forfeitTurn = new Button("Forfeit turn");
+        forfeitTurn = new Button("Forfeit turn");
         forfeitTurn.setTranslateX(1250);
         forfeitTurn.setTranslateY(835);
         sideBar.getChildren().add(forfeitTurn);
-
-        //TODO: skipping turn but moving with previous
-        //card instead of moving with new card
-        //declare final variable outside
+        //forfeitTurn.setDisable(true);
 
         //card = card2;
         forfeitTurn.setOnMouseClicked(event -> {
@@ -783,6 +787,7 @@ public class Main extends Application {
             }
 
             if (deck.isEmpty()) {
+                deck = new SorryDeck();
                 deck.shuffle();
             }
 
@@ -824,6 +829,7 @@ public class Main extends Application {
                 }
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -864,6 +870,7 @@ public class Main extends Application {
             }
 
             if (deck.isEmpty()) {
+                deck = new SorryDeck();
                 deck.shuffle();
             }
             card = deck.getTopCard();
@@ -903,6 +910,7 @@ public class Main extends Application {
 
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -986,8 +994,8 @@ public class Main extends Application {
             pawnID2 = activeBoard.getTileID(x, y);
         }
 
-        System.out.println(pawnIDs);
-        System.out.println(pawnID2);
+        //System.out.println(pawnIDs);
+        //System.out.println(pawnID2);
 
         int checkPawn1 = pawnIDs + (choice+1);
         int checkPawn2 = pawnID2 + (7-(choice+1));
@@ -1110,6 +1118,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1166,6 +1175,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1207,6 +1217,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1229,6 +1240,7 @@ public class Main extends Application {
         PlayerBoard activeBoard = boards[turn % 2];
 
         if (choice == 0){
+
 
             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), 11)) {
 
@@ -1261,6 +1273,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1294,8 +1307,8 @@ public class Main extends Application {
             }
 
             boolean done1 = false;
-            System.out.println(pawnIDs);
-            System.out.println(pawnID2);
+            //System.out.println(pawnIDs);
+            //System.out.println(pawnID2);
 
             if ((activeBoard.hasPawnAt(pawnIDs, turn % 2))) {
 
@@ -1334,6 +1347,7 @@ public class Main extends Application {
                     ++turn;
 
                     if (deck.isEmpty()) {
+                        deck = new SorryDeck();
                         deck.shuffle();
                     }
 
@@ -1360,7 +1374,13 @@ public class Main extends Application {
         int pawnID = activeBoard.getTileID(x, y);
 
 
+
         boolean done = false;
+
+        if(!canMove(boards, turn % 2, card.getNumber())){
+            //enable forfeit button
+            forfeitTurn.setDisable(false);
+        }
         //loop through other player board
         //check every tile to see
         //if there is a pawn on it
@@ -1401,6 +1421,7 @@ public class Main extends Application {
             turn++;
 
             if(deck.isEmpty()){
+                deck = new SorryDeck();
                 deck.shuffle();
             }
 
@@ -1412,6 +1433,115 @@ public class Main extends Application {
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
         }
         reset();
+    }
+
+    private boolean canMove(PlayerBoard[] boards, int rotation, int card){
+        int[] myPawns = new int[60];
+        int[] otherPawns = new int[60];
+        int startPawns;
+        int homePawns;
+
+        Arrays.fill(myPawns, 0);
+        Arrays.fill(otherPawns, 0);
+
+        startPawns = boards[rotation].getStartPawns();
+        homePawns = boards[rotation].getHomePawns();
+
+        for (int i = 0; i < myPawns.length; i++) {
+            if (boards[rotation].hasPawnAt(i)) {
+                myPawns[i] = 1;
+            }
+        }
+
+        for (int i = 0; i < myPawns.length; i++) {
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == rotation)) {
+                    if (board.hasPawnAt(i,rotation)){
+                        otherPawns[i] = 1;
+                    }
+                }
+            }
+        }
+
+        boolean canMovePawn = true;
+
+        int pawnsOut = 4 - homePawns - startPawns;
+
+        int lastPawnID = 0;
+
+        for (int i = 0; i < myPawns.length; i++) {
+            if (boards[rotation].hasPawnAt(i)) {
+                lastPawnID = i;
+            }
+        }
+
+        // checks for the specific case where we have pawns lined up that can't move to home
+        // and can't move foward
+        if (lastPawnID > 0 && !(card == 10)) {
+            if (card > 65 - lastPawnID) {
+                if (pawnsOut == 1) {
+                    if (myPawns[lastPawnID] == 1) {
+                        canMovePawn = false;
+                    }
+                } else if (pawnsOut == 2) {
+                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1) {
+                        canMovePawn = false;
+                    }
+                } else if (pawnsOut == 3) {
+                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1 &&
+                            myPawns[lastPawnID - 2 * card] == 1) {
+                        canMovePawn = false;
+                    }
+                } else if (pawnsOut == 4) {
+                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1 &&
+                            myPawns[lastPawnID - card] == 1 && myPawns[lastPawnID - card] == 1) {
+                        canMovePawn = false;
+                    }
+                }
+            }
+        }
+
+        if (!canMovePawn) {
+            switch (card) {
+                case 0:
+                    if (homePawns > 0) {
+                        canMovePawn = Arrays.asList(otherPawns).contains(1);
+                    } else {
+                        canMovePawn = false;
+                    }
+                    break;
+                case 1:
+                    canMovePawn = true;
+                case 2:
+                    if (startPawns > 1 && myPawns[1] == 0){
+                        canMovePawn = true;
+                    }
+                    break;
+                case 7:
+                    if (pawnsOut == 0) {
+                        canMovePawn = false;
+                    } else if (pawnsOut == 1 && lastPawnID + card > 65) {
+                        canMovePawn = false;
+                    } else {
+                        canMovePawn = true;
+                    }
+                    break;
+                case 11:
+                    if (pawnsOut == 1 && lastPawnID + card > 65) {
+                        if (Arrays.asList(otherPawns).contains(1)) {
+                            canMovePawn = true;
+                        } else {
+                            canMovePawn = false;
+                        }
+                    }
+                    break;
+                default:
+                    canMovePawn = Arrays.asList(myPawns).contains(1);
+                    break;
+            }
+        }
+
+        return canMovePawn;
     }
 
 

@@ -18,19 +18,19 @@ public class PlayerBoard {
     private Color playerColor = Color.RED;
 
     public PlayerBoard() {
-        this.boardTiles = new BoardTile[65];
+        this.boardTiles = new BoardTile[66];
 
         boardTiles[0] = new BoardTile();
         boardTiles[0].setTileID(0);
 
-        for (int i = 1; i < 65; i++) {
+        for (int i = 1; i < 66; i++) {
             boardTiles[i] = new BoardTile(i, boardTiles[i - 1]);
         }
 
         this.startTile = boardTiles[0];
-        this.endTile = boardTiles[64];
+        this.endTile = boardTiles[65];
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < 65; i++) {
             boardTiles[i].setNextTile(boardTiles[i + 1]);
         }
 
@@ -94,11 +94,112 @@ public class PlayerBoard {
                 int y = coords[1];
                 Circle pawn = new Circle(x, y, 15, playerColor);
                 pawn.setStroke(Color.BLACK);
-                pawn.setStrokeWidth(new Double(2.0));
+                pawn.setStrokeWidth(2.0);
 
                 playerDisplay.getChildren().add(pawn);
             }
         }
+
+        int[] coord1 = new int[]{305, 130};
+        int x1 = coordinateRotation(coord1, 0, rotation)[0];
+        int y1 = coordinateRotation(coord1, 0, rotation)[1];
+        Circle pawn1 = new Circle(x1, y1, 15, playerColor);
+        pawn1.setStroke(Color.BLACK);
+        pawn1.setStrokeWidth(2.0);
+
+        int[] coord2 = new int[]{345, 130};
+        int x2 = coordinateRotation(coord2, 0, rotation)[0];
+        int y2 = coordinateRotation(coord2, 0, rotation)[1];
+        Circle pawn2 = new Circle(x2, y2, 15, playerColor);
+        pawn2.setStroke(Color.BLACK);
+        pawn2.setStrokeWidth(2.0);
+
+        int[] coord3 = new int[]{305, 170};
+        int x3 = coordinateRotation(coord3, 0, rotation)[0];
+        int y3 = coordinateRotation(coord3, 0, rotation)[1];
+        Circle pawn3 = new Circle(x3, y3, 15, playerColor);
+        pawn3.setStroke(Color.BLACK);
+        pawn3.setStrokeWidth(2.0);
+
+        int[] coord4 = new int[]{345, 170};
+        int x4 = coordinateRotation(coord4, 0, rotation)[0];
+        int y4 = coordinateRotation(coord4, 0, rotation)[1];
+        Circle pawn4 = new Circle(x4, y4, 15, playerColor);
+        pawn4.setStroke(Color.BLACK);
+        pawn4.setStrokeWidth(2.0);
+
+        System.out.println("done with normal");
+        switch(startPawns) {
+            case 1:
+                playerDisplay.getChildren().add(pawn1);
+                break;
+            case 2:
+                playerDisplay.getChildren().add(pawn1);
+                playerDisplay.getChildren().add(pawn2);
+                break;
+            case 3:
+                playerDisplay.getChildren().add(pawn1);
+                playerDisplay.getChildren().add(pawn2);
+                playerDisplay.getChildren().add(pawn3);
+                break;
+            case 4:
+                playerDisplay.getChildren().add(pawn1);
+                playerDisplay.getChildren().add(pawn2);
+                playerDisplay.getChildren().add(pawn3);
+                playerDisplay.getChildren().add(pawn4);
+                break;
+        }
+
+        int[] coord5 = new int[]{205, 380};
+        int x5 = coordinateRotation(coord5, 0, rotation)[0];
+        int y5 = coordinateRotation(coord5, 0, rotation)[1];
+        Circle pawn5 = new Circle(x5, y5, 15, playerColor);
+        pawn5.setStroke(Color.BLACK);
+        pawn5.setStrokeWidth(2.0);
+
+        int[] coord6 = new int[]{205, 420};
+        int x6 = coordinateRotation(coord6, 0, rotation)[0];
+        int y6 = coordinateRotation(coord6, 0, rotation)[1];
+        Circle pawn6 = new Circle(x6, y6, 15, playerColor);
+        pawn6.setStroke(Color.BLACK);
+        pawn6.setStrokeWidth(2.0);
+
+        int[] coord7 = new int[]{245, 380};
+        int x7 = coordinateRotation(coord7, 0, rotation)[0];
+        int y7 = coordinateRotation(coord7, 0, rotation)[1];
+        Circle pawn7 = new Circle(x7, y7, 15, playerColor);
+        pawn7.setStroke(Color.BLACK);
+        pawn7.setStrokeWidth(2.0);
+
+        int[] coord8 = new int[]{245, 420};
+        int x8 = coordinateRotation(coord8, 0, rotation)[0];
+        int y8 = coordinateRotation(coord8, 0, rotation)[1];
+        Circle pawn8 = new Circle(x8, y8, 15, playerColor);
+        pawn8.setStroke(Color.BLACK);
+        pawn8.setStrokeWidth(2.0);
+
+        switch(homePawns) {
+            case 1:
+                playerDisplay.getChildren().add(pawn5);
+                break;
+            case 2:
+                playerDisplay.getChildren().add(pawn5);
+                playerDisplay.getChildren().add(pawn6);
+                break;
+            case 3:
+                playerDisplay.getChildren().add(pawn5);
+                playerDisplay.getChildren().add(pawn6);
+                playerDisplay.getChildren().add(pawn7);
+                break;
+            case 4:
+                playerDisplay.getChildren().add(pawn5);
+                playerDisplay.getChildren().add(pawn6);
+                playerDisplay.getChildren().add(pawn7);
+                playerDisplay.getChildren().add(pawn8);
+                break;
+        }
+
+        System.out.println("done with start/home");
 
         return playerDisplay;
     }
