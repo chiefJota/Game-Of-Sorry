@@ -50,11 +50,9 @@ public class Main extends Application {
     private Button move6;
     private Button move7;
 
+    private Button forfeitTurn;
 
-
-
-
-
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -162,6 +160,11 @@ public class Main extends Application {
 
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
+                            if(deck.isEmpty()){
+                                deck = new SorryDeck();
+                                deck.shuffle();
+
+                            }
 
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
 
@@ -740,14 +743,11 @@ public class Main extends Application {
         }
 
 
-        Button forfeitTurn = new Button("Forfeit turn");
+        forfeitTurn = new Button("Forfeit turn");
         forfeitTurn.setTranslateX(1250);
         forfeitTurn.setTranslateY(835);
         sideBar.getChildren().add(forfeitTurn);
-
-        //TODO: skipping turn but moving with previous
-        //card instead of moving with new card
-        //declare final variable outside
+        //forfeitTurn.setDisable(true);
 
         //card = card2;
         forfeitTurn.setOnMouseClicked(event -> {
@@ -787,6 +787,7 @@ public class Main extends Application {
             }
 
             if (deck.isEmpty()) {
+                deck = new SorryDeck();
                 deck.shuffle();
             }
 
@@ -828,6 +829,7 @@ public class Main extends Application {
                 }
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -875,6 +877,7 @@ public class Main extends Application {
             }
 
             if (deck.isEmpty()) {
+                deck = new SorryDeck();
                 deck.shuffle();
             }
             card = deck.getTopCard();
@@ -913,6 +916,7 @@ public class Main extends Application {
                 }
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1039,6 +1043,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1097,6 +1102,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1139,6 +1145,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1192,6 +1199,7 @@ public class Main extends Application {
                 ++turn;
 
                 if (deck.isEmpty()) {
+                    deck = new SorryDeck();
                     deck.shuffle();
                 }
 
@@ -1267,6 +1275,7 @@ public class Main extends Application {
                     ++turn;
 
                     if (deck.isEmpty()) {
+                        deck = new SorryDeck();
                         deck.shuffle();
                     }
 
@@ -1294,8 +1303,12 @@ public class Main extends Application {
 
         System.out.println(pawnID);
 
-
         boolean done = false;
+
+        if(!canMove(boards, turn % 2, card.getNumber())){
+            //enable forfeit button
+            forfeitTurn.setDisable(false);
+        }
         //loop through other player board
         //check every tile to see
         //if there is a pawn on it
@@ -1334,6 +1347,7 @@ public class Main extends Application {
             turn++;
 
             if(deck.isEmpty()){
+                deck = new SorryDeck();
                 deck.shuffle();
             }
 
