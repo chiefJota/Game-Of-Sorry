@@ -59,14 +59,6 @@ public class PlayerBoard {
         }
 
         boardTiles[0].setLastTile(boardTiles[59]);
-
-        boardTiles[1].addPawn();
-        boardTiles[2].addPawn();
-        boardTiles[3].addPawn();
-        boardTiles[22].addPawn();
-        boardTiles[23].addPawn();
-        boardTiles[24].addPawn();
-        boardTiles[25].addPawn();
     }
 
     public void highlightTiles(int[] tilesHighlighted, Group root) {
