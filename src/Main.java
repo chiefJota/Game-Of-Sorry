@@ -71,12 +71,18 @@ public class Main extends Application {
 
         makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage);
 
-        PlayerBoard[] boards = new PlayerBoard[2];
+        PlayerBoard[] boards = new PlayerBoard[4];
         boards[0] = new PlayerBoard(0, Color.RED);
         boards[1] = new PlayerBoard(1, Color.BLUE);
-        //PlayerBoard board3 = new PlayerBoard(3, Color.GREEN);
+        boards[2] = new PlayerBoard(2, Color.YELLOW);
+        boards[3] = new PlayerBoard(3, Color.GREEN);
 
-        ComputerPlayer cpu1 = new ComputerPlayer(1);
+        ComputerPlayer[] cpus = new ComputerPlayer[4];
+        cpus[0] = new ComputerPlayer(0);
+        cpus[1] = new ComputerPlayer(1);
+        cpus[2] = new ComputerPlayer(2);
+        cpus[3] = new ComputerPlayer(3);
+
 
         makeBoard(root);
 
@@ -119,10 +125,9 @@ public class Main extends Application {
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
-
-                if (turn % 2 == 1) {
-                    if (frame % 10 == 0) {
-                        boolean didturn = cpu1.doTurn(boards, card.getNumber(), turn);
+                if (!(turn % 4 == 0)) {
+                    if (frame % 20 == 0) {
+                        boolean didturn = cpus[turn % 4].doTurn(boards, card.getNumber());
 
                         if (didturn) {
                             if (didturn && !(card.getNumber() == 2)) {turn++;}
@@ -186,7 +191,7 @@ public class Main extends Application {
                             moveEleven(boards, root, getcoords);
                             break;
                         default:
-                            PlayerBoard activeBoard = boards[turn % 2];
+                            PlayerBoard activeBoard = boards[turn % 4];
 
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
@@ -200,16 +205,16 @@ public class Main extends Application {
                                 //Moves the pawn and remakes the board
                                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
                                 for (PlayerBoard board : boards) {
-                                    if (!(board.getRotation() == turn % 2)) {
-                                        board.bump(shortBump, turn % 2);
+                                    if (!(board.getRotation() == turn % 4)) {
+                                        board.bump(shortBump, turn % 4);
                                     }
                                 }
 
                                 int[] longBump = activeBoard.checkSlide();
 
                                 for (PlayerBoard board : boards) {
-                                    if (!(board.getRotation() == turn % 2)) {
-                                        board.bump(longBump, turn % 2);
+                                    if (!(board.getRotation() == turn % 4)) {
+                                        board.bump(longBump, turn % 4);
                                     }
                                 }
 
@@ -598,13 +603,13 @@ public class Main extends Application {
         bar2.setFill(Color.BLACK);
         bar3.setFill(Color.BLACK);
 
-        if (turn % 2 == 0) {
+        if (turn % 4 == 0) {
             bar.setFill(Color.RED);
-        } else if (turn % 2 == 1) {
+        } else if (turn % 4 == 1) {
             bar.setFill(Color.BLUE);
-        } else if (turn % 2 == 2) {
+        } else if (turn % 4 == 2) {
             bar.setFill(Color.YELLOW);
-        } else if (turn % 2 == 3) {
+        } else if (turn % 4 == 3) {
             bar.setFill(Color.GREEN);
         }
 
@@ -805,12 +810,18 @@ public class Main extends Application {
     public void move1(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
         int pawnID = activeBoard.getTileID(x, y);
 
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(1, turn % 4);
+                }
+            }
 
             activeBoard.moveToHome();
 
@@ -841,16 +852,16 @@ public class Main extends Application {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 1);
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump, turn % 4);
                     }
                 }
 
                 int[] longBump = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump, turn % 4);
                     }
                 }
 
@@ -888,12 +899,18 @@ public class Main extends Application {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
         int pawnID = activeBoard.getTileID(x, y);
 
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(1, turn % 4);
+                }
+            }
 
             activeBoard.moveToHome();
 
@@ -921,16 +938,16 @@ public class Main extends Application {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 2);
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump, turn % 4);
                     }
                 }
 
                 int[] longBump = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump, turn % 4);
                     }
                 }
 
@@ -964,7 +981,7 @@ public class Main extends Application {
 
 
     public void move4(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords) {
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
@@ -973,16 +990,16 @@ public class Main extends Application {
             int bumped1 = activeBoard.movePawn(activeBoard.getTileID(x, y), -4);
             int[] bumped11 = new int[]{bumped1};
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(bumped11, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(bumped11, turn % 4);
                 }
             }
 
             int[] bumped = activeBoard.checkSlide();
 
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(bumped, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(bumped, turn % 4);
                 }
             }
             activeBoard.moveToHome();
@@ -1016,16 +1033,16 @@ public class Main extends Application {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
-        if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) && (activeBoard.getTileID(x, y) != -1)) {
+        if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 4)) && (activeBoard.getTileID(x, y) != -1)) {
             pawnIDs = activeBoard.getTileID(x, y);
         }
 
         if (pawnIDs != -1) {
             ++click2;
         }
-        if ((click2 != 0) && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2))) {
+        if ((click2 != 0) && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 4))) {
             pawnID2 = activeBoard.getTileID(x, y);
         }
 
@@ -1039,16 +1056,16 @@ public class Main extends Application {
 
             int shortBump = activeBoard.movePawn(pawnIDs, 7);
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(shortBump, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(shortBump, turn % 4);
                 }
             }
 
             int[] longBump = activeBoard.checkSlide();
 
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(longBump, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(longBump, turn % 4);
                 }
             }
 
@@ -1075,16 +1092,16 @@ public class Main extends Application {
 
             int shortBump = activeBoard.movePawn(pawnID2, 7);
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(shortBump, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(shortBump, turn % 4);
                 }
             }
 
             int[] longBump = activeBoard.checkSlide();
 
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(longBump, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(longBump, turn % 4);
                 }
             }
 
@@ -1108,36 +1125,36 @@ public class Main extends Application {
             reset();
 
 
-        } else if ((activeBoard.hasPawnAt(pawnIDs, turn % 2)) && activeBoard.hasPawnAt(pawnID2, turn % 2)) {
+        } else if ((activeBoard.hasPawnAt(pawnIDs, turn % 4)) && activeBoard.hasPawnAt(pawnID2, turn % 4)) {
             if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1)) && checkPawn1 != checkPawn2) {
 
                 int shortBump = activeBoard.movePawn(pawnIDs, choice + 1);
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump, turn % 4);
                     }
                 }
 
                 int[] longBump = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump, turn % 4);
                     }
                 }
 
                 int shortBump1 = activeBoard.movePawn(pawnID2, 7 - (choice + 1));
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump1, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump1, turn % 4);
                     }
                 }
 
                 int[] longBump1 = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump1, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump1, turn % 4);
                     }
                 }
 
@@ -1176,25 +1193,25 @@ public class Main extends Application {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
         int pawnID = activeBoard.getTileID(x, y);
 
-        if ((choice == 0) && (activeBoard.hasPawnAt(pawnID, turn % 2))) {
+        if ((choice == 0) && (activeBoard.hasPawnAt(pawnID, turn % 4))) {
             if (activeBoard.canMovePawn(pawnID, 10)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 10);
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump, turn % 4);
                     }
                 }
 
                 int[] longBump = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump, turn % 4);
                     }
                 }
 
@@ -1228,16 +1245,16 @@ public class Main extends Application {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), -1);
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump, turn % 4);
                     }
                 }
 
                 int[] longBump = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump, turn % 4);
                     }
                 }
                 activeBoard.moveToHome();
@@ -1272,7 +1289,7 @@ public class Main extends Application {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
         if (choice == 0){
 
@@ -1283,16 +1300,16 @@ public class Main extends Application {
                 //Moves the pawn and remakes the board
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 11);
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(shortBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(shortBump, turn % 4);
                     }
                 }
 
                 int[] longBump = activeBoard.checkSlide();
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        board.bump(longBump, turn % 2);
+                    if (!(board.getRotation() == turn % 4)) {
+                        board.bump(longBump, turn % 4);
                     }
                 }
 
@@ -1325,7 +1342,7 @@ public class Main extends Application {
 
         } else if (choice == 1) {
 
-            if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 2)) && (activeBoard.getTileID(x, y)!=-1)){
+            if (click2 == 0 && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % 4)) && (activeBoard.getTileID(x, y)!=-1)){
                 pawnIDs = activeBoard.getTileID(x, y);
 
             }
@@ -1334,7 +1351,7 @@ public class Main extends Application {
             }
 
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
+                if (!(board.getRotation() == turn % 4)) {
                     if (board.hasPawnAt(board.getTileID(x,y))){
                         pawnID2 = activeBoard.getTileID(x, y);
                     }
@@ -1345,11 +1362,11 @@ public class Main extends Application {
             //System.out.println(pawnIDs);
             //System.out.println(pawnID2);
 
-            if ((activeBoard.hasPawnAt(pawnIDs, turn % 2))) {
+            if ((activeBoard.hasPawnAt(pawnIDs, turn % 4))) {
 
                 for (PlayerBoard board : boards) {
-                    if (!(board.getRotation() == turn % 2)) {
-                        if (board.hasPawnAt(pawnID2, turn%2)) {
+                    if (!(board.getRotation() == turn % 4)) {
+                        if (board.hasPawnAt(pawnID2, turn % 4)) {
                             done1 = true;
                         }
                     }
@@ -1363,9 +1380,9 @@ public class Main extends Application {
                     //spaces = -(spaces);
 
                     for (PlayerBoard board : boards) {
-                        if (!(board.getRotation() == turn % 2)) {
-                            if (board.hasPawnAt(pawnID2, turn % 2)) {
-                                board.movePawn(pawnID2, -(spaces), turn%2);
+                        if (!(board.getRotation() == turn % 4)) {
+                            if (board.hasPawnAt(pawnID2, turn % 4)) {
+                                board.movePawn(pawnID2, -(spaces), turn % 4);
                             }
                         }
                     }
@@ -1404,20 +1421,20 @@ public class Main extends Application {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-        PlayerBoard activeBoard = boards[turn % 2];
+        PlayerBoard activeBoard = boards[turn % 4];
 
         int pawnID = activeBoard.getTileID(x, y);
 
         boolean done = false;
 
-       canMove(boards, turn % 2, card.getNumber());
+       canMove(boards, turn % 4, card.getNumber());
 
         //loop through other player board
         //check every tile to see
         //if there is a pawn on it
         for (PlayerBoard board : boards) {
-            if (!(board.getRotation() == turn % 2)) {
-                if (board.hasPawnAt(pawnID, turn % 2)) {
+            if (!(board.getRotation() == turn % 4)) {
+                if (board.hasPawnAt(pawnID, turn % 4)) {
                     activeBoard.movePawnTo(pawnID);
 
                     done = true;
@@ -1426,16 +1443,16 @@ public class Main extends Application {
         }
         if (done) {
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(pawnID, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(pawnID, turn % 4);
                 }
             }
 
             int[] longBump = activeBoard.checkSlide();
 
             for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 2)) {
-                    board.bump(longBump, turn % 2);
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(longBump, turn % 4);
                 }
             }
 
