@@ -120,7 +120,6 @@ public class PlayerBoard {
         pawn4.setStroke(Color.BLACK);
         pawn4.setStrokeWidth(2.0);
 
-        System.out.println("done with normal");
         switch(startPawns) {
             case 1:
                 playerDisplay.getChildren().add(pawn1);
@@ -190,8 +189,6 @@ public class PlayerBoard {
                 playerDisplay.getChildren().add(pawn8);
                 break;
         }
-
-        System.out.println("done with start/home");
 
         return playerDisplay;
     }
@@ -279,12 +276,12 @@ public class PlayerBoard {
                 if (i == 21 || i == 36 || i == 51) {
                     this.movePawn(i, 4);
                     int[] bumpedTiles = new int[]{i, i+1, i+2, i+3, i+4};
-                    this.bump(Arrays.copyOfRange(bumpedTiles, 0,4), rotation);
+                    this.bump(Arrays.copyOfRange(bumpedTiles, 1,4), rotation);
                     return bumpedTiles;
                 } else if (i == 13 || i == 28 || i == 43) {
                     this.movePawn(i, 3);
                     int[] bumpedTiles = new int[]{i, i+1, i+2, i+3};
-                    this.bump(Arrays.copyOfRange(bumpedTiles, 0,3), rotation);
+                    this.bump(Arrays.copyOfRange(bumpedTiles, 1,3), rotation);
                     return bumpedTiles;
                 }
             }
@@ -298,16 +295,8 @@ public class PlayerBoard {
     }
 
     public void movePawnTo(int tileID) {
-        System.out.println(tileID);
-
         boardTiles[tileID].addPawn();
-
-        System.out.println(startPawns);
-
         startPawns--;
-
-        System.out.println(startPawns);
-
     }
 
 

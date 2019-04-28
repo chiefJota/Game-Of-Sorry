@@ -20,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.animation.AnimationTimer;
 
+import javax.sound.midi.SysexMessage;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -35,6 +36,7 @@ public class Main extends Application {
     private int click2 = 0;
     private int pawnIDs = -1;
     private int pawnID2 = -1;
+    private int frame = 0;
 
     private Button move1;
     private Button move2;
@@ -74,6 +76,8 @@ public class Main extends Application {
         boards[1] = new PlayerBoard(1, Color.BLUE);
         //PlayerBoard board3 = new PlayerBoard(3, Color.GREEN);
 
+        ComputerPlayer cpu1 = new ComputerPlayer(1);
+
         makeBoard(root);
 
         for (PlayerBoard board : boards) {
@@ -98,7 +102,6 @@ public class Main extends Application {
                     x = (int) e.getX();
                     y = (int) e.getY();
                 }
-                System.out.println("click");
             }
         };
 
@@ -117,8 +120,48 @@ public class Main extends Application {
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
 
-                try {
+                if (turn % 2 == 1) {
+                    if (frame % 10 == 0) {
+                        boolean didturn = cpu1.doTurn(boards, card.getNumber(), turn);
 
+                        if (didturn) {
+                            if (didturn && !(card.getNumber() == 2)) {turn++;}
+                            makeBoard(root);
+
+                            for (PlayerBoard board : boards) {
+                                Group pawns = board.displayPawns();
+                                root.getChildren().add(pawns);
+                            }
+
+                            //TODO: Put timer to delay sidebar update
+                            makeSidebar(root, changeCard());
+                        } else {
+                            System.out.println("turn skipped");
+                            System.out.println(card.getNumber());
+                            if (!(card.getNumber() == 2)) {turn++;}
+                            makeBoard(root);
+
+                            for (PlayerBoard board : boards) {
+                                Group pawns = board.displayPawns();
+                                root.getChildren().add(pawns);
+                            }
+
+                            //TODO: Put timer to delay sidebar update
+                            makeSidebar(root, changeCard());
+                        }
+                    } else {
+                        makeBoard(root);
+
+                        for (PlayerBoard board : boards) {
+                            Group pawns = board.displayPawns();
+                            root.getChildren().add(pawns);
+                        }
+
+                        //TODO: Put timer to delay sidebar update
+                        makeSidebar(root, card);
+                    }
+                } else
+                    try {
 
                     switch (card.getNumber()) {
                         case 0:
@@ -154,32 +197,31 @@ public class Main extends Application {
                             }*/
 
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
-
-                                    //Moves the pawn and remakes the board
-                                    int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
-                                    for (PlayerBoard board : boards) {
-                                        if (!(board.getRotation() == turn % 2)) {
-                                            board.bump(shortBump, turn % 2);
-                                        }
+                                //Moves the pawn and remakes the board
+                                int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
+                                for (PlayerBoard board : boards) {
+                                    if (!(board.getRotation() == turn % 2)) {
+                                        board.bump(shortBump, turn % 2);
                                     }
+                                }
 
-                                    int[] longBump = activeBoard.checkSlide();
+                                int[] longBump = activeBoard.checkSlide();
 
-                                    for (PlayerBoard board : boards) {
-                                        if (!(board.getRotation() == turn % 2)) {
-                                            board.bump(longBump, turn % 2);
-                                        }
+                                for (PlayerBoard board : boards) {
+                                    if (!(board.getRotation() == turn % 2)) {
+                                        board.bump(longBump, turn % 2);
                                     }
+                                }
 
-                                    activeBoard.moveToHome();
+                                activeBoard.moveToHome();
 
-                                    makeBoard(root);
+                                makeBoard(root);
 
-                                    for (PlayerBoard board : boards) {
-                                        Group pawns = board.displayPawns();
-                                        root.getChildren().add(pawns);
-                                    }
-                                    ++turn;
+                                for (PlayerBoard board : boards) {
+                                    Group pawns = board.displayPawns();
+                                    root.getChildren().add(pawns);
+                                }
+                                ++turn;
 
 
                                // card = deck.getTopCard();
@@ -195,6 +237,8 @@ public class Main extends Application {
                 } catch (Exception exception) {
                     //System.out.println("You did not click on a board tile.");
                 }
+
+                frame++;
 
             }
         }.start();
