@@ -40,7 +40,6 @@ public class PlayerBoard {
     }
 
     public PlayerBoard(int rotation, Color playerColor) {
-        startPawns = 2;
         this.rotation = rotation;
         this.boardTiles = new BoardTile[66];
         this.playerColor = playerColor;
@@ -60,9 +59,6 @@ public class PlayerBoard {
         }
 
         boardTiles[0].setLastTile(boardTiles[59]);
-
-        boardTiles[11].addPawn();
-        boardTiles[23].addPawn();
     }
 
     public void highlightTiles(int[] tilesHighlighted, Group root) {
