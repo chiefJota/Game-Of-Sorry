@@ -46,6 +46,7 @@ public class ComputerPlayer {
                     hasMoved = doEleven(boards);
                     break;
                 default:
+                    //hasMoved = doEleven(boards);
                     hasMoved = doForwardMove(boards, card);
                     break;
             }
@@ -351,22 +352,50 @@ public class ComputerPlayer {
                             for (int j = 64; j > -1; j--) {
                                 if (!(i == j) && boards[playerRotation].hasPawnAt(j)) {
                                     for (int k = 0; k < 7; k++) {
-                                        int value1 = moveValue(i, 7 - k);
-                                        int value2 = moveValue(j, k);
+                                        if(!(i + 7 - k == j + k)) {
+                                            int value1 = moveValue(i, 7 - k);
+                                            int value2 = moveValue(j, k);
 
-                                        if (maxValue == value1 + value2) {
-                                            System.out.println("tag2");
-                                            System.out.println(i);
-                                            System.out.println(j);
-                                            System.out.println(k);
-                                            System.out.println(value1);
-                                            System.out.println(value2);
+                                            if (boards[playerRotation].canMovePawn(i, 7 - k)
+                                                && boards[playerRotation].canMovePawn(j, k)) {
+                                                if (maxValue == value1 + value2) {
+                                                    int bump1 = boards[playerRotation].movePawn(i, 7 - k);
 
-                                            doMove(boards, i, 7 - k);
-                                            doMove(boards, j, k);
-                                            hasMoved = true;
-                                            boards[playerRotation].moveToHome();
-                                            break moved;
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bump1, playerRotation);
+                                                        }
+                                                    }
+
+                                                    int bump2 = boards[playerRotation].movePawn(j, k);
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bump2, playerRotation);
+                                                        }
+                                                    }
+
+                                                    int[] bumped1 = boards[playerRotation].checkSlide();
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bumped1, playerRotation);
+                                                        }
+                                                    }
+
+                                                    int[] bumped2 = boards[playerRotation].checkSlide();
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bumped2, playerRotation);
+                                                        }
+                                                    }
+
+                                                    hasMoved = true;
+                                                    boards[playerRotation].moveToHome();
+                                                    break moved;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -426,43 +455,24 @@ public class ComputerPlayer {
                 for (int i = 0; i < 64; i++) {
                     if (boards[playerRotation].hasPawnAt(i)) {
                         for (int j = 64; j > -1; j--) {
-                            if (hasPawnOther(boards, j, playerRotation)) {
+                            if (hasPawnOther(j)) {
                                 int distance = j - i;
-                                if ((distance > 11 && moveValue(i, distance) > -1)
-                                        || maxValue == moveValue(i, distance)){
+                                if ((distance > 11 && moveValue(i, distance) > -1) && !onSlide(boards, i)
+                                        || maxValue == moveValue(i, distance) && !onSlide(boards, i)){
                                     System.out.println("in");
                                     int[] bumped1;
                                     int[] bumped2 = new int[0];
 
-                                    int move1 = boards[playerRotation].movePawn(i, distance);
+                                    boards[playerRotation].movePawn(i, distance);
                                     bumped1 = boards[playerRotation].checkSlide();
-
-                                    int otherRotation = -1;
-
-                                    int move2 = 1;
 
                                     for (PlayerBoard board : boards) {
                                         if (!(board.getRotation() == playerRotation)) {
                                             if (board.hasPawnAt(j, playerRotation)) {
-                                                move2 = board.movePawn(j, -distance, playerRotation);
-                                                otherRotation = board.getRotation();
-                                                bumped2 = board.checkSlide();
+                                                board.movePawn(j,  -distance, playerRotation);
                                             }
-                                        }
-                                    }
-
-                                    System.out.println(i);
-                                    System.out.println(j);
-                                    System.out.println(distance);
-                                    System.out.println(move1);
-                                    System.out.println(move2);
-
-                                    for (PlayerBoard board : boards) {
-                                        if (!(board.getRotation() == playerRotation)) {
                                             board.bump(bumped1, playerRotation);
-                                        }
-                                        if (!(board.getRotation() == otherRotation)) {
-                                            board.bump(bumped2, otherRotation);
+
                                         }
                                     }
                                     hasMoved = true;
@@ -486,11 +496,13 @@ public class ComputerPlayer {
                     for (int i = 0; i < 64; i++) {
                         if (boards[playerRotation].hasPawnAt(i)) {
                             for (int j = 64; j > -1; j--) {
-                                if (hasPawnOther(boards, j, playerRotation)) {
+                                if (hasPawnOther(j)) {
                                     int distance = j - i;
                                     if ((distance > 11 && moveValue(i, distance) > -1)
                                             || maxValue == moveValue(i, distance)){
                                         System.out.println("in");
+                                        System.out.println(i);
+                                        System.out.println(j);
                                         int[] bumped1;
                                         int[] bumped2 = new int[0];
 
@@ -504,7 +516,7 @@ public class ComputerPlayer {
                                         for (PlayerBoard board : boards) {
                                             if (!(board.getRotation() == playerRotation)) {
                                                 if (board.hasPawnAt(j, playerRotation)) {
-                                                    move2 = board.movePawn(j, -distance, playerRotation);
+                                                    move2 = board.movePawn(j,  -distance - 60, playerRotation);
                                                     otherRotation = board.getRotation();
                                                     bumped2 = board.checkSlide();
                                                 }
@@ -543,6 +555,15 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    private boolean onSlide(PlayerBoard[] boards, int tileID) {
+        if (tileID == 21 || tileID == 36 || tileID == 51) {
+            return true;
+        } else if (tileID == 13 || tileID == 28 || tileID == 43) {
+            return true;
+        }
+        return false;
+    }
+
     private void doMove(PlayerBoard[] boards, int tileID, int moves){
         int bump = boards[playerRotation].movePawn(tileID, moves);
 
@@ -561,13 +582,9 @@ public class ComputerPlayer {
         }
     }
 
-    boolean hasPawnOther(PlayerBoard[] boards, int tileID, int rotation){
-        for (PlayerBoard board : boards) {
-            if (!(board.getRotation() == rotation)) {
-                if (otherPawns[tileID] == 1){
-                    return true;
-                }
-            }
+    boolean hasPawnOther(int tileID){
+        if (otherPawns[tileID] == 1){
+            return true;
         }
         return false;
     }
@@ -580,4 +597,6 @@ public class ComputerPlayer {
         }
         return false;
     }
+
+
 }

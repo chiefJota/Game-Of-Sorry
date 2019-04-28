@@ -125,9 +125,8 @@ public class Main extends Application {
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
-
-                if (true) {
-                    if (frame % 10 == 0) {
+                if (!(turn % 4 == 0)) {
+                    if (frame % 20 == 0) {
                         boolean didturn = cpus[turn % 4].doTurn(boards, card.getNumber());
 
                         if (didturn) {
@@ -818,6 +817,12 @@ public class Main extends Application {
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
 
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(1, turn % 4);
+                }
+            }
+
             activeBoard.moveToHome();
 
             makeBoard(root);
@@ -900,6 +905,12 @@ public class Main extends Application {
 
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
+
+            for (PlayerBoard board : boards) {
+                if (!(board.getRotation() == turn % 4)) {
+                    board.bump(1, turn % 4);
+                }
+            }
 
             activeBoard.moveToHome();
 
