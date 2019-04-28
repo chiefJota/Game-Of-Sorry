@@ -95,7 +95,7 @@ public class Main extends Application {
 
         makeBoard(root);
 
-        for (PlayerBoard board : boards) {
+        for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
             Group pawns = board.displayPawns();
             root.getChildren().add(pawns);
         }
@@ -123,45 +123,16 @@ public class Main extends Application {
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
 
-
-                if (add && players == 3){
-                    PlayerBoard[] boards = new PlayerBoard[3];
-                    boards[0] = new PlayerBoard(0, Color.RED);
-
-                    boards[1] = new PlayerBoard(1, Color.BLUE);
-                    ComputerPlayer cpu1 = new ComputerPlayer(1);
-
-                    boards[2] = new PlayerBoard(2, Color.GREEN);
-                    ComputerPlayer cpu2 = new ComputerPlayer(2);
-                    add = false;
-
-
-                } else if (add && players == 4){
-                    PlayerBoard[] boards = new PlayerBoard[4];
-                    boards[0] = new PlayerBoard(0, Color.RED);
-
-                    boards[1] = new PlayerBoard(1, Color.BLUE);
-                    ComputerPlayer cpu1 = new ComputerPlayer(1);
-
-                    boards[2] = new PlayerBoard(2, Color.GREEN);
-                    ComputerPlayer cpu2 = new ComputerPlayer(2);
-
-                    boards[3] = new PlayerBoard(3, Color.YELLOW);
-                    ComputerPlayer cpu3 = new ComputerPlayer(3);
-                    add = false;
-
-                }
-
-                if (turn % players == 1) {
+                if (!(turn % players == 0)) {
                     if (frame % 20 == 0) {
-                        boolean didturn = cpus[turn % 4].doTurn(boards, card.getNumber());
+                        boolean didturn = cpus[turn % players].doTurn(boards, card.getNumber(), players);
 
 
                         if (didturn) {
                             if (didturn && !(card.getNumber() == 2)) {turn++;}
                             makeBoard(root);
 
-                            for (PlayerBoard board : boards) {
+                            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                                 Group pawns = board.displayPawns();
                                 root.getChildren().add(pawns);
                             }
@@ -174,7 +145,7 @@ public class Main extends Application {
                             if (!(card.getNumber() == 2)) {turn++;}
                             makeBoard(root);
 
-                            for (PlayerBoard board : boards) {
+                            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                                 Group pawns = board.displayPawns();
                                 root.getChildren().add(pawns);
                             }
@@ -185,7 +156,7 @@ public class Main extends Application {
                     } else {
                         makeBoard(root);
 
-                        for (PlayerBoard board : boards) {
+                        for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                             Group pawns = board.displayPawns();
                             root.getChildren().add(pawns);
                         }
@@ -234,7 +205,7 @@ public class Main extends Application {
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
                                 //Moves the pawn and remakes the board
                                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
-                                for (PlayerBoard board : boards) {
+                                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                                     if (!(board.getRotation() == turn % players)) {
                                         board.bump(shortBump, turn % players);
@@ -244,7 +215,7 @@ public class Main extends Application {
 
                                 int[] longBump = activeBoard.checkSlide();
 
-                                for (PlayerBoard board : boards) {
+                                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                                     if (!(board.getRotation() == turn % players)) {
                                         board.bump(longBump, turn % players);
@@ -256,7 +227,7 @@ public class Main extends Application {
 
                                 makeBoard(root);
 
-                                for (PlayerBoard board : boards) {
+                                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                                     Group pawns = board.displayPawns();
                                     root.getChildren().add(pawns);
                                     if (board.hasWon()){
@@ -300,19 +271,19 @@ public class Main extends Application {
         congratulations.setFont(new Font("Times New Roman", 50));
 
         Label winningTeam;
-        if (turn % 4 == 0) {
+        if (turn % players == 0) {
             winningTeam = new Label("The red team won");
             winningTeam.setTranslateY(100);
             winningTeam.setTranslateX(600);
             winningTeam.setFont(new Font("Times New Roman", 30));
             winScreen.setFill(Color.RED);
-        } else if (turn % 4 == 1){
+        } else if (turn % players == 1){
             winningTeam = new Label("The blue team won");
             winningTeam.setTranslateY(150);
             winningTeam.setTranslateX(600);
             winningTeam.setFont(new Font("Times New Roman", 30));
             winScreen.setFill(Color.BLUE);
-        } else if (turn % 4 == 2){
+        } else if (turn % players == 2){
             winningTeam = new Label("The green team won");
             winningTeam.setTranslateY(150);
             winningTeam.setTranslateX(600);
@@ -946,9 +917,9 @@ public class Main extends Application {
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
 
-            for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 4)) {
-                    board.bump(1, turn % 4);
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
+                if (!(board.getRotation() == turn % players)) {
+                    board.bump(1, turn % players);
                 }
             }
 
@@ -956,7 +927,7 @@ public class Main extends Application {
 
             makeBoard(root);
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
@@ -983,7 +954,7 @@ public class Main extends Application {
             if (activeBoard.canMovePawn(pawnID, 1)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 1);
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump, turn % players);
@@ -993,7 +964,7 @@ public class Main extends Application {
 
                 int[] longBump = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump, turn % players);
@@ -1005,7 +976,7 @@ public class Main extends Application {
 
                 makeBoard(root);
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
@@ -1047,9 +1018,9 @@ public class Main extends Application {
         if ((choice == 0) && (!activeBoard.hasPawnAt(1))) {
             activeBoard.moveFromStart();
 
-            for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == turn % 4)) {
-                    board.bump(1, turn % 4);
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
+                if (!(board.getRotation() == turn % players)) {
+                    board.bump(1, turn % players);
                 }
             }
 
@@ -1057,7 +1028,7 @@ public class Main extends Application {
 
             makeBoard(root);
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
@@ -1081,7 +1052,7 @@ public class Main extends Application {
             if (activeBoard.canMovePawn(pawnID, 2)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 2);
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump, turn % players);
@@ -1091,7 +1062,7 @@ public class Main extends Application {
 
                 int[] longBump = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump, turn % players);
 
@@ -1102,7 +1073,7 @@ public class Main extends Application {
 
                 makeBoard(root);
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
@@ -1139,7 +1110,7 @@ public class Main extends Application {
 
             int bumped1 = activeBoard.movePawn(activeBoard.getTileID(x, y), -4);
             int[] bumped11 = new int[]{bumped1};
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(bumped11, turn % players);
@@ -1149,7 +1120,7 @@ public class Main extends Application {
 
             int[] bumped = activeBoard.checkSlide();
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(bumped, turn % players);
@@ -1160,7 +1131,7 @@ public class Main extends Application {
 
             makeBoard(root);
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
@@ -1214,7 +1185,7 @@ public class Main extends Application {
         if (choice == 6 && activeBoard.canMovePawn(pawnIDs, 7)){
 
             int shortBump = activeBoard.movePawn(pawnIDs, 7);
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(shortBump, turn % players);
 
@@ -1223,7 +1194,7 @@ public class Main extends Application {
 
             int[] longBump = activeBoard.checkSlide();
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(longBump, turn % players);
 
@@ -1234,7 +1205,7 @@ public class Main extends Application {
 
             makeBoard(root);
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
@@ -1255,7 +1226,7 @@ public class Main extends Application {
         } else if (choice == 6 && activeBoard.canMovePawn(pawnID2, 7)){
 
             int shortBump = activeBoard.movePawn(pawnID2, 7);
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(shortBump, turn % players);
@@ -1265,7 +1236,7 @@ public class Main extends Application {
 
             int[] longBump = activeBoard.checkSlide();
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(longBump, turn % players);
@@ -1277,7 +1248,7 @@ public class Main extends Application {
 
             makeBoard(root);
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
@@ -1301,7 +1272,7 @@ public class Main extends Application {
             if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1)) && checkPawn1 != checkPawn2) {
 
                 int shortBump = activeBoard.movePawn(pawnIDs, choice + 1);
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump, turn % players);
 
@@ -1310,7 +1281,7 @@ public class Main extends Application {
 
                 int[] longBump = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump, turn % players);
@@ -1319,7 +1290,7 @@ public class Main extends Application {
                 }
 
                 int shortBump1 = activeBoard.movePawn(pawnID2, 7 - (choice + 1));
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump1, turn % players);
 
@@ -1328,7 +1299,7 @@ public class Main extends Application {
 
                 int[] longBump1 = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump1, turn % players);
 
@@ -1339,7 +1310,7 @@ public class Main extends Application {
 
                 makeBoard(root);
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
@@ -1383,7 +1354,7 @@ public class Main extends Application {
             if (activeBoard.canMovePawn(pawnID, 10)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 10);
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump, turn % players);
 
@@ -1392,7 +1363,7 @@ public class Main extends Application {
 
                 int[] longBump = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump, turn % players);
@@ -1404,7 +1375,7 @@ public class Main extends Application {
 
                 makeBoard(root);
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
@@ -1432,7 +1403,7 @@ public class Main extends Application {
             if (activeBoard.canMovePawn(pawnID, -1)) {
 
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), -1);
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump, turn % players);
@@ -1442,7 +1413,7 @@ public class Main extends Application {
 
                 int[] longBump = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump, turn % players);
 
@@ -1452,7 +1423,7 @@ public class Main extends Application {
 
                 makeBoard(root);
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
@@ -1494,7 +1465,7 @@ public class Main extends Application {
 
                 //Moves the pawn and remakes the board
                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), 11);
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(shortBump, turn % players);
@@ -1504,7 +1475,7 @@ public class Main extends Application {
 
                 int[] longBump = activeBoard.checkSlide();
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                     if (!(board.getRotation() == turn % players)) {
                         board.bump(longBump, turn % players);
@@ -1516,7 +1487,7 @@ public class Main extends Application {
 
                 makeBoard(root);
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
@@ -1553,7 +1524,7 @@ public class Main extends Application {
                 ++click2;
             }
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 if (!(board.getRotation() == turn % players)) {
 
                     if (board.hasPawnAt(board.getTileID(x,y))){
@@ -1568,7 +1539,7 @@ public class Main extends Application {
 
             if ((activeBoard.hasPawnAt(pawnIDs, turn % players))) {
 
-                for (PlayerBoard board : boards) {
+                for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                     if (!(board.getRotation() == turn % players)) {
                         if (board.hasPawnAt(pawnID2, turn % players)) {
 
@@ -1584,7 +1555,7 @@ public class Main extends Application {
                     activeBoard.movePawn(pawnIDs, spaces);
                     //spaces = -(spaces);
 
-                    for (PlayerBoard board : boards) {
+                    for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                         if (!(board.getRotation() == turn % players)) {
                             if (board.hasPawnAt(pawnID2, turn % players)) {
                                 board.movePawn(pawnID2, -(spaces), turn % players);
@@ -1597,7 +1568,7 @@ public class Main extends Application {
 
                     makeBoard(root);
 
-                    for (PlayerBoard board : boards) {
+                    for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                         Group pawns = board.displayPawns();
                         root.getChildren().add(pawns);
                         if (board.hasWon()){
@@ -1643,7 +1614,7 @@ public class Main extends Application {
         //loop through other player board
         //check every tile to see
         //if there is a pawn on it
-        for (PlayerBoard board : boards) {
+        for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
             if (!(board.getRotation() == turn % players)) {
                 if (board.hasPawnAt(pawnID, turn % players)) {
 
@@ -1654,7 +1625,7 @@ public class Main extends Application {
             }
         }
         if (done) {
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(pawnID, turn % players);
 
@@ -1663,7 +1634,7 @@ public class Main extends Application {
 
             int[] longBump = activeBoard.checkSlide();
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
                 if (!(board.getRotation() == turn % players)) {
                     board.bump(longBump, turn % players);
@@ -1675,7 +1646,7 @@ public class Main extends Application {
 
             makeBoard(root);
 
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
@@ -1721,7 +1692,7 @@ public class Main extends Application {
         }
 
         for (int i = 0; i < myPawns.length; i++) {
-            for (PlayerBoard board : boards) {
+            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                 if (!(board.getRotation() == rotation)) {
                     if (board.hasPawnAt(i,rotation)){
                         otherPawns[i] = 1;
