@@ -121,7 +121,7 @@ public class Main extends Application {
             public void handle(long currentNanoTime) {
 
                 if (turn % 2 == 1) {
-                    if (frame % 30 == 0) {
+                    if (frame % 10 == 0) {
                         boolean didturn = cpu1.doTurn(boards, card.getNumber(), turn);
 
                         if (didturn) {
@@ -133,10 +133,8 @@ public class Main extends Application {
                                 root.getChildren().add(pawns);
                             }
 
-                            card = deck.getTopCard();
-
                             //TODO: Put timer to delay sidebar update
-                            makeSidebar(root, card);
+                            makeSidebar(root, changeCard());
                         } else {
                             System.out.println("turn skipped");
                             System.out.println(card.getNumber());
@@ -148,10 +146,8 @@ public class Main extends Application {
                                 root.getChildren().add(pawns);
                             }
 
-                            card = deck.getTopCard();
-
                             //TODO: Put timer to delay sidebar update
-                            makeSidebar(root, card);
+                            makeSidebar(root, changeCard());
                         }
                     } else {
                         makeBoard(root);
