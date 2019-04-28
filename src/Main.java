@@ -30,6 +30,7 @@ public class Main extends Application {
     private SorryDeck deck;
     private SorryCard card;
     private int turn = 0;
+
     private int x = 0;
     private int y = 0;
     private int choice = -1;
@@ -125,8 +126,8 @@ public class Main extends Application {
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
-                if (!(turn % 4 == 0)) {
-                    if (frame % 20 == 0) {
+                if (true) {
+                    if (frame % 1 == 0) {
                         boolean didturn = cpus[turn % 4].doTurn(boards, card.getNumber());
 
                         if (didturn) {
@@ -204,7 +205,7 @@ public class Main extends Application {
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
                                 //Moves the pawn and remakes the board
                                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
-                                for (PlayerBoard board : boards) {
+                                for (PlayerBoard board : Arrays.copyOfRange(boards, 1,5)) {
                                     if (!(board.getRotation() == turn % 4)) {
                                         board.bump(shortBump, turn % 4);
                                     }

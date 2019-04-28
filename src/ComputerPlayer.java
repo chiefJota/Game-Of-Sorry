@@ -51,6 +51,7 @@ public class ComputerPlayer {
                     break;
             }
         }
+        checkPawnNum(boards);
         return hasMoved;
     }
 
@@ -498,8 +499,8 @@ public class ComputerPlayer {
                             for (int j = 64; j > -1; j--) {
                                 if (hasPawnOther(j)) {
                                     int distance = j - i;
-                                    if ((distance > 11 && moveValue(i, distance) > -1)
-                                            || maxValue == moveValue(i, distance)){
+                                    if ((distance > 11 && moveValue(i, distance) > -1)  && i < 60
+                                            || maxValue == moveValue(i, distance) && i < 60){
                                         System.out.println("in");
                                         System.out.println(i);
                                         System.out.println(j);
@@ -598,5 +599,26 @@ public class ComputerPlayer {
         return false;
     }
 
+    private void checkPawnNum (PlayerBoard[] boards) {
+        for (PlayerBoard board : boards) {
+            int numPawns = 0;
 
+            numPawns += board.getHomePawns();
+            numPawns += board.getStartPawns();
+
+            for (int i = 0; i < 65; i++){
+                if (board.hasPawnAt(i)) {
+                    numPawns ++;
+                }
+            }
+            if (numPawns < 4) {
+                while (!(numPawns == 4)) {
+                    board.addStartPawns();
+                    numPawns++;
+                }
+            }
+        }
+
+
+    }
 }

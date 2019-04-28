@@ -306,6 +306,11 @@ public class PlayerBoard {
 
     public int getHomePawns(){return homePawns; }
 
+    public void addStartPawns() {
+         startPawns++;
+    }
+
+
     public void moveToHome() {
         if (boardTiles[65].getHasPawn()) {
             boardTiles[65].removePawn();
