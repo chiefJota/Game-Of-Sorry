@@ -59,7 +59,7 @@ public class PlayerBoard {
         }
 
         boardTiles[0].setLastTile(boardTiles[59]);
-    }
+   }
 
     public void highlightTiles(int[] tilesHighlighted, Group root) {
         for (int tileID:tilesHighlighted) {
@@ -274,14 +274,14 @@ public class PlayerBoard {
         for (int i = 0; i < 64; i++) {
             if (boardTiles[i].getHasPawn()){
                 if (i == 21 || i == 36 || i == 51) {
-                    this.movePawn(i, 4);
                     int[] bumpedTiles = new int[]{i, i+1, i+2, i+3, i+4};
-                    this.bump(Arrays.copyOfRange(bumpedTiles, 1,4), rotation);
+                    this.bump(Arrays.copyOfRange(bumpedTiles, 1,5), rotation);
+                    this.movePawn(i, 4);
                     return bumpedTiles;
                 } else if (i == 13 || i == 28 || i == 43) {
-                    this.movePawn(i, 3);
                     int[] bumpedTiles = new int[]{i, i+1, i+2, i+3};
-                    this.bump(Arrays.copyOfRange(bumpedTiles, 1,3), rotation);
+                    this.bump(Arrays.copyOfRange(bumpedTiles, 1,4), rotation);
+                    this.movePawn(i, 3);
                     return bumpedTiles;
                 }
             }

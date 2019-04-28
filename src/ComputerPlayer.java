@@ -9,11 +9,13 @@ public class ComputerPlayer {
     int[] myPawns = new int[65];
     int[] otherPawns = new int[65];
 
+    public ComputerPlayer(){}
+
     public ComputerPlayer(int playerRotation) {
         this.playerRotation = playerRotation;
     }
 
-    public boolean doTurn (PlayerBoard[] boards, int card, int turn){
+    public boolean doTurn (PlayerBoard[] boards, int card){
         boolean hasMoved = false;
         checkBoard(boards);
 
@@ -44,6 +46,7 @@ public class ComputerPlayer {
                     hasMoved = doEleven(boards);
                     break;
                 default:
+                    //hasMoved = doEleven(boards);
                     hasMoved = doForwardMove(boards, card);
                     break;
             }
@@ -190,6 +193,7 @@ public class ComputerPlayer {
                         //checks the value of the move
                         if (moveValue(i, card) == maxValue) {
                             doMove(boards, i, card);
+                            boards[playerRotation].moveToHome();
                             hasMoved = true;
                             break move;
                         }
@@ -216,63 +220,67 @@ public class ComputerPlayer {
             return 0;
         }
         int movedTo = startID + moves;
-        int value = 0;
-        if (movedTo == 21 || movedTo == 36 || movedTo == 51) {
-            for (int i = movedTo; i < movedTo + 5; i++) {
-                if (otherPawns[i] == 1) {
-                    value += 2;
-                } else if (myPawns[i] == 1) {
-                    value -= 2;
+        if (movedTo < 65) {
+            int value = 0;
+            if (movedTo == 21 || movedTo == 36 || movedTo == 51) {
+                for (int i = movedTo; i < movedTo + 5; i++) {
+                    if (otherPawns[i] == 1) {
+                        value += 2;
+                    } else if (myPawns[i] == 1) {
+                        value -= 2;
+                    }
                 }
-            }
-            value ++;
-        } else if (movedTo == 13 || movedTo == 28 || movedTo == 43) {
-            for (int i = movedTo; i < movedTo + 4; i++) {
-                if (otherPawns[i] == 1) {
-                    value += 2;
-                } else if (myPawns[i] == 1) {
-                    value -= 2;
+                value++;
+            } else if (movedTo == 13 || movedTo == 28 || movedTo == 43) {
+                for (int i = movedTo; i < movedTo + 4; i++) {
+                    if (otherPawns[i] == 1) {
+                        value += 2;
+                    } else if (myPawns[i] == 1) {
+                        value -= 2;
+                    }
                 }
-            }
-            value++;
-        } else {
-            if (otherPawns[movedTo] == 1) {
+                value++;
+            } else if (otherPawns[movedTo] == 1) {
                 value += 2;
+
             }
+            if (startID == 1) {
+                value += 4;
+            }
+            if (startID + value == 65) {
+                value += 10;
+            }
+            return value;
         }
-        if (startID == 1) {
-            value += 4;
-        }
-        if (startID + value == 65) {
-            value += 10;
-        }
-        return value;
+        return -10;
     }
 
     private boolean doSorry(PlayerBoard[] boards){
         boolean hasMoved = false;
         boolean hasOtherPawn = false;
 
-        for (int i = 59; i > -1; i--){
-            for (PlayerBoard board : boards) {
-                if (!(board.getRotation() == playerRotation)) {
-                    if (board.hasPawnAt(i, playerRotation)) {
-                        hasOtherPawn = true;
-                    }
-                }
-            }
-
-            if (hasOtherPawn){
-                boards[playerRotation].movePawnTo(i);
-
+        if (!(startPawns == 0)) {
+            for (int i = 59; i > -1; i--) {
                 for (PlayerBoard board : boards) {
                     if (!(board.getRotation() == playerRotation)) {
-                        board.bump(i, playerRotation);
+                        if (board.hasPawnAt(i, playerRotation)) {
+                            hasOtherPawn = true;
+                        }
                     }
                 }
 
-                hasMoved = true;
-                break;
+                if (hasOtherPawn) {
+                    boards[playerRotation].movePawnTo(i);
+
+                    for (PlayerBoard board : boards) {
+                        if (!(board.getRotation() == playerRotation)) {
+                            board.bump(i, playerRotation);
+                        }
+                    }
+
+                    hasMoved = true;
+                    break;
+                }
             }
         }
         return hasMoved;
@@ -339,26 +347,63 @@ public class ComputerPlayer {
                 // turn back while you have the chance
                 moved:
                 while (!hasMoved) {
-                        for (int i = 64; i > -1; i--) {
-                            if (boards[playerRotation].hasPawnAt(i)) {
-                                for (int j = 64; j > -1; j--) {
-                                    if (boards[playerRotation].hasPawnAt(j)) {
-                                        for (int k = 0; k < 7; k++) {
+                    for (int i = 64; i > -1; i--) {
+                        if (boards[playerRotation].hasPawnAt(i)) {
+                            for (int j = 64; j > -1; j--) {
+                                if (!(i == j) && boards[playerRotation].hasPawnAt(j)) {
+                                    for (int k = 0; k < 7; k++) {
+                                        if(!(i + 7 - k == j + k)) {
                                             int value1 = moveValue(i, 7 - k);
                                             int value2 = moveValue(j, k);
-                                            if (maxValue == value1 + value2) {
-                                                doMove(boards, i, 7 - k);
-                                                doMove(boards, i, k);
-                                                hasMoved = true;
-                                                break moved;
+
+                                            if (boards[playerRotation].canMovePawn(i, 7 - k)
+                                                && boards[playerRotation].canMovePawn(j, k)) {
+                                                if (maxValue == value1 + value2) {
+                                                    int bump1 = boards[playerRotation].movePawn(i, 7 - k);
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bump1, playerRotation);
+                                                        }
+                                                    }
+
+                                                    int bump2 = boards[playerRotation].movePawn(j, k);
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bump2, playerRotation);
+                                                        }
+                                                    }
+
+                                                    int[] bumped1 = boards[playerRotation].checkSlide();
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bumped1, playerRotation);
+                                                        }
+                                                    }
+
+                                                    int[] bumped2 = boards[playerRotation].checkSlide();
+
+                                                    for (PlayerBoard board : boards) {
+                                                        if (!(board.getRotation() == playerRotation)) {
+                                                            board.bump(bumped2, playerRotation);
+                                                        }
+                                                    }
+
+                                                    hasMoved = true;
+                                                    boards[playerRotation].moveToHome();
+                                                    break moved;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                    }
                     maxValue--;
-                    if (maxValue < 16){
+                    if (maxValue < -16){
                         break;
                     }
                 }
@@ -382,9 +427,11 @@ public class ComputerPlayer {
                         break move;
                     }
                 }
-            } else if (!hasMoved) {
+            }
+            if (!hasMoved) {
                 hasMoved = doForwardMove(boards, 10);
-            } else if (!hasMoved) {
+            }
+            if (!hasMoved) {
                 move2:
                 for (int i = 0; i < 65; i++) {
                     // check if pawn can move to home or to safe space
@@ -408,43 +455,24 @@ public class ComputerPlayer {
                 for (int i = 0; i < 64; i++) {
                     if (boards[playerRotation].hasPawnAt(i)) {
                         for (int j = 64; j > -1; j--) {
-                            if (hasPawnOther(boards, j, playerRotation)) {
+                            if (hasPawnOther(j)) {
                                 int distance = j - i;
-                                if ((distance > 11 && moveValue(i, distance) > -1)
-                                        || maxValue == moveValue(i, distance)){
+                                if ((distance > 11 && moveValue(i, distance) > -1) && !onSlide(boards, i)
+                                        || maxValue == moveValue(i, distance) && !onSlide(boards, i)){
                                     System.out.println("in");
                                     int[] bumped1;
                                     int[] bumped2 = new int[0];
 
-                                    int move1 = boards[playerRotation].movePawn(i, distance);
+                                    boards[playerRotation].movePawn(i, distance);
                                     bumped1 = boards[playerRotation].checkSlide();
-
-                                    int otherRotation = -1;
-
-                                    int move2 = 1;
 
                                     for (PlayerBoard board : boards) {
                                         if (!(board.getRotation() == playerRotation)) {
                                             if (board.hasPawnAt(j, playerRotation)) {
-                                                move2 = board.movePawn(j, -distance, playerRotation);
-                                                otherRotation = board.getRotation();
-                                                bumped2 = board.checkSlide();
+                                                board.movePawn(j,  -distance, playerRotation);
                                             }
-                                        }
-                                    }
-
-                                    System.out.println(i);
-                                    System.out.println(j);
-                                    System.out.println(distance);
-                                    System.out.println(move1);
-                                    System.out.println(move2);
-
-                                    for (PlayerBoard board : boards) {
-                                        if (!(board.getRotation() == playerRotation)) {
                                             board.bump(bumped1, playerRotation);
-                                        }
-                                        if (!(board.getRotation() == otherRotation)) {
-                                            board.bump(bumped2, otherRotation);
+
                                         }
                                     }
                                     hasMoved = true;
@@ -462,8 +490,78 @@ public class ComputerPlayer {
             if (!hasMoved) {
                 doForwardMove(boards, 11);
             }
+            if (!hasMoved) {
+                moved:
+                while (!hasMoved) {
+                    for (int i = 0; i < 64; i++) {
+                        if (boards[playerRotation].hasPawnAt(i)) {
+                            for (int j = 64; j > -1; j--) {
+                                if (hasPawnOther(j)) {
+                                    int distance = j - i;
+                                    if ((distance > 11 && moveValue(i, distance) > -1)
+                                            || maxValue == moveValue(i, distance)){
+                                        System.out.println("in");
+                                        System.out.println(i);
+                                        System.out.println(j);
+                                        int[] bumped1;
+                                        int[] bumped2 = new int[0];
+
+                                        int move1 = boards[playerRotation].movePawn(i, distance);
+                                        bumped1 = boards[playerRotation].checkSlide();
+
+                                        int otherRotation = -1;
+
+                                        int move2 = 1;
+
+                                        for (PlayerBoard board : boards) {
+                                            if (!(board.getRotation() == playerRotation)) {
+                                                if (board.hasPawnAt(j, playerRotation)) {
+                                                    move2 = board.movePawn(j,  -distance - 60, playerRotation);
+                                                    otherRotation = board.getRotation();
+                                                    bumped2 = board.checkSlide();
+                                                }
+                                            }
+                                        }
+
+                                        System.out.println(i);
+                                        System.out.println(j);
+                                        System.out.println(distance);
+                                        System.out.println(move1);
+                                        System.out.println(move2);
+
+                                        for (PlayerBoard board : boards) {
+                                            if (!(board.getRotation() == playerRotation)) {
+                                                board.bump(bumped1, playerRotation);
+                                            }
+                                            if (!(board.getRotation() == otherRotation)) {
+                                                board.bump(bumped2, otherRotation);
+                                            }
+                                        }
+                                        hasMoved = true;
+                                        break moved;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    maxValue--;
+                    if (maxValue == -10){
+                        break;
+                    }
+                }
+            }
+
         }
         return hasMoved;
+    }
+
+    private boolean onSlide(PlayerBoard[] boards, int tileID) {
+        if (tileID == 21 || tileID == 36 || tileID == 51) {
+            return true;
+        } else if (tileID == 13 || tileID == 28 || tileID == 43) {
+            return true;
+        }
+        return false;
     }
 
     private void doMove(PlayerBoard[] boards, int tileID, int moves){
@@ -484,13 +582,9 @@ public class ComputerPlayer {
         }
     }
 
-    boolean hasPawnOther(PlayerBoard[] boards, int tileID, int rotation){
-        for (PlayerBoard board : boards) {
-            if (!(board.getRotation() == rotation)) {
-                if (otherPawns[tileID] == 1){
-                    return true;
-                }
-            }
+    boolean hasPawnOther(int tileID){
+        if (otherPawns[tileID] == 1){
+            return true;
         }
         return false;
     }
@@ -503,4 +597,6 @@ public class ComputerPlayer {
         }
         return false;
     }
+
+
 }
