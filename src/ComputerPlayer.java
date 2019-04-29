@@ -455,9 +455,9 @@ public class ComputerPlayer {
             int maxValue = 11;
             moved:
             while (!hasMoved) {
-                for (int i = 0; i < 64; i++) {
+                for (int i = 0; i < 60; i++) {
                     if (boards[playerRotation].hasPawnAt(i)) {
-                        for (int j = 64; j > -1; j--) {
+                        for (int j = 60; j > -1; j--) {
                             if (hasPawnOther(j)) {
                                 int distance = j - i;
                                 if ((distance > 11 && moveValue(i, distance) > -1) && !onSlide(boards, i)
@@ -496,9 +496,9 @@ public class ComputerPlayer {
             if (!hasMoved) {
                 moved:
                 while (!hasMoved) {
-                    for (int i = 0; i < 64; i++) {
+                    for (int i = 0; i < 60; i++) {
                         if (boards[playerRotation].hasPawnAt(i)) {
-                            for (int j = 64; j > -1; j--) {
+                            for (int j = 60; j > -1; j--) {
                                 if (hasPawnOther(j)) {
                                     int distance = j - i;
                                     if ((distance > 11 && moveValue(i, distance) > -1)  && i < 60
