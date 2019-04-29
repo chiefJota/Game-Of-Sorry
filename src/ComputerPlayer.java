@@ -44,8 +44,8 @@ public class ComputerPlayer {
         boolean hasMoved = false;
         checkBoard(boards);
 
-        System.out.println("card");
-        System.out.println(card);
+        //System.out.println("card");
+        //System.out.println(card);
 
         if(canMove(boards, card)){
             switch (card) {
@@ -591,9 +591,6 @@ public class ComputerPlayer {
                                     int distance = j - i;
                                     if ((distance > 11 && moveValue(i, distance) > -1)  && i < 60
                                             || maxValue == moveValue(i, distance) && i < 60){
-                                        System.out.println("in");
-                                        System.out.println(i);
-                                        System.out.println(j);
                                         int[] bumped1;
                                         int[] bumped2 = new int[0];
 
@@ -614,11 +611,13 @@ public class ComputerPlayer {
                                             }
                                         }
 
+                                        /*
                                         System.out.println(i);
                                         System.out.println(j);
                                         System.out.println(distance);
                                         System.out.println(move1);
                                         System.out.println(move2);
+                                        */
 
                                         for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                                             if (!(board.getRotation() == playerRotation)) {

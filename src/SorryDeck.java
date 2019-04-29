@@ -16,7 +16,8 @@ public class SorryDeck {
 
         //first add five cards of ones to the deck
         for (int i = 0; i < 5; ++i) {
-            deck.add(new SorryCard(1, "Move a pawn onto the outer\nstarting circle, or move a pawn one space\nforward."));
+            deck.add(new SorryCard(1, "Move a pawn onto the outer\nstarting circle, or move a pawn one space\nforward. " +
+                                                         "Click on a button and then click on\na pawn if you want to move a pawn\nforward."));
         }
 
         //iterate four times the rest of the cards
@@ -25,7 +26,8 @@ public class SorryDeck {
             //then add 4 of each card 2-5
             for (int j = 2; j <= 5; ++j) {
                 if (j == 2) {
-                    description = "Move a pawn onto the outer\nstarting circle, or move a pawn two spaces\nforward. Draw again, even if you could not\nmove a pawn.";
+                    description = "Move a pawn onto the outer\nstarting circle, or move a pawn two spaces\nforward. Draw again, even if you could not\nmove a pawn. " +
+                                  "Click on a button and then click\non a pawn if you want to move a pawn\nforward.";
                     deck.add(new SorryCard(j, description));
                 } else if (j == 3) {
                     description = "Move a pawn forward 3 spaces";
@@ -42,9 +44,10 @@ public class SorryDeck {
             for(int l = 7; l <= 8; ++l) {
                 if (l == 7) {
                     description = "Move a pawn forward seven\nspaces, or split the movement between two\npawns. 7’s can’t be used to start a pawn. If\na 7 is used to move on pawn home, " +
-                            "the\nremainder of the movement total" +
-                            " must be used\nexactly by another " +
-                            "pawn or it is not a legal\nmove.";
+                            "the\nremainder of the movement total must be used\nexactly by another " +
+                            "pawn or it is not a legal\nmove. Click on two of your own pawns and\nthen click a button. " +
+                            "The button you click\nwill move the first pawn the number of\nspaces on the button. The second " +
+                            "pawn will\nmove by the remainder";
                     deck.add(new SorryCard(l, description));
                 }
                 else{
@@ -56,7 +59,8 @@ public class SorryDeck {
 
             for(int m = 10; m <= 12; ++m) {
                 if (m == 10) {
-                    description = "Move a pawn forward 10 spaces,\nor move a pawn backward one space.";
+                    description = "Move a pawn forward 10 spaces,\nor move a pawn backward one space. " +
+                                  "Click\non a button and then on a pawn to move\na pawn.";
                     deck.add(new SorryCard(m, description));
                 }
                 else if(m == 11){
@@ -64,7 +68,9 @@ public class SorryDeck {
                             "pawns with any one of your opponents pawns.\nNote, " +
                             "you do not have to switch positions if\nthere is no " +
                             "other legal play. This is the\nexception to the aforementioned rule." +
-                            " Also,\nyou cannot switch with pawns in the\n“START”, “HOME”, or “SAFETY ZONE”\nareas. ";
+                            " Also,\nyou cannot switch with pawns in the\n“START”, “HOME”, or “SAFETY ZONE”\nareas. " +
+                            " Click on a button below and then\nclick on one pawn if you want to move\nforward 11, or " +
+                            " click on two pawns if you\nwant to swap pawns.";
                     deck.add(new SorryCard(m, description));
 
                 }
@@ -80,7 +86,8 @@ public class SorryDeck {
                     "no “HOME”,\n“START”, or “SAFETY ZONE” spaces), and\n" +
                     "bump the opponent back to their “START”\nspace. If you have no" +
                     " pawns in the “START”\nspace, or " +
-                    "there are no legal pawns to bump,\nend your turn.";
+                    "there are no legal pawns to bump,\nend your turn. Click " +
+                    "on an opponents pawn\nto send them back to start.";
             int number = 0;
             deck.add(new SorryCard(number, description));
 

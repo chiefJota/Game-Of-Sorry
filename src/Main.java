@@ -52,6 +52,9 @@ public class Main extends Application {
     private Button forfeitTurn;
     private BorderPane root;
 
+    private Group win;
+    private Scene winScreen;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -66,22 +69,22 @@ public class Main extends Application {
         // root group
         root = new BorderPane();
 
+        //Create scenes and groups for the menu, rules, win screen, sidebar
         Group menu = new Group();
         Scene startMenu = new Scene(menu, 1450, 900);
 
         Group sorryRules = new Group();
         Scene rulesScene = new Scene(sorryRules, 1450, 900);
 
-        Group win = new Group();
-        Scene winScreen = new Scene(win, 1450, 900);
+        win = new Group();
+        winScreen = new Scene(win, 1450, 900);
 
         Group option = new Group();
         Scene optionScene = new Scene(option, 1450, 900);
 
         makeMenu(menu, startMenu, sorryRules, rulesScene, root, primaryStage, optionScene, option);
-        winScreen(root, primaryStage, win, winScreen, startMenu);
 
-
+        //Create four players and four computers
         PlayerBoard[] boards = new PlayerBoard[4];
         boards[0] = new PlayerBoard(0, Color.RED);
         boards[1] = new PlayerBoard(1, Color.BLUE);
@@ -94,6 +97,7 @@ public class Main extends Application {
         cpus[2] = new ComputerPlayer(2);
         cpus[3] = new ComputerPlayer(3);
 
+        //makes the board and draws the pawns
         makeBoard(root);
 
         for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
@@ -107,8 +111,8 @@ public class Main extends Application {
 
         //Choose first player to go
         Random rand = new Random();
-        //turn = rand.nextInt(4);
-        turn = 0;
+        turn = rand.nextInt(4);
+
 
         EventHandler<MouseEvent> getcoords = new EventHandler<MouseEvent>() {
             @Override
@@ -123,17 +127,20 @@ public class Main extends Application {
 
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
-
+                //If its not the humans turn, try to move
                 if ((!(turn % players == 0) || skyNet) && gameStarted) {
                     if (frame % wait == 0) {
                         boolean didturn = cpus[turn % players].doTurn(boards, card.getNumber(), players);
                         
-
+                        //If the computer did move, check if they won and then redraw the pawns
                         if (didturn) {
 
                             for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
+                                //System.out.println("Turn mod players: " + turn % players);
                                 if (board.hasWon()){
+                                    winScreen(win, winScreen);
                                     primaryStage.setScene(winScreen);
+                                    //System.out.println("winner: " + turn);
                                 }
                             }
 
@@ -150,8 +157,9 @@ public class Main extends Application {
 
                             makeSidebar(root, changeCard());
                         } else {
-                            System.out.println("turn skipped");
-                            System.out.println(card.getNumber());
+                            //If the computer can't move, skip your turn
+                            //System.out.println("turn skipped");
+                            //System.out.println(card.getNumber());
                             if (!(card.getNumber() == 2)) {turn++;}
                             makeBoard(root);
 
@@ -170,10 +178,10 @@ public class Main extends Application {
                             root.getChildren().add(pawns);
                         }
 
-                        
                         makeSidebar(root, card);
                     }
                 } else
+                    //If this is the human player, call the function to move the card
                     try {
 
                     switch (card.getNumber()) {
@@ -202,7 +210,7 @@ public class Main extends Application {
 
                             PlayerBoard activeBoard = boards[turn % players];
 
-
+                            //Allow you to click on the screen and get the location of clicks
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
@@ -210,6 +218,7 @@ public class Main extends Application {
                                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
                                 for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
 
+                                    //Checks if it bumped any players
                                     if (!(board.getRotation() == turn % players)) {
                                         board.bump(shortBump, turn % players);
 
@@ -234,6 +243,7 @@ public class Main extends Application {
                                     Group pawns = board.displayPawns();
                                     root.getChildren().add(pawns);
                                     if (board.hasWon()){
+                                        winScreen(win, winScreen);
                                         primaryStage.setScene(winScreen);
                                     }
                                 }
@@ -261,7 +271,12 @@ public class Main extends Application {
 
     }
 
-    private void winScreen(BorderPane root, Stage primaryStage, Group win, Scene winScreen, Scene startMenu){
+    /**
+     *This is what is displayed when somebody wins the game
+     * @param win
+     * @param winScreen
+     */
+    private void winScreen(Group win, Scene winScreen){
 
         Label congratulations;
         congratulations = new Label("Congratulations!");
@@ -278,19 +293,19 @@ public class Main extends Application {
             winScreen.setFill(Color.RED);
         } else if (turn % players == 1){
             winningTeam = new Label("The blue team won");
-            winningTeam.setTranslateY(150);
+            winningTeam.setTranslateY(100);
             winningTeam.setTranslateX(600);
             winningTeam.setFont(new Font("Times New Roman", 30));
             winScreen.setFill(Color.BLUE);
-        } else if (turn % players == 2){
+        } else if (turn % players == 3){
             winningTeam = new Label("The green team won");
-            winningTeam.setTranslateY(150);
+            winningTeam.setTranslateY(100);
             winningTeam.setTranslateX(600);
             winningTeam.setFont(new Font("Times New Roman", 30));
             winScreen.setFill(Color.GREEN);
         } else {
             winningTeam = new Label("The yellow team won");
-            winningTeam.setTranslateY(150);
+            winningTeam.setTranslateY(100);
             winningTeam.setTranslateX(600);
             winningTeam.setFont(new Font("Times New Roman", 30));
             winScreen.setFill(Color.YELLOW);
@@ -300,18 +315,9 @@ public class Main extends Application {
         win.getChildren().add(congratulations);
         win.getChildren().add(winningTeam);
 
-
-        Button playAgain = new Button("Back to Menu");
-        playAgain.setTranslateX(684);
-        playAgain.setTranslateY(675);
-        win.getChildren().add(playAgain);
-        playAgain.setOnMouseClicked(e -> {
-            primaryStage.setScene(startMenu);
-        });
-
         Button endGame = new Button("Exit");
         endGame.setTranslateX(705);
-        endGame.setTranslateY(725);
+        endGame.setTranslateY(675);
         win.getChildren().add(endGame);
         endGame.setOnMouseClicked(event -> Platform.exit());
 
@@ -325,7 +331,19 @@ public class Main extends Application {
 
     }
 
+    /**
+     * This function makes the menu before the game starts. It has a play, options, how to play, and quit button
+     * @param menu
+     * @param startMenu
+     * @param sorryRules
+     * @param rulesScene
+     * @param root
+     * @param primaryStage
+     * @param optionsScene
+     * @param option
+     */
     private void makeMenu(Group menu, Scene startMenu, Group sorryRules, Scene rulesScene, BorderPane root, Stage primaryStage, Scene optionsScene, Group option) {
+
         startMenu.setFill(Color.LIGHTGREEN);
         Button startGame = new Button("Start Game");
         startGame.setTranslateX(685);
@@ -799,14 +817,14 @@ public class Main extends Application {
             case 1:
                 Button button1 = new Button("Move pawn from Start");
                 button1.setTranslateX(1150);
-                button1.setTranslateY(400);
+                button1.setTranslateY(350);
                 sideBar.getChildren().add(button1);
                 button1.setOnMouseClicked(event -> {
                     choice = 0;
                 });
                 Button button2 = new Button("Move forward 1");
                 button2.setTranslateX(1160);
-                button2.setTranslateY(450);
+                button2.setTranslateY(400);
                 sideBar.getChildren().add(button2);
                 button2.setOnMouseClicked(event -> {
                     choice = 1;
@@ -815,14 +833,14 @@ public class Main extends Application {
             case 2:
                 Button button3 = new Button("Move pawn from Start");
                 button3.setTranslateX(1150);
-                button3.setTranslateY(400);
+                button3.setTranslateY(350);
                 sideBar.getChildren().add(button3);
                 button3.setOnMouseClicked(event -> {
                     choice = 0;
                 });
                 Button button4 = new Button("Move forward 2");
                 button4.setTranslateX(1160);
-                button4.setTranslateY(450);
+                button4.setTranslateY(400);
                 sideBar.getChildren().add(button4);
                 button4.setOnMouseClicked(event -> {
                     choice = 1;
@@ -831,49 +849,49 @@ public class Main extends Application {
             case 7:
                 move1 = new Button("Move 1");
                 move1.setTranslateX(1195);
-                move1.setTranslateY(400);
+                move1.setTranslateY(450);
                 sideBar.getChildren().add(move1);
                 move1.setOnMouseClicked(event -> {
                     choice = 0;
                 });
                 move2 = new Button("Move 2");
                 move2.setTranslateX(1195);
-                move2.setTranslateY(450);
+                move2.setTranslateY(500);
                 sideBar.getChildren().add(move2);
                 move2.setOnMouseClicked(event -> {
                     choice = 1;
                 });
                 move3 = new Button("Move 3");
                 move3.setTranslateX(1195);
-                move3.setTranslateY(500);
+                move3.setTranslateY(550);
                 sideBar.getChildren().add(move3);
                 move3.setOnMouseClicked(event -> {
                     choice = 2;
                 });
                 move4 = new Button("Move 4");
                 move4.setTranslateX(1195);
-                move4.setTranslateY(550);
+                move4.setTranslateY(600);
                 sideBar.getChildren().add(move4);
                 move4.setOnMouseClicked(event -> {
                     choice = 3;
                 });
                 move5 = new Button("Move 5");
                 move5.setTranslateX(1195);
-                move5.setTranslateY(600);
+                move5.setTranslateY(650);
                 sideBar.getChildren().add(move5);
                 move5.setOnMouseClicked(event -> {
                     choice = 4;
                 });
                 move6 = new Button("Move 6");
                 move6.setTranslateX(1195);
-                move6.setTranslateY(650);
+                move6.setTranslateY(700);
                 sideBar.getChildren().add(move6);
                 move6.setOnMouseClicked(event -> {
                     choice = 5;
                 });
                 move7 = new Button("Move 7");
                 move7.setTranslateX(1195);
-                move7.setTranslateY(700);
+                move7.setTranslateY(750);
                 sideBar.getChildren().add(move7);
                 move7.setOnMouseClicked(event -> {
                     choice = 6;
@@ -897,15 +915,15 @@ public class Main extends Application {
                 break;
             case 11:
                 Button button7 = new Button("Move forward 11");
-                button7.setTranslateX(1150);
-                button7.setTranslateY(400);
+                button7.setTranslateX(1155);
+                button7.setTranslateY(500);
                 sideBar.getChildren().add(button7);
                 button7.setOnMouseClicked(event -> {
                     choice = 0;
                 });
                 Button button8 = new Button("Swap");
                 button8.setTranslateX(1190);
-                button8.setTranslateY(450);
+                button8.setTranslateY(550);
                 sideBar.getChildren().add(button8);
                 button8.setOnMouseClicked(event -> {
                     choice = 1;
@@ -941,6 +959,16 @@ public class Main extends Application {
         root.getChildren().add(sideBar);
     }
 
+    /**
+     * This function listens for a click on a pawn and then a button press.
+     * You can either move a pawn forward 1 or move a pawn out of your start
+     * space using the buttons
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     public void move1(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
@@ -966,6 +994,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
+                    winScreen(win, winScreen);
                     primaryStage.setScene(winScreen);
                 }
             }
@@ -1008,6 +1037,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
+                        winScreen(win, winScreen);
                         primaryStage.setScene(winScreen);
                     }
                 }
@@ -1025,7 +1055,17 @@ public class Main extends Application {
 
     }
 
-
+    /**
+     * This function listens for a click and then a button press. It either
+     * moves a pawn two spaces forward, or moves a pawn out of the start
+     * space. This function does not increment  the turn variable in order
+     * to make it so you have another turn
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     public void move2(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1053,6 +1093,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
+                    winScreen(win, winScreen);
                     primaryStage.setScene(winScreen);
                 }
             }
@@ -1091,6 +1132,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
+                        winScreen(win, winScreen);
                         primaryStage.setScene(winScreen);
                     }
                 }
@@ -1105,7 +1147,15 @@ public class Main extends Application {
 
     }
 
-
+    /**
+     * This function listens for one mouse click and then moves the pawn that
+     * you clicked on backwards 4
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     public void move4(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
         PlayerBoard activeBoard = boards[turn % players];
 
@@ -1140,6 +1190,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
+                    winScreen(win, winScreen);
                     primaryStage.setScene(winScreen);
                 }
             }
@@ -1154,6 +1205,18 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * This function listens for two clicks and then a button press. After you
+     * click on your own two pawns, you click on a button numbered 1-7
+     * Depending on the button you press, the first pawn moves the amount shown
+     * on the button and the second pawn that is clicked moves the remainder of
+     * that amount
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     void moveSeven(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1203,6 +1266,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
+                    winScreen(win, winScreen);
                     primaryStage.setScene(winScreen);
                 }
             }
@@ -1243,6 +1307,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
+                    winScreen(win, winScreen);
                     primaryStage.setScene(winScreen);
                 }
             }
@@ -1304,6 +1369,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
+                        winScreen(win, winScreen);
                         primaryStage.setScene(winScreen);
                     }
                 }
@@ -1320,7 +1386,16 @@ public class Main extends Application {
 
     }
 
-
+    /**
+     * This function allows you to move either forward 10 or backwards 1
+     * You can click on a pawn and then click on a button that makes you move
+     * forward or backward
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     void moveTen(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1360,6 +1435,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
+                        winScreen(win, winScreen);
                         primaryStage.setScene(winScreen);
                     }
                 }
@@ -1400,6 +1476,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
+                        winScreen(win, winScreen);
                         primaryStage.setScene(winScreen);
                     }
                 }
@@ -1415,6 +1492,16 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * This function allows you to move forward eleven or swap a pawn with an opposing player
+     * The function listens for two clicks and then depends on a button being pressed to
+     * dictate the action of the function (either move forward or swap)
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     void moveEleven(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1456,6 +1543,7 @@ public class Main extends Application {
                     Group pawns = board.displayPawns();
                     root.getChildren().add(pawns);
                     if (board.hasWon()){
+                        winScreen(win, winScreen);
                         primaryStage.setScene(winScreen);
                     }
                 }
@@ -1526,6 +1614,7 @@ public class Main extends Application {
                         Group pawns = board.displayPawns();
                         root.getChildren().add(pawns);
                         if (board.hasWon()){
+                            winScreen(win, winScreen);
                             primaryStage.setScene(winScreen);
                         }
                     }
@@ -1609,6 +1698,7 @@ public class Main extends Application {
                 Group pawns = board.displayPawns();
                 root.getChildren().add(pawns);
                 if (board.hasWon()){
+                    winScreen(win, winScreen);
                     primaryStage.setScene(winScreen);
                 }
             }
@@ -1621,6 +1711,7 @@ public class Main extends Application {
         }
         reset();
     }
+
 
 void reset(){
     choice = -1;
