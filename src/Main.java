@@ -19,13 +19,13 @@ import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.animation.AnimationTimer;
-import javax.sound.midi.SysexMessage;
 import java.util.Arrays;
 import java.util.Random;
 
 @SuppressWarnings("Duplicates")
 public class Main extends Application {
 
+    //All global variables
     private SorryDeck deck;
     private SorryCard card;
     private int turn = 0;
@@ -437,6 +437,14 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * Makes the sorry game board
+     * by creating all the boardtiles,
+     * slides, center image, and
+     * the home and starts
+     * for the respective pawns.
+     * @param root
+     */
     private void makeBoard(BorderPane root) {
 
         root.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -709,6 +717,22 @@ public class Main extends Application {
 
     }
 
+    /**
+     * makeSidebar separates the game board with a sidebar that
+     * displays the card drawn, the card description, the cards remaining,
+     * has a "forfeit turn" button (only applicable for human player(s))
+     * and an "exit game" button.
+     * Additionally, for special cards where multiple moves
+     * may be made, buttons will appear for the special card
+     * drawn and displayed at the top of the sideBar.
+     * Also, a white rectangle is written over the previous layer
+     * to emulate removing the old contents of the sidebar
+     * and then writing the new contents on the new layer, eaach time.
+     * Finally, the strip between the game board and
+     * sidebar changes color to indicate the turn of the current player
+     * @param root
+     * @param card
+     */
     private void makeSidebar(BorderPane root, SorryCard card) {
         Rectangle bar = new Rectangle(1000, 0, 25, 900);
         Rectangle bar2 = new Rectangle(1000, 0, 4, 900);
@@ -889,16 +913,14 @@ public class Main extends Application {
                 break;
         }
 
-
+        //forfeitTurn button
         forfeitTurn = new Button("Forfeit turn");
         forfeitTurn.setTranslateX(1250);
         forfeitTurn.setTranslateY(835);
         sideBar.getChildren().add(forfeitTurn);
         forfeitTurn.setDisable(false);
 
-        //TODO: might have to check if the player can move
-        // in here to enable and disable the forfeit turn
-        // button
+        //forfeitTurn button action
         forfeitTurn.setOnMouseClicked(event -> {
             //increment turn to
             //be opposing players
@@ -908,6 +930,7 @@ public class Main extends Application {
 
         });
 
+        //endGame button
         Button endGame = new Button("Exit Game");
         endGame.setTranslateX(1350);
         endGame.setTranslateY(835);
@@ -1520,6 +1543,22 @@ public class Main extends Application {
 
     }
 
+    /**
+     * moveSorry takes a pawn
+     * from the start space of a player
+     * if there is a pawn in the start space and
+     * replaces an opposing players pawn with their pawn
+     * on the opposing players position. The opposing player's
+     * pawn will be sent back to its respective start space.
+     * If sorry is not possible then the human player can
+     * press the forfeit turn button, otherwise the computer
+     * players will skip their turns.
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     void moveSorry(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1577,8 +1616,6 @@ public class Main extends Application {
                 }
             }
 
-
-            //increment the turn
             turn++;
             
             makeSidebar(root, changeCard());
@@ -1587,7 +1624,7 @@ public class Main extends Application {
         }
         reset();
     }
-
+    
     private boolean canMove(PlayerBoard[] boards, int rotation, int card){
         int[] myPawns = new int[60];
         int[] otherPawns = new int[60];
