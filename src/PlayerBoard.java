@@ -488,7 +488,7 @@ public class PlayerBoard {
 
     /**
      * tileIDRotation for multiple tiles
-     * @param initTileID
+     * @param initTileIDs
      * @param initRot
      * @param finalRot
      * @return

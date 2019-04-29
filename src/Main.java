@@ -19,13 +19,13 @@ import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.animation.AnimationTimer;
-import javax.sound.midi.SysexMessage;
 import java.util.Arrays;
 import java.util.Random;
 
 @SuppressWarnings("Duplicates")
 public class Main extends Application {
 
+    //All global variables
     private SorryDeck deck;
     private SorryCard card;
     private int turn = 0;
@@ -455,6 +455,14 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * Makes the sorry game board
+     * by creating all the boardtiles,
+     * slides, center image, and
+     * the home and starts
+     * for the respective pawns.
+     * @param root
+     */
     private void makeBoard(BorderPane root) {
 
         root.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -727,6 +735,22 @@ public class Main extends Application {
 
     }
 
+    /**
+     * makeSidebar separates the game board with a sidebar that
+     * displays the card drawn, the card description, the cards remaining,
+     * has a "forfeit turn" button (only applicable for human player(s))
+     * and an "exit game" button.
+     * Additionally, for special cards where multiple moves
+     * may be made, buttons will appear for the special card
+     * drawn and displayed at the top of the sideBar.
+     * Also, a white rectangle is written over the previous layer
+     * to emulate removing the old contents of the sidebar
+     * and then writing the new contents on the new layer, eaach time.
+     * Finally, the strip between the game board and
+     * sidebar changes color to indicate the turn of the current player
+     * @param root
+     * @param card
+     */
     private void makeSidebar(BorderPane root, SorryCard card) {
         Rectangle bar = new Rectangle(1000, 0, 25, 900);
         Rectangle bar2 = new Rectangle(1000, 0, 4, 900);
@@ -907,16 +931,14 @@ public class Main extends Application {
                 break;
         }
 
-
+        //forfeitTurn button
         forfeitTurn = new Button("Forfeit turn");
         forfeitTurn.setTranslateX(1250);
         forfeitTurn.setTranslateY(835);
         sideBar.getChildren().add(forfeitTurn);
         forfeitTurn.setDisable(false);
 
-        //TODO: might have to check if the player can move
-        // in here to enable and disable the forfeit turn
-        // button
+        //forfeitTurn button action
         forfeitTurn.setOnMouseClicked(event -> {
             //increment turn to
             //be opposing players
@@ -926,6 +948,7 @@ public class Main extends Application {
 
         });
 
+        //endGame button
         Button endGame = new Button("Exit Game");
         endGame.setTranslateX(1350);
         endGame.setTranslateY(835);
@@ -1609,6 +1632,22 @@ public class Main extends Application {
 
     }
 
+    /**
+     * moveSorry takes a pawn
+     * from the start space of a player
+     * if there is a pawn in the start space and
+     * replaces an opposing players pawn with their pawn
+     * on the opposing players position. The opposing player's
+     * pawn will be sent back to its respective start space.
+     * If sorry is not possible then the human player can
+     * press the forfeit turn button, otherwise the computer
+     * players will skip their turns.
+     * @param boards
+     * @param root
+     * @param getcoords
+     * @param primaryStage
+     * @param winScreen
+     */
     void moveSorry(PlayerBoard[] boards, BorderPane root, EventHandler<MouseEvent> getcoords, Stage primaryStage, Scene winScreen) {
 
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1619,9 +1658,6 @@ public class Main extends Application {
         int pawnID = activeBoard.getTileID(x, y);
 
         boolean done = false;
-
-       canMove(boards, turn % players, card.getNumber());
-
 
         //loop through other player board
         //check every tile to see
@@ -1667,8 +1703,6 @@ public class Main extends Application {
                 }
             }
 
-
-            //increment the turn
             turn++;
             
             makeSidebar(root, changeCard());
@@ -1678,127 +1712,8 @@ public class Main extends Application {
         reset();
     }
 
-    private boolean canMove(PlayerBoard[] boards, int rotation, int card){
-        int[] myPawns = new int[60];
-        int[] otherPawns = new int[60];
-        int startPawns;
-        int homePawns;
 
-        Arrays.fill(myPawns, 0);
-        Arrays.fill(otherPawns, 0);
-
-        startPawns = boards[rotation].getStartPawns();
-        homePawns = boards[rotation].getHomePawns();
-
-        for (int i = 0; i < myPawns.length; i++) {
-            if (boards[rotation].hasPawnAt(i)) {
-                myPawns[i] = 1;
-            }
-        }
-
-        for (int i = 0; i < myPawns.length; i++) {
-            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
-                if (!(board.getRotation() == rotation)) {
-                    if (board.hasPawnAt(i,rotation)){
-                        otherPawns[i] = 1;
-                    }
-                }
-            }
-        }
-
-        boolean canMovePawn = true;
-
-        int pawnsOut = 4 - homePawns - startPawns;
-
-        int lastPawnID = 0;
-
-        for (int i = 0; i < myPawns.length; i++) {
-            if (boards[rotation].hasPawnAt(i)) {
-                lastPawnID = i;
-            }
-        }
-
-        // checks for the specific case where we have pawns lined up that can't move to home
-        // and can't move foward
-        if (lastPawnID > 0 && !(card == 10)) {
-            if (card > 65 - lastPawnID) {
-                if (pawnsOut == 1) {
-                    if (myPawns[lastPawnID] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                } else if (pawnsOut == 2) {
-                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                } else if (pawnsOut == 3) {
-                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1 &&
-                            myPawns[lastPawnID - 2 * card] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                } else if (pawnsOut == 4) {
-                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1 &&
-                            myPawns[lastPawnID - card] == 1 && myPawns[lastPawnID - card] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                }
-            }
-        }
-
-        if (!canMovePawn) {
-            switch (card) {
-                case 0:
-                    if (homePawns > 0) {
-                        canMovePawn = Arrays.asList(otherPawns).contains(1);
-                    } else {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                    break;
-                case 1:
-                    canMovePawn = true;
-                case 2:
-                    if (startPawns > 1 && myPawns[1] == 0){
-                        canMovePawn = true;
-                    }
-                    break;
-                case 7:
-                    if (pawnsOut == 0) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    } else if (pawnsOut == 1 && lastPawnID + card > 65) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    } else {
-                        canMovePawn = true;
-                    }
-                    break;
-                case 11:
-                    if (pawnsOut == 1 && lastPawnID + card > 65) {
-                        if (Arrays.asList(otherPawns).contains(1)) {
-                            canMovePawn = true;
-                        } else {
-                            canMovePawn = false;
-                            forfeitTurn.setDisable(false);
-                        }
-                    }
-                    break;
-                default:
-                    canMovePawn = Arrays.asList(myPawns).contains(1);
-                    break;
-            }
-        }
-
-        return canMovePawn;
-    }
-
-    /**
-     * This function resets our private variables to their initial values
-     */
-    void reset(){
+void reset(){
     choice = -1;
     click2 = 0;
     pawnIDs = -1;
