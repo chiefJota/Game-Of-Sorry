@@ -1570,9 +1570,6 @@ public class Main extends Application {
 
         boolean done = false;
 
-       canMove(boards, turn % players, card.getNumber());
-
-
         //loop through other player board
         //check every tile to see
         //if there is a pawn on it
@@ -1624,124 +1621,6 @@ public class Main extends Application {
         }
         reset();
     }
-    
-    private boolean canMove(PlayerBoard[] boards, int rotation, int card){
-        int[] myPawns = new int[60];
-        int[] otherPawns = new int[60];
-        int startPawns;
-        int homePawns;
-
-        Arrays.fill(myPawns, 0);
-        Arrays.fill(otherPawns, 0);
-
-        startPawns = boards[rotation].getStartPawns();
-        homePawns = boards[rotation].getHomePawns();
-
-        for (int i = 0; i < myPawns.length; i++) {
-            if (boards[rotation].hasPawnAt(i)) {
-                myPawns[i] = 1;
-            }
-        }
-
-        for (int i = 0; i < myPawns.length; i++) {
-            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
-                if (!(board.getRotation() == rotation)) {
-                    if (board.hasPawnAt(i,rotation)){
-                        otherPawns[i] = 1;
-                    }
-                }
-            }
-        }
-
-        boolean canMovePawn = true;
-
-        int pawnsOut = 4 - homePawns - startPawns;
-
-        int lastPawnID = 0;
-
-        for (int i = 0; i < myPawns.length; i++) {
-            if (boards[rotation].hasPawnAt(i)) {
-                lastPawnID = i;
-            }
-        }
-
-        // checks for the specific case where we have pawns lined up that can't move to home
-        // and can't move foward
-        if (lastPawnID > 0 && !(card == 10)) {
-            if (card > 65 - lastPawnID) {
-                if (pawnsOut == 1) {
-                    if (myPawns[lastPawnID] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                } else if (pawnsOut == 2) {
-                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                } else if (pawnsOut == 3) {
-                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1 &&
-                            myPawns[lastPawnID - 2 * card] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                } else if (pawnsOut == 4) {
-                    if (myPawns[lastPawnID] == 1 && myPawns[lastPawnID - card] == 1 &&
-                            myPawns[lastPawnID - card] == 1 && myPawns[lastPawnID - card] == 1) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                }
-            }
-        }
-
-        if (!canMovePawn) {
-            switch (card) {
-                case 0:
-                    if (homePawns > 0) {
-                        canMovePawn = Arrays.asList(otherPawns).contains(1);
-                    } else {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    }
-                    break;
-                case 1:
-                    canMovePawn = true;
-                case 2:
-                    if (startPawns > 1 && myPawns[1] == 0){
-                        canMovePawn = true;
-                    }
-                    break;
-                case 7:
-                    if (pawnsOut == 0) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    } else if (pawnsOut == 1 && lastPawnID + card > 65) {
-                        canMovePawn = false;
-                        forfeitTurn.setDisable(false);
-                    } else {
-                        canMovePawn = true;
-                    }
-                    break;
-                case 11:
-                    if (pawnsOut == 1 && lastPawnID + card > 65) {
-                        if (Arrays.asList(otherPawns).contains(1)) {
-                            canMovePawn = true;
-                        } else {
-                            canMovePawn = false;
-                            forfeitTurn.setDisable(false);
-                        }
-                    }
-                    break;
-                default:
-                    canMovePawn = Arrays.asList(myPawns).contains(1);
-                    break;
-            }
-        }
-
-        return canMovePawn;
-    }
-
 
 void reset(){
     choice = -1;
