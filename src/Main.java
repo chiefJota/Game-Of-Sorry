@@ -38,7 +38,9 @@ public class Main extends Application {
     private int pawnIDs = -1;
     private int pawnID2 = -1;
     private int frame = 0;
-    private boolean add = true;
+    private boolean skyNet = false;
+    private boolean gameStarted = false;
+    private int wait = 1;
 
     private Button move1;
     private Button move2;
@@ -123,8 +125,8 @@ public class Main extends Application {
         new AnimationTimer() {
             public void handle(long currentNanoTime) {
 
-                if (!(turn % players == 0)) {
-                    if (frame % 20 == 0) {
+                if ((!(turn % players == 0) || skyNet) && gameStarted) {
+                    if (frame % wait == 0) {
                         boolean didturn = cpus[turn % players].doTurn(boards, card.getNumber(), players);
 
 
@@ -297,6 +299,7 @@ public class Main extends Application {
             winScreen.setFill(Color.YELLOW);
         }
 
+        gameStarted = false;
         win.getChildren().add(congratulations);
         win.getChildren().add(winningTeam);
 
@@ -333,6 +336,7 @@ public class Main extends Application {
         menu.getChildren().add(startGame);
         startGame.setOnMouseClicked(e -> {
             primaryStage.setScene(new Scene(root, 1450, 900));
+            gameStarted = true;
         });
 
         Button endGame = new Button("Exit");
@@ -400,6 +404,7 @@ public class Main extends Application {
         option.getChildren().add(one);
         one.setOnMouseClicked(e -> {
             players = 2;
+            wait = 20;
             primaryStage.setScene(startMenu);
         });
 
@@ -409,6 +414,7 @@ public class Main extends Application {
         option.getChildren().add(two);
         two.setOnMouseClicked(e -> {
             players = 3;
+            wait = 15;
             primaryStage.setScene(startMenu);
         });
 
@@ -418,6 +424,18 @@ public class Main extends Application {
         option.getChildren().add(three);
         three.setOnMouseClicked(e -> {
             players = 4;
+            wait = 10;
+            primaryStage.setScene(startMenu);
+        });
+
+        Button four = new Button("Skynet takeover");
+        four.setTranslateX(675);
+        four.setTranslateY(315);
+        option.getChildren().add(four);
+        four.setOnMouseClicked(e -> {
+            players = 4;
+            wait = 2;
+            skyNet = true;
             primaryStage.setScene(startMenu);
         });
     }
@@ -1268,8 +1286,11 @@ public class Main extends Application {
 
 
 
-        } else if ((activeBoard.hasPawnAt(pawnIDs, turn % players)) && activeBoard.hasPawnAt(pawnID2, turn % players)) {
-            if (activeBoard.canMovePawn(pawnIDs, choice + 1) && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1)) && checkPawn1 != checkPawn2) {
+        } else if ((activeBoard.hasPawnAt(pawnIDs, turn % players))
+                && activeBoard.hasPawnAt(pawnID2, turn % players)) {
+            if (activeBoard.canMovePawn(pawnIDs, choice + 1)
+                    && activeBoard.canMovePawn(pawnID2, 7 - (choice + 1))
+                    && (checkPawn1 != checkPawn2 || checkPawn1 == 65)) {
 
                 int shortBump = activeBoard.movePawn(pawnIDs, choice + 1);
                 for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
@@ -1288,6 +1309,8 @@ public class Main extends Application {
 
                     }
                 }
+
+                activeBoard.moveToHome();
 
                 int shortBump1 = activeBoard.movePawn(pawnID2, 7 - (choice + 1));
                 for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {

@@ -551,7 +551,6 @@ public class ComputerPlayer {
                                 int distance = j - i;
                                 if ((distance > 11 && moveValue(i, distance) > -1) && !onSlide(boards, i)
                                         || maxValue == moveValue(i, distance) && !onSlide(boards, i)){
-                                    System.out.println("in");
                                     int[] bumped1;
                                     int[] bumped2 = new int[0];
 
