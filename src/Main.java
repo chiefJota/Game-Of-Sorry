@@ -19,7 +19,6 @@ import javafx.scene.text.Font;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.animation.AnimationTimer;
-
 import javax.sound.midi.SysexMessage;
 import java.util.Arrays;
 import java.util.Random;
@@ -128,10 +127,20 @@ public class Main extends Application {
                 if ((!(turn % players == 0) || skyNet) && gameStarted) {
                     if (frame % wait == 0) {
                         boolean didturn = cpus[turn % players].doTurn(boards, card.getNumber(), players);
-
+                        
 
                         if (didturn) {
-                            if (didturn && !(card.getNumber() == 2)) {turn++;}
+
+                            for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
+                                if (board.hasWon()){
+                                    primaryStage.setScene(winScreen);
+                                }
+                            }
+
+                            if (didturn && !(card.getNumber() == 2)) {
+                                turn++;
+                            }
+
                             makeBoard(root);
 
                             for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
@@ -139,7 +148,6 @@ public class Main extends Application {
                                 root.getChildren().add(pawns);
                             }
 
-                            //TODO: Put timer to delay sidebar update
                             makeSidebar(root, changeCard());
                         } else {
                             System.out.println("turn skipped");
@@ -151,8 +159,7 @@ public class Main extends Application {
                                 Group pawns = board.displayPawns();
                                 root.getChildren().add(pawns);
                             }
-
-                            //TODO: Put timer to delay sidebar update
+                            
                             makeSidebar(root, changeCard());
                         }
                     } else {
@@ -163,7 +170,7 @@ public class Main extends Application {
                             root.getChildren().add(pawns);
                         }
 
-                        //TODO: Put timer to delay sidebar update
+                        
                         makeSidebar(root, card);
                     }
                 } else
@@ -198,12 +205,6 @@ public class Main extends Application {
 
                             root.addEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
 
-                           /* if(deck.isEmpty()){
-                                forfeitTurn.setDisable(true);
-                                deck = new SorryDeck();
-                                deck.shuffle();
-                            }*/
-
                             if (activeBoard.canMovePawn(activeBoard.getTileID(x, y), card.getNumber())) {
                                 //Moves the pawn and remakes the board
                                 int shortBump = activeBoard.movePawn(activeBoard.getTileID(x, y), card.getNumber());
@@ -237,11 +238,7 @@ public class Main extends Application {
                                     }
                                 }
                                 ++turn;
-
-
-                               // card = deck.getTopCard();
-
-                                //TODO: Put timer to delay sidebar update
+                                
                                 makeSidebar(root, changeCard());
 
                                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -762,10 +759,7 @@ public class Main extends Application {
         remainingCards.setTranslateY(835);
         remainingCards.setTranslateX(1050);
         remainingCards.setMaxWidth(375);
-
         remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
-
-        //remainingCards.textProperty().bind(Bindings.concat("Cards left: ").concat(new SimpleIntegerProperty(deck.cardsRemaining()).asString()));
 
 
         sideBar.getChildren().add(white);
@@ -953,15 +947,8 @@ public class Main extends Application {
                 }
             }
 
-           /* if (deck.isEmpty()) {
-                deck = new SorryDeck();
-                deck.shuffle();
-            }*/
-
-        //    card = deck.getTopCard();
-
             turn++;
-            //TODO: Put timer to delay sidebar update
+            
             makeSidebar(root, changeCard());
 
 
@@ -1001,16 +988,9 @@ public class Main extends Application {
                         primaryStage.setScene(winScreen);
                     }
                 }
-/*
-                if (deck.isEmpty()) {
-                    deck = new SorryDeck();
-                    deck.shuffle();
-                }*/
-
-              //  card = deck.getTopCard();
 
                 ++turn;
-                //TODO: Put timer to delay sidebar update
+                
                 makeSidebar(root, changeCard());
 
 
@@ -1053,14 +1033,7 @@ public class Main extends Application {
                     primaryStage.setScene(winScreen);
                 }
             }
-
-          /*  if (deck.isEmpty()) {
-                deck = new SorryDeck();
-                deck.shuffle();
-            }*/
-          //  card = deck.getTopCard();
-
-            //TODO: Put timer to delay sidebar update
+            
             makeSidebar(root, changeCard());
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1098,16 +1071,7 @@ public class Main extends Application {
                         primaryStage.setScene(winScreen);
                     }
                 }
-
-
-               /* if (deck.isEmpty()) {
-                    deck = new SorryDeck();
-                    deck.shuffle();
-                }*/
-
-             //   card = deck.getTopCard();
-
-                //TODO: Put timer to delay sidebar update
+                
                 makeSidebar(root, changeCard());
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1158,15 +1122,7 @@ public class Main extends Application {
             }
 
             ++turn;
-
-
-            if (deck.cardsRemaining() == 0) {
-                deck.shuffle();
-            }
-
-            //card = deck.getTopCard();
-
-            //TODO: Put timer to delay sidebar update
+            
             makeSidebar(root, changeCard());
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1193,9 +1149,6 @@ public class Main extends Application {
         if ((click2 != 0) && (activeBoard.hasPawnAt(activeBoard.getTileID(x, y), turn % players))) {
             pawnID2 = activeBoard.getTileID(x, y);
         }
-
-        //System.out.println(pawnIDs);
-        //System.out.println(pawnID2);
 
         int checkPawn1 = pawnIDs + (choice+1);
         int checkPawn2 = pawnID2 + (7-(choice+1));
@@ -1232,10 +1185,7 @@ public class Main extends Application {
             }
             ++turn;
 
-
-            //card = deck.getTopCard();
-
-            //TODO: Put timer to delay sidebar update
+            
             makeSidebar(root, changeCard());
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1274,17 +1224,11 @@ public class Main extends Application {
                 }
             }
             ++turn;
-
-
-            //card = deck.getTopCard();
-
-            //TODO: Put timer to delay sidebar update
+            
             makeSidebar(root, changeCard());
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
             reset();
-
-
 
         } else if ((activeBoard.hasPawnAt(pawnIDs, turn % players))
                 && activeBoard.hasPawnAt(pawnID2, turn % players)) {
@@ -1342,19 +1286,10 @@ public class Main extends Application {
                 }
 
                 ++turn;
-
-           /*     if (deck.isEmpty()) {
-                    deck = new SorryDeck();
-                    deck.shuffle();
-                }
-*/
-               // card = deck.getTopCard();
-
-                //TODO: Put timer to delay sidebar update
+                
                 makeSidebar(root, changeCard());
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
-
 
                 reset();
             }
@@ -1407,15 +1342,7 @@ public class Main extends Application {
                 }
 
                 ++turn;
-
-             /*   if (deck.isEmpty()) {
-                    deck = new SorryDeck();
-                    deck.shuffle();
-                }
-*/
-             //   card = deck.getTopCard();
-
-                //TODO: Put timer to delay sidebar update
+                
                 makeSidebar(root, changeCard());
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1456,14 +1383,6 @@ public class Main extends Application {
 
                 ++turn;
 
-             /*   if (deck.isEmpty()) {
-                    deck = new SorryDeck();
-                    deck.shuffle();
-                }*/
-
-            //    card = deck.getTopCard();
-
-                //TODO: Put timer to delay sidebar update
                 makeSidebar(root, changeCard());
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1519,15 +1438,7 @@ public class Main extends Application {
                 }
 
                 ++turn;
-
-               /* if (deck.isEmpty()) {
-                    deck = new SorryDeck();
-                    deck.shuffle();
-                }
-*/
-                //card = deck.getTopCard();
-
-                //TODO: Put timer to delay sidebar update
+                
                 makeSidebar(root, changeCard());
 
                 root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1557,8 +1468,6 @@ public class Main extends Application {
             }
 
             boolean done1 = false;
-            //System.out.println(pawnIDs);
-            //System.out.println(pawnID2);
 
             if ((activeBoard.hasPawnAt(pawnIDs, turn % players))) {
 
@@ -1576,7 +1485,6 @@ public class Main extends Application {
                     int spaces = pawnID2 - pawnIDs;
 
                     activeBoard.movePawn(pawnIDs, spaces);
-                    //spaces = -(spaces);
 
                     for (PlayerBoard board : Arrays.copyOfRange(boards, 0, players)) {
                         if (!(board.getRotation() == turn % players)) {
@@ -1600,15 +1508,7 @@ public class Main extends Application {
                     }
 
                     ++turn;
-
-                  /*  if (deck.isEmpty()) {
-                        deck = new SorryDeck();
-                        deck.shuffle();
-                    }*/
-
-                   // card = deck.getTopCard();
-
-                    //TODO: Put timer to delay sidebar update
+                    
                     makeSidebar(root, changeCard());
 
                     root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
@@ -1680,15 +1580,7 @@ public class Main extends Application {
 
             //increment the turn
             turn++;
-
-            /*if(deck.isEmpty()){
-                deck = new SorryDeck();
-                deck.shuffle();
-            }*/
-
-           // card = deck.getTopCard();
-
-            //TODO: Put timer to delay sidebar update
+            
             makeSidebar(root, changeCard());
 
             root.removeEventFilter(MouseEvent.MOUSE_CLICKED, getcoords);
