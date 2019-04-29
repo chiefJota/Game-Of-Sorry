@@ -39,7 +39,7 @@ public class Main extends Application {
     private int frame = 0;
     private boolean skyNet = false;
     private boolean gameStarted = false;
-    private int wait = 1;
+    private int wait = 20;
 
     private Button move1;
     private Button move2;
@@ -111,7 +111,7 @@ public class Main extends Application {
 
         //Choose first player to go
         Random rand = new Random();
-        turn = rand.nextInt(4);
+        turn = rand.nextInt(players);
 
 
         EventHandler<MouseEvent> getcoords = new EventHandler<MouseEvent>() {
