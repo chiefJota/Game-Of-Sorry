@@ -1,21 +1,44 @@
 import java.util.Arrays;
 
+/**
+ * A class that allows a computer to play Sorry
+ */
 public class ComputerPlayer {
+    // ints storing the rotation, pawns on start and home,
+    // and the tile ID for the first and last pawns.
     int playerRotation = 0;
     int startPawns = 4;
     int homePawns = 0;
     int lastPawnID = 0;
     int firstPawnID = 0;
+
+    // Int arrays representing the location of pawns on the board
+    // the index corresponds to the tile ID.
+    // 0 for no pawn, 1 for pawn.
+    // separated into two arrays for the computer players pawns and
+    // the pawns for all other players
     int[] myPawns = new int[65];
     int[] otherPawns = new int[65];
+
+    // int storing the number of players
     int players = 2;
 
+    // default constructor
     public ComputerPlayer(){}
 
+    // constructor with rotation
     public ComputerPlayer(int playerRotation) {
         this.playerRotation = playerRotation;
     }
 
+    /**
+     * Function that executes a turn for the computer player
+     * returns if a move is done in the turn.
+     * @param boards
+     * @param card
+     * @param players
+     * @return
+     */
     public boolean doTurn (PlayerBoard[] boards, int card, int players){
         this.players = players;
         boolean hasMoved = false;
@@ -57,6 +80,12 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * A function that updates the computer player to the state of the game
+     * takes the full array of boards and updates the parameter of the
+     * computer player
+     * @param boards
+     */
     private void checkBoard(PlayerBoard[] boards){
         Arrays.fill(myPawns, 0);
         Arrays.fill(otherPawns, 0);
@@ -93,6 +122,12 @@ public class ComputerPlayer {
         }
     }
 
+    /**
+     * Checks if the computer can execute the card given for the board.
+     * @param boards
+     * @param card
+     * @return
+     */
     private boolean canMove(PlayerBoard[] boards, int card){
         boolean canMovePawn = true;
 
@@ -167,6 +202,15 @@ public class ComputerPlayer {
         return canMovePawn;
     }
 
+    /**
+     * Function to move a pawn a certain card number forward.
+     * First checks if the pawn can be moved into home or the safe spaces.
+     * Then moves the pawn that gives the most valuable move, if two pawns
+     * have the same move value, moves the pawn closest to your home.
+     * @param boards
+     * @param card
+     * @return
+     */
     private boolean doForwardMove(PlayerBoard[] boards, int card){
         // bool to ensure only one move is done
         boolean hasMoved = false;
@@ -188,13 +232,17 @@ public class ComputerPlayer {
             }
 
             // next do the moves with the maximum value possible
+            // sets maximum possible value of the move
             int maxValue = 11;
             move:
             while (!hasMoved) {
+                // for every tile
                 for (int i = 64; i > -1; i--) {
+                    // checks if the move can be completed
                     if (boards[playerRotation].canMovePawn(i, card)) {
-                        //checks the value of the move
+                        //checks if the value of the move matches the max
                         if (moveValue(i, card) == maxValue) {
+                            // executes the move and exits loop
                             doMove(boards, i, card);
                             boards[playerRotation].moveToHome();
                             hasMoved = true;
@@ -202,6 +250,7 @@ public class ComputerPlayer {
                         }
                     }
                 }
+                // if move not done decrement max value until we hit the minimum possible value
                 maxValue--;
                 if (maxValue < -8) {
                     break;
@@ -213,8 +262,9 @@ public class ComputerPlayer {
     }
 
     /**
-     * determines the value of a move, for every pawn that's not yours bumped, value is incremented
-     * for every pawn that is yours bumped, value is decremented
+     * determines the value of a move, for every pawn that's not yours bumped, value is increased by 2
+     * for every pawn that is yours bumped, value is decreased by 2.
+     * Moving a pawn off start if worth 4 while moving a pawn into home is worth 10.
      * @param startID, moves
      * @return value
      */
@@ -255,9 +305,16 @@ public class ComputerPlayer {
             }
             return value;
         }
-        return -10;
+        return -100;
     }
 
+    /**
+     * Executes the sorry card, if there is a pawn in start,
+     * move it to the location of the enemy pawn closes to your home and
+     * bump that pawn.
+     * @param boards
+     * @return
+     */
     private boolean doSorry(PlayerBoard[] boards){
         boolean hasMoved = false;
         boolean hasOtherPawn = false;
@@ -289,6 +346,11 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * Move pawn from start if possible, or move pawn forward one.
+     * @param boards
+     * @return
+     */
     private boolean doOne(PlayerBoard[] boards){
         boolean hasMoved = false;
         if (startPawns > 0 && !boards[playerRotation].hasPawnAt(1)) {
@@ -306,6 +368,11 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * Move pawn from start if possible, or move pawn forward two.
+     * @param boards
+     * @return
+     */
     private boolean doTwo(PlayerBoard[] boards){
         boolean hasMoved = false;
         if (startPawns > 0 && !boards[playerRotation].hasPawnAt(1)) {
@@ -323,6 +390,7 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    // Move pawn backwards 4, moves the pawn closest to the start
     private boolean doFour(PlayerBoard[] boards){
         boolean hasMoved = false;
         if (hasElement(myPawns,1)) {
@@ -338,6 +406,14 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * Moves pawn forward 7 if there is only 1 pawn.
+     * if there is more than 1 pawn, for every possible combination of 2 pawns on the board,
+     * checks the value of every distribution of seven moves between then.
+     * Sum the value and take the most valuable combination of moves.
+     * @param boards
+     * @return
+     */
     private boolean doSeven(PlayerBoard[] boards){
         boolean hasMoved = false;
         if (hasElement(myPawns,1)) {
@@ -415,6 +491,12 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * Moves pawn backwards 1 if pawn is on the first two tile
+     * else move the pawn forward 10.
+     * @param boards
+     * @return
+     */
     private boolean doTen(PlayerBoard[] boards) {
         boolean hasMoved = false;
 
@@ -449,6 +531,13 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * Checks of swap results in a move of greater than 11 or a value of greater than 4
+     * Else move pawn forward 10
+     * Swaps pawn backwards if there is no other legal move.
+     * @param boards
+     * @return
+     */
     private boolean doEleven(PlayerBoard[] boards){
         boolean hasMoved = false;
         if (hasElement(myPawns,1)) {
@@ -558,6 +647,12 @@ public class ComputerPlayer {
         return hasMoved;
     }
 
+    /**
+     * Checks if a tileID is on the start of a slide
+     * @param boards
+     * @param tileID
+     * @return
+     */
     private boolean onSlide(PlayerBoard[] boards, int tileID) {
         if (tileID == 21 || tileID == 36 || tileID == 51) {
             return true;
@@ -567,6 +662,14 @@ public class ComputerPlayer {
         return false;
     }
 
+    /**
+     * Executes a move, moves the pawn on tile ID a certain number of moves,
+     * bump the pawns on resulting tile. Checks if the tile is on the start
+     * of a slide, executes the slide and bumps all pawns on the slide.
+     * @param boards
+     * @param tileID
+     * @param moves
+     */
     private void doMove(PlayerBoard[] boards, int tileID, int moves){
         int bump = boards[playerRotation].movePawn(tileID, moves);
 
@@ -585,6 +688,11 @@ public class ComputerPlayer {
         }
     }
 
+    /**
+     * Checks if there is a pawn from another board on the tile ID
+     * @param tileID
+     * @return
+     */
     boolean hasPawnOther(int tileID){
         if (otherPawns[tileID] == 1){
             return true;
@@ -592,6 +700,12 @@ public class ComputerPlayer {
         return false;
     }
 
+    /**
+     * Uitility function, checks if an array contains an element
+     * @param array
+     * @param element
+     * @return
+     */
     private boolean hasElement (int[] array, int element){
         for (int i : array) {
             if (i == element) {
@@ -601,6 +715,12 @@ public class ComputerPlayer {
         return false;
     }
 
+    /**
+     * Patch for strange behavior of 11 when a pawn gets deleted
+     * Checks if there are 4 pawns total, if there are less, adds the missing
+     * pawns to start.
+     * @param boards
+     */
     private void checkPawnNum (PlayerBoard[] boards) {
         for (PlayerBoard board : boards) {
             int numPawns = 0;

@@ -5,18 +5,35 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.Arrays;
 
+/**
+ * A complete Sorry board for one player
+ * Multiple instances needed for more than one player
+ * Communications between boards facilitated through the
+ * rotation of the board.
+ */
 public class PlayerBoard {
+    // ints storing the number of pawns on start and home
     private int homePawns = 0;
     private int startPawns = 4;
 
+    // the array of tiles to create the board
     private BoardTile[] boardTiles;
 
-    private BoardTile startTile;
-    private BoardTile endTile;
-
+    // int storing the rotation of the board
+    // 0, 1, 2 and 3 corresponds to having the start/home circles
+    // on the top, right, bottom, and left for the player/board
     private int rotation = 0;
+
+    // int storing the color of the player
     private Color playerColor = Color.RED;
 
+    /**
+     * Default constructor
+     * Creates the 65 tiles for the Sorry board,
+     * as well as a tile for the home space.
+     * Orders them in an array, and links them to
+     * the next and last tiles moved to.
+     */
     public PlayerBoard() {
         this.boardTiles = new BoardTile[66];
 
@@ -27,9 +44,6 @@ public class PlayerBoard {
             boardTiles[i] = new BoardTile(i, boardTiles[i - 1]);
         }
 
-        this.startTile = boardTiles[0];
-        this.endTile = boardTiles[65];
-
         for (int i = 0; i < 65; i++) {
             boardTiles[i].setNextTile(boardTiles[i + 1]);
         }
@@ -39,6 +53,10 @@ public class PlayerBoard {
         boardTiles[0].addPawn();
     }
 
+    /**
+     * Constructs the board but also sets the
+     * rotation and color.
+     */
     public PlayerBoard(int rotation, Color playerColor) {
         this.rotation = rotation;
         this.boardTiles = new BoardTile[66];
@@ -51,9 +69,6 @@ public class PlayerBoard {
             boardTiles[i] = new BoardTile(i, boardTiles[i - 1]);
         }
 
-        this.startTile = boardTiles[0];
-        this.endTile = boardTiles[65];
-
         for (int i = 0; i < 65; i++) {
             boardTiles[i].setNextTile(boardTiles[i + 1]);
         }
@@ -61,24 +76,16 @@ public class PlayerBoard {
         boardTiles[0].setLastTile(boardTiles[59]);
    }
 
-    public void highlightTiles(int[] tilesHighlighted, Group root) {
-        for (int tileID:tilesHighlighted) {
-            if (boardTiles[tileID].getHasPawn()) {
-                int[] coords = getLocation(tileID);
-                int x = coords[0] -25;
-                int y = coords[1] -25;
-                Rectangle highlight = new Rectangle(x, y, 50, 50);
-                highlight.setFill(Color.rgb(255, 255, 0, 0.5));
-                highlight.setStrokeWidth(new Double(2.0));
-
-                root.getChildren().add(highlight);
-            }
-        }
-    }
-
+    /**
+     * A function that returns a Javafx Group that contains
+     * all of the pawns displayed, in the rotation of the
+     * player/board
+     * @return playerDisplay
+     */
     public Group displayPawns() {
         Group playerDisplay = new Group();
 
+        // adds pawns on board
         for (int i = 0; i < 65; i++) {
             if (boardTiles[i].getHasPawn()) {
                 int[] coords = getLocation(i);
@@ -92,6 +99,7 @@ public class PlayerBoard {
             }
         }
 
+        // adds pawns on home and start
         int[] coord1 = new int[]{305, 130};
         int x1 = coordinateRotation(coord1, 0, rotation)[0];
         int y1 = coordinateRotation(coord1, 0, rotation)[1];
@@ -193,16 +201,32 @@ public class PlayerBoard {
         return playerDisplay;
     }
 
-    // checks if there is a pawn at the tile
+    /**
+     * Checks if there is a pawn at the tileID,
+     * returns true/false
+     * @param tileID
+     */
     public Boolean hasPawnAt(int tileID) {
         return boardTiles[tileID].getHasPawn();
     }
 
-    // checks if there is a pawn at the tile
-    public Boolean hasPawnAt(int tileID, int initRot ) {
+    /**
+     * Checks if there is a pawn at the tileID when inquired by
+     * another board. Takes the tileID as well as the rotation
+     * of the board the inquiry came from.
+     * @param tileID, initRot
+     */
+    public Boolean hasPawnAt(int tileID, int initRot) {
         return boardTiles[tileIDRotation(tileID, initRot, rotation)].getHasPawn();
     }
 
+    /**
+     * Checks if the pawn at a tile ID can move a certain number of spaces.
+     * Checks to avoid bumping own tile and moving off the board.
+     * @param tileID
+     * @param moves
+     * @return
+     */
     public Boolean canMovePawn(int tileID, int moves) {
         if (tileID + moves > 65 || !boardTiles[tileID].getHasPawn()) {
             return false;
@@ -223,8 +247,13 @@ public class PlayerBoard {
         }
     }
 
-    // Takes the id of the tile and if there's a pawn on it move it a certain amount foward
-    // cannot currently move backwards, but will not move tile off board(that will actually cause a crash)
+    /**
+     * Moves the pawn at a tile ID a certain number of spaces.
+     * Also returns the tile ID of the tile the pawn lands on.
+     * @param tileID
+     * @param moves
+     * @return
+     */
     public int movePawn(int tileID, int moves) {
         BoardTile activeTile = this.boardTiles[tileID];
 
@@ -247,8 +276,16 @@ public class PlayerBoard {
         return -1;
     }
 
-    public int movePawn(int tileID, int moves, int rotate) {
-        int rotatedID = tileIDRotation(tileID, rotate , rotation);
+    /**
+     * Moves the pawn at a tile ID for a player with different rotation
+     * a certain number of spaces
+     * Also returns the tile ID of the tile the pawn lands on.
+     * @param tileID
+     * @param moves
+     * @return
+     */
+    public int movePawn(int tileID, int moves, int initRot) {
+        int rotatedID = tileIDRotation(tileID, initRot , rotation);
         BoardTile activeTile = this.boardTiles[rotatedID];
 
         if (activeTile.getHasPawn()) {
@@ -270,6 +307,12 @@ public class PlayerBoard {
         return -1;
     }
 
+    /**
+     * Checks if any pawn is on a tile that is the start of a slide
+     * bumps all of your own slides on the slide.
+     * returns the tile ID of the tiles that was slid over.
+     * @return
+     */
     public int[] checkSlide() {
         for (int i = 0; i < 64; i++) {
             if (boardTiles[i].getHasPawn()){
@@ -289,28 +332,22 @@ public class PlayerBoard {
         return new int[0];
     }
 
+    // Moves pawn from start to the tile in front of start
     public void moveFromStart() {
         boardTiles[1].addPawn();
         startPawns--;
     }
 
+    // Moves a pawn from start to a certain tile ID
     public void movePawnTo(int tileID) {
         boardTiles[tileID].addPawn();
         startPawns--;
     }
 
-
-    public int getStartPawns() {
-        return startPawns;
-    }
-
-    public int getHomePawns(){return homePawns; }
-
-    public void addStartPawns() {
-         startPawns++;
-    }
-
-
+    /**
+     * Checks if there is a pawn on the tile for home,
+     * removes it and increment the homePawn number
+     */
     public void moveToHome() {
         if (boardTiles[65].getHasPawn()) {
             boardTiles[65].removePawn();
@@ -318,6 +355,9 @@ public class PlayerBoard {
         }
     }
 
+    /**
+     * Returns if there are 4 pawns in Home
+     */
     public boolean hasWon() {
         if (homePawns == 4) {
             return true;
@@ -326,6 +366,12 @@ public class PlayerBoard {
         }
     }
 
+    /**
+     * Removes the pawn on tileID, add it back to startPawns,
+     * taking the rotation of the board
+     * @param tileID
+     * @param initRot
+     */
     public void bump(int tileID, int initRot) {
         int rotatedID = tileIDRotation(tileID, initRot, rotation);
         if (boardTiles[rotatedID].getHasPawn()) {
@@ -335,6 +381,10 @@ public class PlayerBoard {
         }
     }
 
+    /**
+     * Removes the pawn on multiple  tileIDs of a different player
+     * add it back to startPawns
+     */
     public void bump(int[] tileIDs, int initRot) {
         int[] rotatedIDs = tileIDRotation(tileIDs, initRot, rotation);
 
@@ -347,10 +397,9 @@ public class PlayerBoard {
         }
     }
 
-    // this includes the x and y coordinates of the CENTER of the tiles ordered from 0 to 64
-    // remember that if the pane is square it will start from the top left of the pane
-    // you would want to subtract 25 from all values in these two lists to get the coords of the
-    // left top corner
+    /**
+     * returns the x and y coordinates of the CENTER of the tiles ordered from 0 to 64
+     */
     private int[] getLocation(int tileID) {
         int[] coordinates = new int[2];
 
@@ -373,6 +422,20 @@ public class PlayerBoard {
         return rotatedCoordinates;
     }
 
+    /**
+     * Crucial function.
+     * All coords are programed for a player/Board with the star and home on top of the Sorry board
+     * However, this function allows us to rotate the around the center of the board.
+     * Thus allowing us to get the coords of the tile, etc. of a different rotation
+     * by calling this function.
+     * Takes initial coordinates, and rotates it from the initial rotation to the final rotation.
+     * The rotations are 0 for start/home pointing up, 1 for right, 2 for down, and 3 for left.
+     * Returns the coordinates rotated around the center.
+     * @param initCoords
+     * @param initRot
+     * @param finalRot
+     * @return
+     */
     public int[] coordinateRotation(int[] initCoords, int initRot, int finalRot) {
         int initX = initCoords[0];
         int initY = initCoords[1];
@@ -405,12 +468,31 @@ public class PlayerBoard {
         return new int[]{finalX, finalY};
     }
 
+    /**
+     * Crucial function.
+     * For the 60 shared tiles around the outside of the board.
+     * Allows us to, knowing the rotation of two players
+     * and the tile ID for the first player,
+     * to know what the tile ID is for the second player
+     *
+     * @param initTileID
+     * @param initRot
+     * @param finalRot
+     * @return
+     */
     private int tileIDRotation(int initTileID, int initRot, int finalRot) {
         int[] initTileIDs = new int[]{initTileID};
         int[] rotatedIDs = tileIDRotation(initTileIDs, initRot, finalRot);
         return rotatedIDs[0];
     }
 
+    /**
+     * tileIDRotation for multiple tiles
+     * @param initTileID
+     * @param initRot
+     * @param finalRot
+     * @return
+     */
     private int[] tileIDRotation(int[] initTileIDs, int initRot, int finalRot) {
         int rotation = (finalRot - initRot + 4)%4;
 
@@ -423,6 +505,12 @@ public class PlayerBoard {
         return finalTileIDs;
     }
 
+    /**
+     * Gets the tile id for a click on the screen.
+     * @param x
+     * @param y
+     * @return
+     */
     public int getTileID(int x, int y){
 
         int[] coords = new int[]{x, y};
@@ -501,8 +589,22 @@ public class PlayerBoard {
         return -1;
     }
 
+    // Get the number of pawns on Start
+    public int getStartPawns() {
+        return startPawns;
+    }
+
+    // Get the number of pawns on Home
+    public int getHomePawns(){return homePawns; }
+
+    // Increment the number of pawns on Start
+    // Not used normally, only for patch
+    public void addStartPawns() {
+        startPawns++;
+    }
+
+    // Gets the rotation of the board.
     public int getRotation(){
         return rotation;
     }
-
 }
