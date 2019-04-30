@@ -109,9 +109,8 @@ public class Main extends Application {
         primaryStage.setScene(startMenu);
         primaryStage.show();
 
-        //Choose first player to go
-        Random rand = new Random();
-        turn = rand.nextInt(players);
+        //red player goes first
+        turn = 0;
 
 
         EventHandler<MouseEvent> getcoords = new EventHandler<MouseEvent>() {
@@ -1712,8 +1711,12 @@ public class Main extends Application {
         reset();
     }
 
-
-void reset(){
+    /**
+     * resets choice
+     * click2, pawnIDs (2 of them)
+     * and the x and y coordinates
+     */
+    void reset(){
     choice = -1;
     click2 = 0;
     pawnIDs = -1;
